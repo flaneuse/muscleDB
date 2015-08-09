@@ -8,7 +8,7 @@
 # # 
 # data = data %>%
 #   mutate(gene = shortName)
-# 
+# # 
 # iMuscles= 8:15
 # maxInit = max(data[,iMuscles])
 
