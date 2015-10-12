@@ -35,6 +35,9 @@ filterData <- reactive({
   # you'll find only genes w/ both the name Myod1 and kinase as an ontology (which doesn't exist).
   # To switch this to an OR relationship, change the '&' to a '|'.
   
+  filtered = data %>% 
+    filter(tissue %in% input$muscles)
+  
   filtered = eval(parse(text = sprintf("data %%>%% 
         filter(grepl(geneInput, shortName) & grepl(ont, GO)) %%>%%
         mutate(transcript = strtrim(Transcript, 10)) %%>%%      
