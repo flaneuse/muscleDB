@@ -2,10 +2,15 @@ ANOVAlookupTable <- function (geneExprFileName,
                               numRep = 6, 
                               onlyPairwise = FALSE) {
   
-  source("~/GitHub/muscle-transcriptome/prep/calcANOVA.r")
+  source("calcANOVA.r")
+  
+  print('Starting ANOVA calculation.')
   
   # Read in file
+  print('Reading in file... this will take a second.')
   geneExpr = as.matrix(read.csv(geneExprFileName, row.names=1))
+  
+  print('... done!  Let the calculation begin.')
   
   # Define the muscle tissues to be examined.
   muscles = c('AOR', 'ATR', 'DIA', 'EDL', 'EYE', 

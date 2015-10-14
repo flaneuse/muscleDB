@@ -46,10 +46,14 @@ df = full_join(avg, SE, by = c("Transcript", "tissue")) %>%
   mutate(lb = expr - SE,
          ub = expr + SE,
          shortName = 'foo',
-         transcript = 'bar',
+         transcript = 'bar', 
          gene = 'fu',
          GO = 'moo',
          entrezLink = 'html',
-         USCSLink = 'html')
+         q = 1,
+         UCSCLink = 'html')
+
+# ! Convert transcript into 10-digit, useful transcript ID.
+# ! Fix the UCSC links, etc.
 
 saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
