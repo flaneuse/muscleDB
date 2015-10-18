@@ -91,3 +91,18 @@ allANOVAs = full_join(allANOVAs, anovasWeb)
 
 write.csv(allANOVAs, 'allANOVAs_merged_2015-10-18.csv')
 saveRDS(allANOVAs, 'allANOVAs_merged_2015-10-18.rds')
+
+
+ANOVAs4Web = allANOVAs %>% 
+  select(-contains('TA'), -contains('AA'), -contains('MAS'), -contains('TON'))
+
+write.csv(ANOVAs4Web, 'allANOVAs_forWeb_2015-10-18.csv')
+saveRDS(ANOVAs4Web, 'allANOVAs_forWeb_2015-10-18.rds')
+
+
+ANOVAs4Web = allANOVAs %>% 
+  select(-contains('_p'),
+         -contains('TA'), -contains('AA'), 
+         -contains('MAS'), -contains('TON'))
+
+saveRDS(ANOVAs4Web, 'q_forWeb_2015-10-18.rds')
