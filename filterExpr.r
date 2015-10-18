@@ -2,31 +2,13 @@
 # the inputs change.
 filterData <- reactive({
   x = proc.time()
-  # Change gene so it's starting with the input$gene's name, e.g. 'Per' will return 
+  
+  
   # Per1, Per2, Per3, ....
   # Note: to change to exact matching, include '$' at the end of the string.
   geneInput = paste0('^',input$geneInput)
   ont = input$GO
   
-  # Set minimum and maximum expression values.
-  #   if(is.null(input$minExprVal)) {
-  #     low = 0
-  #     } else {
-  low = input$minExprVal
-  # }
-  
-  high = input$maxExprVal
-  
-  # Select just the muscles and other useful cols.
-  cols2Sel = paste0("shortName,transcript,", paste0(lapply(input$muscles, function(x) 
-    paste0("contains('", x,"_mean')")), collapse=","))
-  
-  muscleExpr = paste(
-    paste0(lapply(input$muscles, 
-                  function(x) paste0(x, "_mean >=", low)), collapse=" & "),
-    paste0(lapply(input$muscles,
-                  function(x) paste0(x, "_mean <=", high)), collapse = " & "),
-    sep = ",")
   
   # SELECT DATA.
   # Note: right now, if there's something in both the "gene" and "ont"
@@ -36,15 +18,21 @@ filterData <- reactive({
   # To switch this to an OR relationship, change the '&' to a '|'.
   
   filtered = data %>% 
-    filter(tissue %in% input$muscles)
+    filter(tissue %in% input$muscles,
+           grepl(geneInput, Transcript) & grepl(ont, GO)
+    )
   
-  filtered = eval(parse(text = sprintf("data %%>%% 
-        filter(grepl(geneInput, shortName) & grepl(ont, GO)) %%>%%
-        mutate(transcript = strtrim(Transcript, 10)) %%>%%      
-        select(%s) %%>%% filter(%s)", 
-                                       cols2Sel,
-                                       muscleExpr
-  )))
+  # Quantitative filtering
+  filteredTranscripts = filtered %>% 
+    filter(expr <= input$maxExprVal, 
+           expr >= input$minExprVal, 
+           q <= input$qVal) %>% 
+    select(Transcript)
+  
+  # Select the transcripts where at least one tissue meets the conditions.
+  filtered = filtered %>% 
+    filter(Transcript %in% filteredTranscripts$Transcript)
+  
   
   print(proc.time() - x)
   

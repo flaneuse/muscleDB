@@ -1,4 +1,5 @@
-# library(dplyr)
+library(dplyr)
+library(tidyr)
 # # 
 # data = readRDS("~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/combData_2014-10-19.rds")
 # # # 
@@ -24,7 +25,7 @@ shinyServer(
     
     # TABLE outputs: main table with all the data, and summary table 
     # with the summary statistics for the filtered data.
-    source("summaryTable.r", local = TRUE)
+    # source("summaryTable.r", local = TRUE)
     source("mainTable.r", local = TRUE)
     
     # PLOT output

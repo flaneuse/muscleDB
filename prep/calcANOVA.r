@@ -40,10 +40,10 @@ d <- data.frame(cat = rep(letters[1:numTissues], each = numRep), val = rep(1,num
 
 #!!!!! Temporary fix since SOL6 is bad.  DELETE DELETE DELETE when good data is obtained.
 # Deletes the last row of the empty placeholder matrix.
-if (any(match(muscles, "SOL"), na.rm = TRUE)) {
-  lastRow = nrow(d)
-  d = d[-lastRow,]
-}
+# if (any(match(muscles, "SOL"), na.rm = TRUE)) {
+#   lastRow = nrow(d)
+#   d = d[-lastRow,]
+# }
 
 
 

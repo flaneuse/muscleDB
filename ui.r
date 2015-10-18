@@ -6,27 +6,49 @@ library(d3heatmap)
 library(ggvis)
 library(ggplot2)
 
+
+# Define sidebar for inputs -----------------------------------------------
+
 sidebar <- dashboardSidebar(
   sidebarSearchForm(label = "search symbol (Myod1)", "geneInput", "searchButton"),
   sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
-                     
-                     choices = c("aorta" = "AOR", "atria" = "ATR",
-                                 "left ventricle" = "LV", "right ventricle" = "RV",
-                                 "diaphragm" = "DIA", "EDL" = "EDL", "eye" = "EYE" ,
-                                 "soleus" = "SOL"),
-                     selected = c("AOR", "ATR","LV", "RV", "DIA", 
-                                  "EDL", "EYE","SOL")),
+                     choices = c('atria' = 'atria', 
+                                 'left ventricle' = 'left ventricle',
+                                 'total aorta' = 'total aorta', 
+                                 'right ventricle' = 'right ventricle',
+                                 'soleus' = 'soleus', 
+                                 'thoracic aorta' = 'thoracic aorta', 
+                                 'abdominal aorta' = 'abdominal aorta', 
+                                 'diaphragm' = 'diaphragm',
+                                 'eye' = 'eye', 
+                                 'EDL' = 'EDL', 'FDB' = 'FDB', 
+                                 'masseter' =  'masseter', 
+                                 'plantaris' = 'plantaris', 
+                                 'tongue' = 'tongue'),
+                     selected = c('atria', 'left ventricle',
+                                  'total aorta', 'right ventricle',
+                                  'soleus', 'thoracic aorta', 
+                                  'abdominal aorta', 'diaphragm',
+                                  'eye', 'EDL', 'FDB', 
+                                  'masseter', 'plantaris', 'tongue')),
+  
+  # Conditional for advanced filtering options.
   checkboxInput("adv", "advanced filtering", value = FALSE),
   conditionalPanel(
     condition = "input.adv == true",
+    
+    # -- Expression filtering. --
     HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'>
       expression level </div>"),
     fluidRow(column(6,
                     numericInput("minExprVal", "min:", 0,
                                  min = 0, max = maxInit)),
              column(6,
-                    numericInput("maxExprVal", "max:", value = maxInit, min = 0, max = maxInit))),
+                    numericInput("maxExprVal", "max:", 
+                                 value = maxInit, min = 0, max = maxInit))),
+    
+    # -- fold change. --
     HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'> fold change </div>"),
     helpText(em(HTML("<div style= 'font-size:10pt; padding-left:1em'> 
         Filters by the increase in expression, 
@@ -35,7 +57,14 @@ sidebar <- dashboardSidebar(
                  choices = list("aorta" = "AOR", "atria" = "ATR",
                                 "diaphragm"="DIA", "EDL" = "EDL", "eye"="EYE",
                                 "left ventricle" = "LV", "right ventricle"="RV", "soleus" = "SOL"), selected = "AOR"),
-      sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%")
+      sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
+    
+    # -- q-value. --
+    HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'>
+      q value </div>"),
+    fluidRow(column(6,
+                    numericInput("qVal", "maximum q value:", 0,
+                                 min = 0, max = 1, value = 1)))
   ),
   
   sidebarMenu(

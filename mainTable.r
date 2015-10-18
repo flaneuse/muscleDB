@@ -1,5 +1,11 @@
 output$table <- renderDataTable({
-  filterData()
+  filtered = filterData()
+  
+  filtered %>% 
+    select(gene = entrezLink, transcript = UCSCLink, 
+           tissue, expr, q) %>% 
+    spread(tissue, expr)
+  
 },  escape = c(-1,-2),
 options = list(searching = FALSE, stateSave = TRUE,
                rowCallback = JS(

@@ -1,5 +1,9 @@
 ANOVAlookupTable <- function (geneExprFileName, 
                               numRep = 6, 
+                              muscles = c('AOR', 'ATR', 'DIA', 'EDL', 'EYE', 
+                                          'LV', 'RV', 'SOL', 'TON', 'TA',
+                                          'AA', 'FDB', 'MAS', 'PLA'),
+                              n = 2,  # Starting point for comparison.
                               onlyPairwise = FALSE) {
   
   source("calcANOVA.r")
@@ -13,25 +17,24 @@ ANOVAlookupTable <- function (geneExprFileName,
   print('... done!  Let the calculation begin.')
   
   # Define the muscle tissues to be examined.
-  muscles = c('AOR', 'ATR', 'DIA', 'EDL', 'EYE', 
-              'LV', 'RV', 'SOL', 'TON', 'TA',
-              'AA', 'FDB', 'MAS', 'PLA')
   muscles = sort(muscles) # Check that the muscles are in the proper order to match the tissues to the lookup table
+  
+  numMuscles = length(muscles)
   
   # Initialize data frame containing all the values.
   if (onlyPairwise) {
-    numMuscles = 2
+    numCombs = choose(numMuscles,n) * 2
   } else {
-    numMuscles = length(muscles)
+    numCombs = (2^numMuscles - numMuscles - 1) * 2 # Since not calculating the ANOVA of a single tissue...
+    
   }
   
-  numCombs = (2^numMuscles - numMuscles - 1) * 2 # Since not calculating the ANOVA of a single tissue...
   ANOVAvals = matrix(data=NA,nrow = nrow(geneExpr), ncol= numCombs)
   colnames(ANOVAvals) = rep(" ",numCombs)
   rownames(ANOVAvals) = rownames(geneExpr)
   counter = 1
   
-  for (i in 2:numMuscles) {
+  for (i in n:numMuscles) {
     # Update console so you know where you're at in the loop.
     print(paste("Finding all combinations of", i, "(of", numMuscles, ") ..."))
     print(paste("Counter is at", counter, "of", numCombs))
@@ -56,10 +59,16 @@ ANOVAlookupTable <- function (geneExprFileName,
       ANOVAvals[,counter] = PQvals$q
       colnames(ANOVAvals)[counter] <- paste(paste(combMusc[,j], collapse = "-"), "q", sep="_")
       counter = counter + 1
+      
+      
+      if (! j%%5) {
+        # Save a temp version each time a set of comparisons is done.
+        saveRDS(ANOVAvals, "temp_allPQ.rds")
+        write.csv(ANOVAvals, "temp_allPQ.csv")
+      }
     }
     
-    # Save a temp version each time a set of comparisons is done.
-    write.csv(ANOVAvals, "temp_allPQ.csv")
+    
   }
   
   return(ANOVAvals)
