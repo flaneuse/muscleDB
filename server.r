@@ -14,7 +14,7 @@ library(tidyr)
 # maxInit = max(data[,iMuscles])
 
 # data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
-maxInit = max(data$expr)
+# maxInit = max(data$expr)
 
 shinyServer(
   function(input, output, session) {
