@@ -1,12 +1,3 @@
-library(shiny)
-library(shinydashboard)
-library(dplyr)
-library(DT)
-library(d3heatmap)
-library(ggvis)
-library(ggplot2)
-
-
 # Define sidebar for inputs -----------------------------------------------
 
 sidebar <- dashboardSidebar(
@@ -25,7 +16,7 @@ sidebar <- dashboardSidebar(
                                  'EDL' = 'EDL', 'FDB' = 'FDB', 
                                  # 'masseter' =  'masseter', 
                                  'plantaris' = 'plantaris'), 
-                                 # 'tongue' = 'tongue'),
+                     # 'tongue' = 'tongue'),
                      selected = c('atria', 'left ventricle',
                                   'total aorta', 'right ventricle',
                                   'soleus', 
@@ -60,7 +51,7 @@ sidebar <- dashboardSidebar(
                  choices = list("aorta" = "AOR", "atria" = "ATR",
                                 "diaphragm"="DIA", "EDL" = "EDL", "eye"="EYE",
                                 "left ventricle" = "LV", "right ventricle"="RV", "soleus" = "SOL"), selected = "AOR"),
-      sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
+    sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
     HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'>
@@ -118,20 +109,20 @@ body <- dashboardBody(
     tabItem(tabName = "volcano", plotOutput("volcano")),
     tabItem(tabName = "PCA", 
             fluidRow(column(5,
-            plotOutput("pcaPlot"),
-            dataTableOutput("PCAload")),
-            column(7,infoBoxOutput("PCAstats")))),
-            # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
+                            plotOutput("pcaPlot"),
+                            dataTableOutput("PCAload")),
+                     column(7,infoBoxOutput("PCAstats")))),
+    # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
     tabItem(tabName = "heatMap", 
             fluidRow(column(7,
-              d3heatmapOutput("heatmap",
-                                                 width = 500,
-                                                 height = 550)),
-              column(5,
-                     selectInput("scaleHeat", label = "heat map scaling",
-                                 choices = c("none" = "none", "by row" = "row", 
-                                             "by column" = "col", "log" = "log")),
-                     checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
+                            d3heatmapOutput("heatmap",
+                                            width = 500,
+                                            height = 550)),
+                     column(5,
+                            selectInput("scaleHeat", label = "heat map scaling",
+                                        choices = c("none" = "none", "by row" = "row", 
+                                                    "by column" = "col", "log" = "log")),
+                            checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
                      ))),
     tabItem(tabName = "plot", plotOutput("plot1")),
     tabItem(tabName = "table",

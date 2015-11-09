@@ -6,8 +6,9 @@ filterData <- reactive({
   
   # Per1, Per2, Per3, ....
   # Note: to change to exact matching, include '$' at the end of the string.
-  geneInput = paste0('^',input$geneInput)
-  ont = input$GO
+  # geneInput = paste0('^',input$geneInput) # Antiquated; for 
+  geneInput = paste0(input$geneInput, '%')
+  ont = paste0('%', input$GO, '%')
   
   
   # SELECT DATA.
@@ -17,9 +18,11 @@ filterData <- reactive({
   # you'll find only genes w/ both the name Myod1 and kinase as an ontology (which doesn't exist).
   # To switch this to an OR relationship, change the '&' to a '|'.
   
+  # filtered = semi_join(mt, df2, copy = TRUE, auto_index = TRUE) %>% 
   filtered = data %>% 
     filter(tissue %in% input$muscles,
-           grepl(geneInput, Transcript) & grepl(ont, GO)
+           transcript %like% geneInput
+           # , GO %like% ont
     )
   
   # Quantitative filtering
@@ -27,12 +30,10 @@ filterData <- reactive({
     filter(expr <= input$maxExprVal, 
            expr >= input$minExprVal, 
            q <= input$qVal) %>% 
-    select(Transcript)
+    select(transcript)
   
   # Select the transcripts where at least one tissue meets the conditions.
-  filtered = filtered %>% 
-    filter(Transcript %in% filteredTranscripts$Transcript)
-  
+  filtered = left_join(filtered, filteredTranscripts)
   
   print(proc.time() - x)
   
