@@ -2,13 +2,13 @@ output$table <- renderDataTable({
   filtered = filterData()
   
   filtered %>% 
-    mutate(test = 'www.google.com') %>% 
-    select(transcript, tissue, expr) %>% 
-#     select(gene = entrezLink, transcript = UCSCLink, 
-#            tissue, expr) %>% 
+    mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
+    select(transcript, tissue, expr, test) %>% 
     spread(tissue, expr)
   
-},  escape = c(-1,-2),
+},  
+escape = c(-1,-2, -3),
+selection = 'none', #! Temporarily turning off row selection.
 options = list(searching = FALSE, stateSave = TRUE,
                rowCallback = JS(
                  'function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
