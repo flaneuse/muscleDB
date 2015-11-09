@@ -12,4 +12,5 @@ library(RSQLite)
 # Import in the Muscle Transcriptome database -----------------------------
 
 mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
-mt = tbl(mt_source, 'MT')
+data = tbl(mt_source, 'MT')
+maxInit = 25000

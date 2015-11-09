@@ -12,5 +12,5 @@ output$plot1 <- renderPlot({
 #   filteredData %>% 
 #     ggvis(x = 1:8, y = ~mpg) %>% formatPlot() 
   
-  ggplot(filteredData, aes(x= 1:8, y=val)) + geom_bar(stat = "identity")
+  ggplot(filteredData, aes(x= 1:8, y=expr)) + geom_bar(stat = "identity")
 })

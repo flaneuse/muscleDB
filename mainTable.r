@@ -2,8 +2,10 @@ output$table <- renderDataTable({
   filtered = filterData()
   
   filtered %>% 
-    select(gene = entrezLink, transcript = UCSCLink, 
-           tissue, expr, q) %>% 
+    mutate(test = 'www.google.com') %>% 
+    select(transcript, tissue, expr) %>% 
+#     select(gene = entrezLink, transcript = UCSCLink, 
+#            tissue, expr) %>% 
     spread(tissue, expr)
   
 },  escape = c(-1,-2),

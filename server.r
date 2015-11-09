@@ -14,8 +14,7 @@
 # data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
 # maxInit = max(data$expr)
 
-data = mt
-maxInit = 25000
+
 
 shinyServer(
   function(input, output, session) {

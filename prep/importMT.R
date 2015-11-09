@@ -1,11 +1,17 @@
 library(RSQLite)
 library(stringr)
+library(dplyr)
+library(tidyr)
+
+
 # Import and clean data.
 
 
 # Import averages and SEs. ------------------------------------------------
 df <- read.delim("~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/Expression_Levels_for_webpage(10-6-15).txt")
 
+
+numTranscripts = nrow(df)
 
 # Pull out the averages and gather ----------------------------------------
 avg = df %>% 
@@ -16,6 +22,7 @@ avg = df %>%
          eye = EYE_mean, EDL = EDL_mean, FDB = FDB_mean, 
          masseter = MAS_mean, plantaris = PLA_mean, 
          tongue = TON_mean) %>% 
+  # mutate(id = 1:numTranscripts) %>% 
   gather(tissue, expr, -transcript)
 
 
@@ -45,7 +52,8 @@ anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/
 
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
-  mutate(lb = expr - SE,
+  mutate(
+         lb = expr - SE,
          ub = expr + SE,
          shortName = 'foo',
          gene = 'fu',
@@ -54,9 +62,6 @@ df = full_join(avg, SE, by = c("transcript", "tissue")) %>%
          UCSCLink = 'html')
 
 
-
-# Clean the transcript IDs into shortened versions ------------------------
-df = df %>% mutate(new = str_extract(df$transcript, 'uc......'))
 
 
 # ! Fix the UCSC links, etc.
@@ -73,6 +78,14 @@ df_public = df %>%
 
 df_public = full_join(df_public, anovasWeb, by = 'transcript') %>% 
   select(-contains('_p'))
+
+
+# Clean the transcript IDs into shortened versions ------------------------
+df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc......'),
+                   NM = str_extract(df_public$transcript, 'N...........')) %>% 
+  mutate(fullTranscript = transcript, 
+         transcript = ifelse(is.na(uc), NM, uc)) %>% 
+  select(-fullTranscript, -uc, -NM)
 
 saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
