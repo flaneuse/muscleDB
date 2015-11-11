@@ -3,17 +3,14 @@
 filterData <- reactive({
   x = proc.time()
   
-  filtered = data %>% 
-    filter(expr > 18000)
-  
-  filtered = collect(filtered)
-#   
+
+# #   
 #   
 #   # Per1, Per2, Per3, ....
 #   # Note: to change to exact matching, include '$' at the end of the string.
 #   # geneInput = paste0('^',input$geneInput) # Antiquated; for 
-#   geneInput = paste0(input$geneInput, '%')
-#   ont = paste0('%', input$GO, '%')
+  geneInput = paste0(input$geneInput, '%')
+  ont = paste0('%', input$GO, '%')
 #   
 #   
 #   # SELECT DATA.
@@ -24,11 +21,15 @@ filterData <- reactive({
 #   # To switch this to an OR relationship, change the '&' to a '|'.
 #   
 #   # filtered = semi_join(mt, df2, copy = TRUE, auto_index = TRUE) %>% 
-#   filtered = data %>% 
-#     filter(tissue %in% input$muscles,
-#            transcript %like% geneInput
-#            # , GO %like% ont
-#     )
+  filtered = data %>% 
+    filter(tissue %in% input$muscles,
+           expr >10,
+           # ,
+           transcript %like% geneInput
+           # , GO %like% ont
+    )
+  
+
 #   
 #   # Quantitative filtering
 #   filteredTranscripts = filtered %>% 
@@ -49,4 +50,13 @@ filterData <- reactive({
 #   #       } else {
 #   #         filtered
 #   #       }
+  
+  # filtered = collect(filtered)
+  
+  # print(dim(filtered))
+  
+  
+  # filtered = data %>% 
+    # filter(expr > 18000)
+  
 })
