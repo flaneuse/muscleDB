@@ -22,8 +22,8 @@ avg = df %>%
          eye = EYE_mean, EDL = EDL_mean, FDB = FDB_mean, 
          masseter = MAS_mean, plantaris = PLA_mean, 
          tongue = TON_mean) %>% 
-  # mutate(id = 1:numTranscripts) %>% 
-  gather(tissue, expr, -transcript)
+  mutate(id = 1:numTranscripts) %>% 
+  gather(tissue, expr, -transcript, -id)
 
 
 # Pull out SE and gather --------------------------------------------------

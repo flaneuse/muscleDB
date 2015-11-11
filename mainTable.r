@@ -4,14 +4,15 @@ output$table <- renderDataTable({
   
   # Remove cols not needed in the table.
   filtered = filtered %>% 
-    mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
-    select(transcript, tissue, expr, test)
+    # mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
+    select(transcript, tissue, expr, id)
   
   print(dim(filtered))
   
   # Convert to table so can be used by tidyr.
   collect(filtered) %>% 
-            spread(tissue, expr)
+            spread(tissue, expr) %>% 
+    select(-id)
   
 },  
 escape = c(-1,-2, -3),

@@ -23,8 +23,6 @@ filterData <- reactive({
 #   # filtered = semi_join(mt, df2, copy = TRUE, auto_index = TRUE) %>% 
   filtered = data %>% 
     filter(tissue %in% input$muscles,
-           expr >10,
-           # ,
            transcript %like% geneInput
            # , GO %like% ont
     )
@@ -50,13 +48,4 @@ filterData <- reactive({
 #   #       } else {
 #   #         filtered
 #   #       }
-  
-  # filtered = collect(filtered)
-  
-  # print(dim(filtered))
-  
-  
-  # filtered = data %>% 
-    # filter(expr > 18000)
-  
 })
