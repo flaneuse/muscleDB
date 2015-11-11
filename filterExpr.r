@@ -1,6 +1,9 @@
 # filterData is a reactive function that takes no arguments, so it'll autoupdate when
 # the inputs change.
 filterData <- reactive({
+  
+  num2Return = 2500
+  
   x = proc.time()
   
 
@@ -27,6 +30,10 @@ filterData <- reactive({
            # , GO %like% ont
     )
   
+  
+  
+  head(filtered, n = num2Return)
+  # filter(filtered, row_number(transcript) == 1L)
 
 #   
 #   # Quantitative filtering

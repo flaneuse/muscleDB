@@ -1,5 +1,5 @@
 output$plot1 <- renderPlot({
-  filteredData = filterData()
+  filteredData = collect(filterData())
   
   ggplot(filteredData, aes(x= tissue, y=expr)) + 
     geom_bar(stat = "identity") +

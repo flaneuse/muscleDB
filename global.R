@@ -2,12 +2,11 @@ library(dplyr)
 library(tidyr)
 library(shiny)
 library(shinydashboard)
-library(dplyr)
 library(DT)
 library(d3heatmap)
 library(ggvis)
 library(ggplot2)
-library(RSQLite)
+
 
 # Import in the Muscle Transcriptome database -----------------------------
 
