@@ -52,7 +52,17 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-poll = read.csv('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/googlepoll.csv', header = FALSE)
+
+# read in google survey ---------------------------------------------------
+
+
+poll = read.csv('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/googlepoll.csv', 
+                stringsAsFactors = FALSE,
+                header = FALSE)
+
+
+# delimit and remove NAs --------------------------------------------------
+colnames(poll) = NULL
 
 poll = t(poll) %>% 
   na.omit() 
@@ -62,18 +72,37 @@ percent = function(x, ndigits = 1) {
 }
 
 
-df = data.frame(tissue = poll) %>% 
-  group_by(tissue) %>% 
+
+# tissue list -------------------------------------------------------------
+
+tissueList  = c('soleus', 'gastrocnemius', 'EDL',
+                'tibialisanterior', 'diaphragm', 'plantaris',
+                'quadriceps',  'extraocularmuscles', 'FDB', 'hamstrings',
+                'masseter', 'tongue', 'vastuslateralis')
+
+non_musc = c('aorta', 'leftventricle', 'rightventricle', 'atria')
+
+# add in external data ----------------------------------------------------
+
+df = data.frame(tissue = poll) 
+
+df$tissue = factor
+
+df  = df %>% 
+  mutate(tissue = ifelse(tissue %in% non_musc,
+                          'notmuscle', 
+                          ifelse(tissue %in%
+                            tissueList, 
+                         as.character(tissue), 'other'))) %>% 
+group_by(tissue) %>% 
   summarise(nObs = n()) %>% 
-  mutate(pct = percent(nObs / nResponses)) %>% 
+    mutate(pct = nObs / nResponses) %>% 
+  filter(tissue != 'notmuscle') %>% 
   arrange(desc(nObs)) %>% 
-  filter(nObs > 1,
-         tissue %in% c('soleus', 'gastrocnemius', 'EDL',
-                       'tibialisanterior', 'diaphragm', 'plantaris',
-                       'quadriceps',  'extraocularmuscles', 'FDB', 'hamstrings',
-                       'masseter', 'tongue')) %>% 
-  mutate(citations = c(5,5,4,4.5, 5,4,5,4,3.5,4,3.5,4),
-         maleMice = c(2,1,2,1,2,2,1,0,2,0,2,2)) %>% 
+  mutate(citations = ((c(3.6218,3.6267,2.4994, 3.6251,
+                       3.0994, 3.6234, 2.744, 2.7853,
+                       2.7754, 2.3043, 2.4118, 2.5423, 2.2299, 0) / 4.0053)*6),
+         maleMice = c(2,1,2,1,2,1,1,0,2,1,0,0,0, 0)) %>% 
   arrange(desc(nObs))
 
 df$tissue = factor(df$tissue,
@@ -108,21 +137,22 @@ theme_xGrid<- function() {
 grey60K = "#808285"
 grey90K="#414042"
 
-x1 = ggplot(df, aes(x = tissue, y = nObs, label = pct)) +
+x1 = ggplot(df, aes(x = tissue, y = pct, label = percent(pct))) +
   geom_bar(fill = 'dodger blue', alpha = 0.4, stat = 'identity') +
   geom_text(colour = 'dodger blue', hjust = 1.3, 
             family = 'Segoe UI', size = 5) +
   theme_xGrid() +
-  coord_flip(ylim = c(0, nResponses)) +
+  coord_flip(ylim = c(0, 1)) +
   ggtitle('Skeletal tissues were selected based on input from > 100 experts') +
   ylab('Number of respondents in an online poll')
 
 
-x2 = ggplot(df, aes(x = tissue, y = citations, label = 10^citations)) +
+x2 = ggplot(df, aes(x = tissue, y = citations, label = round(10^citations))) +
   geom_bar(fill = '#b2182b', alpha = 0.3, stat = 'identity') +
-  geom_text(colour = '#b2182b', hjust = 1.3, 
+  geom_text(colour = '#b2182b', hjust = 0, 
             family = 'Segoe UI', size = 5) +
   theme_xGrid() +
+  scale_y_reverse() +
   coord_flip() +
   ggtitle('Skeletal tissues were selected based on input from > 100 experts') +
   ylab('Number of PubMed citations')
