@@ -1,4 +1,5 @@
 library(profvis)
+library(readr)
 
 mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 data = tbl(mt_source, 'MT')
@@ -53,5 +54,6 @@ microbenchmark(mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Webs
 data = tbl(mt_source, 'MT'), times = 10)
 
 profvis(readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds'))
+
 
 profvis(read_rds('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds'))

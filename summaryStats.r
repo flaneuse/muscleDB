@@ -1,11 +1,14 @@
-# Widget showing the minimum expression value.
+# Widget showing the minimum, mean, and maximum expression value.
 output$minExpr <- renderInfoBox({
   filteredData = filterData()
   
-  minVal = min(filteredData[,sapply(filteredData, is.numeric)])
+  minVal = filteredData %>% 
+    summarise(min = min(expr))
   
-  iMin = rowSums(filteredData[,sapply(filteredData,is.numeric)]==minVal)
-  iMin = which(iMin > 0)
+  # Find minimum value and which tissues have that value.
+  minVal= minVal[[1]]
+  
+  iMin = which(filteredData$expr == iMin)
   
   
   if (length(iMin) > 2) {
@@ -27,11 +30,8 @@ output$minExpr <- renderInfoBox({
 output$avgExpr <- renderInfoBox({
   filteredData = filterData()
   
-  #   minVal = round(filteredData  %>% select(contains("_mean")) %>% 
-  #                    summarise_each(funs(mean)),1)
-  
-  avgVal = round(mean(t(filteredData %>% select(contains("_mean")))),2)
-  
+  avgVal = filteredData %>% 
+    summarise(round(mean(expr),2))
   
   infoBox("mean expression",
           avgVal,
@@ -44,10 +44,13 @@ output$avgExpr <- renderInfoBox({
 output$maxExpr <- renderInfoBox({
   filteredData = filterData()
   
-  maxVal = max(filteredData[,sapply(filteredData, is.numeric)])
+  maxVal = filteredData %>% 
+    summarise(max = max(expr))
   
-  iMax = rowSums(filteredData[,sapply(filteredData,is.numeric)]==maxVal)
-  iMax = which(iMax > 0)
+  # Find maximum value and which tissues have that value.
+  maxVal= maxVal[[1]]
+  
+  iMax = which(filteredData$expr == maxVal)
   
   
   if (length(iMax) > 2) {

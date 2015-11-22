@@ -1,3 +1,7 @@
+
+# Table to display all the results ----------------------------------------
+
+
 output$table <- renderDataTable({
   filtered = filterData()
   
