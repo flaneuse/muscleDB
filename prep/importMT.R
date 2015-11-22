@@ -2,7 +2,7 @@ library(RSQLite)
 library(stringr)
 library(dplyr)
 library(tidyr)
-
+library(readr)
 
 # Import and clean data.
 
@@ -82,13 +82,14 @@ df_public = full_join(df_public, anovasWeb, by = 'transcript') %>%
 
 # Clean the transcript IDs into shortened versions ------------------------
 df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc......'),
-                   NM = str_extract(df_public$transcript, 'N...........')) %>% 
+                   NM = str_extract(df_public$transcript, 'N...............')) %>% 
   mutate(fullTranscript = transcript, 
          transcript = ifelse(is.na(uc), NM, uc)) %>% 
   select(-fullTranscript, -uc, -NM)
 
 saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
+write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.csv')
 
 # Copy to sqlite db -------------------------------------------------------
 db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3',

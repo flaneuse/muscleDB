@@ -335,7 +335,7 @@ x = anovas %>%
   select(-gunk) %>% 
   mutate(logExpr = log10(expr))  
 
-x = x %>%  filter(Transcript %in% z[1]) 
+x = x %>%  filter(Transcript %in% z)
   
 
 
@@ -348,7 +348,7 @@ y = x %>%
             std = sd(expr))
 
 ggplot(x, 
-       aes(x = tissue, y = logExpr)) + 
+       aes(x = tissue, y = expr)) +
   facet_wrap(~Transcript) +
   geom_boxplot(fill = 'dodgerblue', alpha = 0.2, 
                colour = 'dodgerblue') +
@@ -365,3 +365,21 @@ ggplot(y, aes(y = tissue)) +
   facet_wrap(~Transcript) + 
   geom_point(aes(x = avg, colour = avg), size = 4) +
   theme_xGrid()
+
+
+
+# ggvis implementation ----------------------------------------------------
+x %>% ggvis(~tissue, ~ expr) %>% 
+  layer_points() %>% 
+  add_tooltip(on = 'hover')
+  
+  devtools::install_github("hadley/lazyeval", build_vignettes = FALSE)
+devtools::install_github("hadley/dplyr", build_vignettes = FALSE)
+devtools::install_github("rstudio/ggvis", build_vignettes = FALSE)
+
+nasa %>%
+  group_by(year, month) %>%
+  ggvis(~year, ~month) %>%
+  subvis() %>%
+  layer_tile(~long, ~lat, fill = ~ozone)
+  
