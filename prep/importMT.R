@@ -50,6 +50,7 @@ source('~/GitHub/muscle-transcriptome/prep/ANOVAlookupTable.r')
 
 anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/MT_adjusted_TranscriptQuants.csv', 6)
 
+
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
   mutate(
@@ -72,6 +73,10 @@ saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-1
 # For the public version, remove 4 tissues.
 anovasWeb = readRDS('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/allANOVAs_forWeb_2015-10-18.rds')
 
+anovasWeb = anovasWeb %>% 
+  group_by(transcript) %>% 
+  mutate_each(funs(signif(., digits = 3)))
+
 df_public = df %>% 
   filter(tissue != 'thoracic aorta', tissue != 'masseter', 
          tissue != 'abdominal aorta', tissue != 'tongue')
@@ -84,6 +89,10 @@ df_public = full_join(df_public, anovasWeb, by = 'transcript') %>%
 df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc......'),
                    NM = str_extract(df_public$transcript, 'N...............')) %>% 
   mutate(fullTranscript = transcript, 
+         expr = round(expr, digits = 2),
+         SE = round(SE, digits = 2),
+         lb = round(lb, digits = 2),
+         ub = round(ub, digits = 2),
          transcript = ifelse(is.na(uc), NM, uc)) %>% 
   select(-fullTranscript, -uc, -NM)
 
