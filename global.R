@@ -6,7 +6,7 @@ library(DT)
 library(d3heatmap)
 library(ggvis)
 library(ggplot2)
-
+library(data.table)
 
 # Import in the Muscle Transcriptome database -----------------------------
 
@@ -15,6 +15,8 @@ library(ggplot2)
 
 data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
-data = data %>% 
-  slice(1:2500)
-maxInit = 27000
+# data = data %>% 
+  # slice(1:2500)
+
+# Set the maximum of the expression, for the limits on the expr widget.
+maxInit = max(data$expr)

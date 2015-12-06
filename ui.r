@@ -84,7 +84,7 @@ sidebar <- dashboardSidebar(
              menuSubItem("Sub-item 1", tabName = "subitem1"),
              menuSubItem("Sub-item 2", tabName = "subitem2")
     ),
-    menuItem("code", icon = icon("code"))
+    menuItem("code", tabName = "code", icon = icon("code"))
   )
 )
 
@@ -106,7 +106,7 @@ header <- dashboardHeader(
                ),
                messageItem("Website code and data scripts",
                            "find the code on Github", icon = icon("code"),
-                           href = "http://www.github.com")
+                           href = "https://github.com/flaneuse/muscle-transcriptome")
   )
 )
 
@@ -124,7 +124,13 @@ body <- dashboardBody(
   tabItems(
     
     # -- Basic plot -- 
-    tabItem(tabName = "plot", plotOutput("plot1")),
+    tabItem(tabName = "plot", 
+            fluidRow(h5("MuscleDB is a database containing RNAseq expression
+                        levels for 10 different muscle tissues.")),
+            fluidRow(h6("Explore the database by filtering the data on the toolbar 
+                        at the left and with different visualizations on the bottom left. 
+                        Need help getting started? See our help page.")),
+            plotOutput("plot1")),
     
     
     # -- Full table with mini-stats. --
@@ -178,7 +184,11 @@ body <- dashboardBody(
                                         choices = c("none" = "none", "by row" = "row", 
                                                     "by column" = "col", "log" = "log")),
                             checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
-                     )))
+                     ))),
+    
+    # -- Code --
+    tabItem(tabName = "code",
+            source("abtCode.R", local = TRUE))
   ))
 
 
@@ -186,7 +196,7 @@ body <- dashboardBody(
 # Dashboard definition (main call) ----------------------------------------
 
 dashboardPage(
-  title = "Muscle Transcriptome Atlas",  
+  title = "MuscleDB: A muscle transcriptome atlas",  
   header,
   sidebar,
   body
