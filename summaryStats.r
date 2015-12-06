@@ -8,7 +8,7 @@ output$minExpr <- renderInfoBox({
   # Find minimum value and which tissues have that value.
   minVal= minVal[[1]]
   
-  iMin = which(filteredData$expr == iMin)
+  iMin = which(filteredData$expr == minVal)
   
   
   if (length(iMin) > 2) {
