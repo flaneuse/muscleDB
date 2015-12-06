@@ -3,24 +3,25 @@
 
 
 output$table <- renderDataTable({
+  
   filtered = filterData()
   
   # Remove cols not needed in the table.
   filtered = filtered %>% 
     # mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
-    select(transcript, tissue, expr, id)
+    select(transcript, tissue, expr, id, q)
   
   # Convert to table so can be used by tidyr.
   filtered = collect(filtered) 
   
   filtered %>% 
-            spread(tissue, expr) %>% 
+    spread(tissue, expr) %>% 
     select(-id)
-  
 },  
 escape = c(-1,-2, -3),
 selection = 'none', #! Temporarily turning off row selection.
 options = list(searching = FALSE, stateSave = TRUE,
+               pageLength = 25,
                rowCallback = JS(
                  'function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         if (aData[0])
