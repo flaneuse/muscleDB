@@ -1,0 +1,42 @@
+# Function to return a heatmap for MuscleDB.
+
+# Hack for now, to only look at small subset of data
+# Select just the expr cols and convert to wide df.
+output$heatmap <- renderD3heatmap({
+  filteredData = filterData() %>% 
+    select(transcript, gene, id, tissue, expr) %>% 
+    spread(tissue, expr) %>% 
+    slice(1:100)
+  
+  # Pull out the names to display
+  heatNames = filteredData %>% 
+    mutate(name = paste0(gene, " (", transcript, ")")) %>% 
+    select(name)
+
+  # Remove the non-numeric columns. 
+  filteredData = filteredData %>% 
+    select(-id, -transcript, -gene)
+  
+  
+  # Figure out how to scale the heatmap (no scaling, by row, log.)
+  if(input$scaleHeat == "log") {
+    scaleHeat = "none"
+    
+    filteredData = filteredData %>% 
+      mutate_each(funs(log10))
+    
+    
+    filteredData[filteredData == -Inf] = NA #! Note!  Fix this.  NA's don't work with foreign call to calc dendrogram.
+    
+  } else{
+    scaleHeat = input$scaleHeat
+  }
+  
+  # Draw the heatmap
+  d3heatmap(filteredData, scale = scaleHeat, 
+            dendrogram = if(input$orderHeat){'both'} else{'none'}, 
+            # Rowv = TRUE, Colv = TRUE, 
+            show_grid = TRUE, color="YlOrRd", labRow = t(heatNames),
+            xaxis_height = 100, yaxis_width = 200
+  )
+})
