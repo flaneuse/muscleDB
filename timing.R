@@ -1,4 +1,5 @@
 library(profvis)
+library(microbenchmark)
 library(readr)
 
 mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
@@ -51,9 +52,69 @@ microbenchmark(read_rds('~/Dropbox/Muscle Transcriptome Atlas/Website files/data
 
 # sqlite db
 microbenchmark(mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE),
-data = tbl(mt_source, 'MT'), times = 10)
+               data = tbl(mt_source, 'MT'), times = 10)
 
 profvis(readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds'))
 
 
 profvis(read_rds('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds'))
+
+
+
+# 2016-01-02 --------------------------------------------------------------
+mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3')
+csvFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.csv'
+rdsFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds'
+
+microbenchmark(mt_source = 
+                 src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3'),
+data = tbl(mt_source, 'MT'), times = 5)   
+
+# Unit: milliseconds
+# expr       min        lq      mean    median        uq       max neval cld
+# mt_source  1.587156  1.624611  1.868068  1.882497  2.097639  2.148436     5  a 
+# data 27.236683 27.561139 28.377779 28.836713 29.035498 29.218864     5   b
+
+
+testSQL = function() {
+  mt_source2 = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3')
+  data = tbl(mt_source2, 'MT')
+}
+
+microbenchmark(testSQL(), times = 5)   
+# Unit: milliseconds
+# expr      min       lq     mean   median       uq      max neval
+# testSQL() 31.55138 32.19742 40.90228 32.22655 52.20697 56.32906     5
+
+microbenchmark(read_csv(csvFile), times = 5)  
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# read_csv(csvFile) 7.119855 7.591674 8.178306 7.734527 7.742967 10.70251     5
+
+
+microbenchmark(read.csv(csvFile), times = 5)  
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# read.csv(csvFile) 67.07867 67.52327 70.97954 68.93592 75.10657 76.25324     5
+
+microbenchmark(fread(csvFile), times = 5)  
+# Unit: seconds
+# expr      min       lq     mean   median      uq      max neval
+# fread(csvFile) 5.048835 5.085546 5.224239 5.244558 5.30128 5.440977     5
+
+microbenchmark(readRDS(rdsFile), times = 5)
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# readRDS(rdsFile) 1.816742 1.844397 1.917542 1.887949 1.994142 2.044478     5
+
+microbenchmark(read_rds(rdsFile), times = 5)
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# read_rds(rdsFile) 1.823947 1.905809 1.967962 1.920554 2.081367 2.108134     5
+
+# Conclusion: by microbenchmark, seems VERY clear that loading SQL file <<< read_rds ~= readRDS < fread < read_csv
+
+
+# Test: 2016-01-02: Accessing data within. --------------------------------
+
+
