@@ -15,7 +15,7 @@ filterData <- reactive({
   # Note: to change to exact matching, include '$' at the end of the string.
   # geneInput = paste0(input$geneInput, '%') # For SQL-based filtering
   geneInput = paste0('^', input$geneInput)
-  ont = paste0('%', input$GO, '%')
+  ont = paste0(input$GO)
   
   
   muscleSymbols = plyr::mapvalues(input$muscles,
@@ -45,13 +45,14 @@ filterData <- reactive({
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% input$muscles,   # muscles
-             transcript %like% geneInput)  # gene symbol
-             # , GO %like% ont,
+             shortName %like% geneInput,  # gene symbol
+             GO %like% ont)
   }  else if (input$adv == FALSE) {
     filtered = data %>% 
       select_("-contains('_q')") %>% 
       filter(tissue %in% input$muscles,   # muscles
-             transcript %like% geneInput) %>%  # gene symbol
+             shortName %like% geneInput,  # gene symbol
+             GO %like% geneInput) %>%     # gene ontology
       mutate(q = NA)
   } else if(qCol %in% colnames(data)){
     # Check if the q values exist in the db.
@@ -59,14 +60,15 @@ filterData <- reactive({
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% input$muscles,   # muscles
-             transcript %like% geneInput,  # gene symbol
-             # , GO %like% ont,
+             shortName %like% geneInput,  # gene symbol
+             GO %like% ont,               # gene ontology
              q < input$qVal
       )} else {
         filtered = data %>% 
           select(-contains('_q')) %>% 
           filter(tissue %in% input$muscles,   # muscles
-                 transcript %like% geneInput  # gene symbol
+                 shortName %like% geneInput,  # gene symbol
+                 GO %like% ont                # gene ontology                 
           ) %>% 
           mutate(q = NA)
       }
