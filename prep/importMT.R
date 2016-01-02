@@ -57,10 +57,18 @@ oldFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/c
 
 geneInfo = read_rds(oldFile) %>% 
   select(Transcript, shortName, geneSymbol, geneName, GO, EntrezLink, UCSCLink) %>% 
-  mutate(uc = str_extract(Transcript, 'uc......'),
+  mutate(uc = str_extract(Transcript, 'uc......'), # Remove extra crap
              NM = str_extract(Transcript, 'N...............')) %>% 
-  mutate(transcript = ifelse(is.na(uc), NM, uc)) %>% 
-  select(transcript, shortName, gene = geneName, GO, entrezLink = EntrezLink, UCSCLink)
+  mutate(transcript = ifelse(is.na(uc), NM, uc), # tidying up transcript name.
+         geneLink = ifelse(geneSymbol == "", # Gene symbol w/ link to entrez page.
+                             "", paste0("<a href = '", EntrezLink, 
+                                              "' target = '_blank'>", geneSymbol, "</a>")), 
+         transcriptLink = ifelse(UCSCLink == "",
+                           transcript, 
+                           paste0("<a href = '", UCSCLink,
+                                  "' target = '_blank'>", transcript, "</a>")) # transcript name w/ link to UCSC page
+  ) %>% 
+  select(transcript, shortName, gene = geneSymbol, GO, geneLink, transcriptLink)
 
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
@@ -69,7 +77,7 @@ df = full_join(avg, SE, by = c("transcript", "tissue")) %>%
          ub = expr + SE)
 
 
-saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-01-02.rds')
 
 
 # For the public version, remove 4 tissues.
@@ -97,6 +105,7 @@ df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc.....
          ub = round(ub, digits = 2),
          transcript = ifelse(is.na(uc), NM, uc)) %>% 
   select(-fullTranscript, -uc, -NM)
+
 
 # Merge in GO, ontology
 df_public = left_join(df_public, 

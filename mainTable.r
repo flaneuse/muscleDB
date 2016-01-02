@@ -9,7 +9,7 @@ output$table <- renderDataTable({
   # Remove cols not needed in the table.
   filtered = filtered %>% 
     # mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
-    select(transcript, tissue, expr, id, q)
+    select(transcript = transcriptLink, gene = geneLink, tissue, expr, id, q)
   
   # Convert to table so can be used by tidyr.
   filtered = collect(filtered) 
