@@ -118,3 +118,45 @@ microbenchmark(read_rds(rdsFile), times = 5)
 # Test: 2016-01-02: Accessing data within. --------------------------------
 
 
+
+# data.tables test: 2016-01-02 --------------------------------------------
+# Checking how melt and reshape compare b/w data.tables and tidyr
+data1 = data %>% 
+  select(transcript = transcriptLink, gene = geneLink, tissue, expr, id, LV.PLA_q)
+data2 = data.table(data1)
+
+#tidyr
+microbenchmark(x = data1 %>%  
+                 spread(tissue, expr) %>% 
+  select(-id), times = 5)
+# Unit: seconds
+# expr     min       lq     mean   median       uq      max neval
+# x 3.35939 3.371684 3.686335 3.632538 3.954592 4.113469     5
+
+
+
+# as data.table
+microbenchmark(y = data2 %>% 
+                 spread(tissue, expr) %>% 
+                 select(-id), times = 5)
+
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# x 3.364923 3.666169 3.785398 3.691737 3.951036 4.253124     5
+
+
+# data.table
+microbenchmark(x = data.table::dcast(data1, transcript + gene + id + LV.PLA_q ~ tissue, value.var = 'expr'),
+               times = 5)
+# Unit: seconds
+# expr      min       lq     mean   median       uq      max neval
+# x 3.211758 3.396247 3.461231 3.418552 3.574601 3.704999     5
+
+# dt, as data.table
+
+microbenchmark(x = data.table::dcast(data2, transcript + gene + id + LV.PLA_q ~ tissue, value.var = 'expr'),
+               times = 5)
+# Unit: milliseconds
+# expr      min       lq     mean   median       uq      max neval
+# x 639.4798 657.0914 677.4345 676.1142 697.2487 717.2387     5
+

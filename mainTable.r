@@ -12,11 +12,11 @@ output$table <- renderDataTable({
     select(transcript = transcriptLink, gene = geneLink, tissue, expr, id, q)
   
   # Convert to table so can be used by tidyr.
-  filtered = collect(filtered) 
+  # filtered = collect(filtered) 
   
-  filtered %>% 
-    spread(tissue, expr) %>% 
-    select(-id)
+  data.table::dcast(filtered, 
+                    transcript + gene + id + q ~ tissue, 
+                    value.var = 'expr')
 },  
 escape = c(-1,-2, -3),
 selection = 'none', #! Temporarily turning off row selection.
