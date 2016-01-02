@@ -3,6 +3,7 @@ library(stringr)
 library(dplyr)
 library(tidyr)
 library(readr)
+library(data.table)
 
 # Import and clean data.
 
@@ -40,32 +41,33 @@ SE = df %>%
 
 #! Need to spot check that everything is done properly.
 #! SE, stdev, 95% CI, ...?
-# Import GO and gene names ------------------------------------------------
-geneInfo = readRDS("~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/combData_2014-10-19.rds")
 
 
 
 # Calculate q-values ------------------------------------------------------
-source('~/GitHub/muscle-transcriptome/prep/ANOVAlookupTable.r')
+# Run previously; then imported.
+# source('~/GitHub/muscle-transcriptome/prep/ANOVAlookupTable.r')
 
-anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/MT_adjusted_TranscriptQuants.csv', 6)
+# anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/MT_adjusted_TranscriptQuants.csv', 6)
 
+
+
+# Pull in the outdated data to get GO and gene names ----------------------
+oldFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/combData_2014-10-19.rds'
+
+geneInfo = read_rds(oldFile) %>% 
+  select(Transcript, shortName, geneSymbol, geneName, GO, EntrezLink, UCSCLink) %>% 
+  mutate(uc = str_extract(Transcript, 'uc......'),
+             NM = str_extract(Transcript, 'N...............')) %>% 
+  mutate(transcript = ifelse(is.na(uc), NM, uc)) %>% 
+  select(transcript, shortName, gene = geneName, GO, entrezLink = EntrezLink, UCSCLink)
 
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
   mutate(
          lb = expr - SE,
-         ub = expr + SE,
-         shortName = 'foo',
-         gene = 'fu',
-         GO = 'moo',
-         entrezLink = 'html',
-         UCSCLink = 'html')
+         ub = expr + SE)
 
-
-
-
-# ! Fix the UCSC links, etc.
 
 saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
 
@@ -96,12 +98,17 @@ df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc.....
          transcript = ifelse(is.na(uc), NM, uc)) %>% 
   select(-fullTranscript, -uc, -NM)
 
-saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
+# Merge in GO, ontology
+df_public = left_join(df_public, 
+                      geneInfo, by = c("transcript" = "transcript"))
 
-write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.csv')
+
+saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds')
+
+write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.csv')
 
 # Copy to sqlite db -------------------------------------------------------
-db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3',
+db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3',
                 create = TRUE)
 
 data_sqlite = copy_to(db, df_public, temporary = FALSE,
