@@ -66,10 +66,30 @@ shinyServer(
     
     # HEATMAP -----------------------------------------------------------------
     source("heatmap.R", local = TRUE) 
-
+    
     
     # VOLCANO PLOT ------------------------------------------------------------
-    output$volcanoSelect <- renderUI({
-      
-    })
+    output$m1 = renderUI(
+           selectInput('muscle1', label = 'muscle 1',
+                       choices = input$muscles,
+           width = '200px'))
+    
+    output$m2 = renderUI(
+      selectInput('muscle2', label = 'muscle 2 (reference',
+                  choices = input$muscles,
+                  width = '200px'))
+    
+    # volcanoTooltip = function(x) {
+    #   if(is.null(x)) return(NULL)
+    #   all_data <- isolate(filterVolcano())
+    #   geneName <- all_data[all_data$ID == x$ID, 1]
+    #   transcriptName <- all_data[all_data$ID == x$ID, 2]
+    #   paste0("<b>", geneName, "</b><br>",
+    #          transcriptName, "<br>",
+    #          "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
+    #          "q: ", format(10^-x[2], digits = 3, nsmall = 1))
+    # }
+    source("volcano.R", local = TRUE)
+    
+    
   })

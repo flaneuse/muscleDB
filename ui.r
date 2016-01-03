@@ -60,9 +60,9 @@ sidebar <- dashboardSidebar(
     id = "tabs",
     menuItemOutput("minExprInput"),
     menuItemOutput("maxExprInput"),
+    menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("plot", tabName = "plot", icon = icon("bar-chart")),
-    menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
     menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
     menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
@@ -151,7 +151,14 @@ body <- dashboardBody(
     
     
     # -- Volcano plot --
-    tabItem(tabName = "volcano", plotOutput("volcano")),
+    tabItem(tabName = "volcano", 
+            fluidRow(h4('Select two tissues to compare.')),
+            fluidRow(column(4, uiOutput('m1')),
+                     column(4, uiOutput('m2'))),
+            fluidRow(dataTableOutput("volcanoPlot")),
+            fluidRow(column(10, dataTableOutput("volcanoTable")),
+                     column(1, fluidRow(actionButton('saveVolcano', 'save selected rows')),
+                            fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     tabItem(tabName = "PCA", 
             fluidRow(column(5,
                             plotOutput("pcaPlot"),
