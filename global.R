@@ -6,6 +6,7 @@ library(DT)
 library(d3heatmap)
 library(ggvis)
 library(ggplot2)
+library(rCharts)
 library(data.table)
 
 
