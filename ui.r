@@ -155,7 +155,7 @@ body <- dashboardBody(
             fluidRow(h4('Select two tissues to compare.')),
             fluidRow(column(4, uiOutput('m1')),
                      column(4, uiOutput('m2'))),
-            fluidRow(dataTableOutput("volcanoPlot")),
+            fluidRow(plotOutput("volcanoPlot")),
             fluidRow(column(10, dataTableOutput("volcanoTable")),
                      column(1, 
                             fluidRow(br()),
@@ -165,6 +165,7 @@ body <- dashboardBody(
                             fluidRow(actionButton('saveVolcano', 'save selected rows')),
                             fluidRow(br()),
                             fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
+    # -- PCA --
     tabItem(tabName = "PCA", 
             fluidRow(column(5,
                             plotOutput("pcaPlot"),
