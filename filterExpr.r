@@ -12,7 +12,7 @@ filterData <- reactive({
   
   # For fold change, adding in the FC-selected muscle if it's not already in the list
   if(input$adv == TRUE & input$ref != 'none') {
-    selMuscles = c(input$ref, input$muscles)
+    selMuscles = unique(c(input$ref, input$muscles))
   } else{
     selMuscles = input$muscles
   }
@@ -32,8 +32,7 @@ filterData <- reactive({
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
-  
-  
+  print(qCol)
   # SELECT DATA.
   # Note: right now, if there's something in both the "gene" and "ont"
   # input boxes, they must BOTH be true (AND relationship).
