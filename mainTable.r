@@ -8,7 +8,7 @@ output$table <- renderDataTable({
   
   # Remove cols not needed in the table.
   filtered = filtered %>% 
-    select(transcript = transcriptLink, gene = geneLink, tissue, expr, id, q)
+    select(transcript = transcriptLink, gene = geneLink, tissue, expr, q)
  
   
   # Leftover from SQL implementation. 
@@ -16,7 +16,7 @@ output$table <- renderDataTable({
   
   # Convert to table so can be used by tidyr.  
   data.table::dcast(filtered, 
-                    transcript + gene + id + q ~ tissue, 
+                    transcript + gene + q ~ tissue, 
                     value.var = 'expr')
 },  
 escape = c(-1,-2, -3),
