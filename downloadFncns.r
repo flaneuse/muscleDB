@@ -6,10 +6,9 @@ output$downloadTable <- downloadHandler(
     filteredData = filterData()
     
     filteredData = filteredData %>% 
-      select(transcript, id, tissue, 
-             expr, SE, contains ('_q')) %>% 
-      spread(tissue, expr) %>% 
-      select(-id)    
+      select(gene, transcript, tissue, 
+             expr, q) %>% 
+      spread(tissue, expr) 
     
     write.csv(filteredData, file)
   }
