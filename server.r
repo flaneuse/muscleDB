@@ -11,7 +11,7 @@ shinyServer(
     
     # TABLE outputs: main table with all the data, and summary table 
     # with the summary statistics for the filtered data.
-    # source("summaryTable.r", local = TRUE)
+    source("summaryTable.r", local = TRUE)
     source("mainTable.r", local = TRUE)
     
     # SUMMARY WIDGETS at the top of the table page w/ some summary stats.
