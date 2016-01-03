@@ -155,7 +155,7 @@ body <- dashboardBody(
             fluidRow(h4('Select two tissues to compare.')),
             fluidRow(column(4, uiOutput('m1')),
                      column(4, uiOutput('m2'))),
-            fluidRow(chartOutput("volcanoPlot", 'morris')),
+            fluidRow(plotOutput("volcanoPlot")),
             fluidRow(column(10, dataTableOutput("volcanoTable")),
                      column(1, 
                             fluidRow(br()),

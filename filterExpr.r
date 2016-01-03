@@ -118,7 +118,7 @@ filterData <- reactive({
                logQ = -log10(q))
       } else {
         print('no data')
-        # filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
+        filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
       }
       
     } else if(input$ref != 'none') {

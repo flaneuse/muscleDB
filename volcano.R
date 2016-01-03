@@ -25,13 +25,8 @@ options = list(searching = TRUE, stateSave = TRUE,
 
 # ggvis volcano output ----------------------------------------------------
 
-output$volcanoPlot <- renderChart2({
-  # m1 <- mPlot(x = 'cyl', y = 'mpg', type = "Line", data = mtcars)
+output$volcanoPlot <- renderPlot({
   filteredData = filterData()
-  # r1 <- rPlot(mpg ~ wt, data = mtcars, type = 'point', color = 'gear')
   
-  # r1 = rPlot(logQ ~ logFC, data = filteredData, type = 'point',
-  #            size = list(const = 3), color = list(const = '#888'))
-  
-  r1 = mPlot(x = 'logQ', y = 'logFC', data = filteredData, type = 'point')
-  })
+  qplot(data = filteredData, y = logQ, x = logFC)
+})
