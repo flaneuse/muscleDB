@@ -103,6 +103,9 @@ filterData <- reactive({
         mutate(expr = ifelse(expr == 0, 0.0001, expr) # Correction so don't divide by 0. 
         ) 
       
+      
+      # Check that there's something to reshape.
+      if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
       # Reshape to wide.
       filtered = data.table::dcast(filtered, 
                                    transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
@@ -113,6 +116,10 @@ filterData <- reactive({
         mutate(logFC = log10(FC),
                id = 1:nrow(filtered),
                logQ = -log10(q))
+      } else {
+        print('no data')
+        filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
+      }
       
     } else if(input$ref != 'none') {
       
