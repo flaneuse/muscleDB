@@ -14,10 +14,14 @@ data %>%
 print(proc.time() - x)
 
 
-profvis(data %>% 
+profvis(data%>% 
           filter(expr > 100) %>% 
           collect())
 # 20 ms
+
+microbenchmark(df_public%>% 
+          filter(expr > 100) %>% 
+          collect())
 
 data_rds = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
@@ -160,3 +164,61 @@ microbenchmark(x = data.table::dcast(data2, transcript + gene + id + LV.PLA_q ~ 
 # expr      min       lq     mean   median       uq      max neval
 # x 639.4798 657.0914 677.4345 676.1142 697.2487 717.2387     5
 
+
+# data.tables vs. dplyr: filtering ----------------------------------------
+microbenchmark(x = data[expr > 1000,], times = 20)
+# Unit: milliseconds
+# expr      min       lq     mean   median       uq      max neval
+# x 7.038254 7.188981 7.524891 7.470954 7.575805 8.611422    20
+
+microbenchmark(x = data %>% filter(expr > 1000), times = 20)
+# Unit: milliseconds
+# expr      min       lq     mean   median       uq     max neval
+# x 10.01758 11.65281 12.06868 11.84012 12.77642 13.8705    20
+
+muscles = c('diaphragm', 'EDL', 'eye',
+            'FDB', 
+            'soleus', 'plantaris')
+geneInput = 'uc0'
+ont = 'process'
+
+muscleSymbols = plyr::mapvalues(muscles,
+                                from = c('atria', 'left ventricle',
+                                         'total aorta', 'right ventricle',
+                                         'soleus', 
+                                         'diaphragm',
+                                         'eye', 'EDL', 'FDB', 
+                                         'plantaris'),
+                                to = c('ATR', 'LV',
+                                       'AOR', 'RV',
+                                       'SOL', 'DIA',
+                                       'EYE', 'EDL',
+                                       'FDB', 'PLA'))
+
+qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
+
+microbenchmark(data[expr > 1000 & 
+       tissue %in% muscles &
+       transcript %like% geneInput &
+       GO %like% GO &
+       `DIA.EDL.EYE.FDB.PLA.SOL_q` < 1e-5, ], times = 30)
+# Unit: milliseconds
+# expr
+# data[expr > 1000 & tissue %in% muscles & transcript %like% geneInput &      GO %like% GO & DIA.EDL.EYE.FDB.PLA.SOL_q < 1e-05, ]
+# min       lq     mean   median       uq      max neval
+# 306.497 315.8089 329.4008 321.3758 333.1114 466.5269    30
+
+microbenchmark(data %>% filter(expr > 1000,
+                               tissue %in% muscles,
+                                 transcript %like% geneInput,
+                                 GO %like% GO,
+                               `DIA.EDL.EYE.FDB.PLA.SOL_q` < 1e-5),
+               times = 30)
+
+# Unit: milliseconds
+# expr
+# data %>% filter(expr > 1000, tissue %in% muscles, transcript %like%      geneInput, GO %like% GO, DIA.EDL.EYE.FDB.PLA.SOL_q < 1e-05)
+# min       lq     mean   median       uq      max neval
+# 304.6636 310.1527 322.5199 320.1557 324.6389 456.4683    30
+
+# Pretty similar-- regardless of data.frame or data.table.
