@@ -9,15 +9,17 @@ output$table <- renderDataTable({
   # Remove cols not needed in the table.
   filtered = filtered %>% 
     select(transcript = transcriptLink, gene = geneLink, tissue, expr, q)
- 
+  
   
   # Leftover from SQL implementation. 
   # filtered = collect(filtered) 
   
-  # Convert to table so can be used by tidyr.  
-  data.table::dcast(filtered, 
-                    transcript + gene + q ~ tissue, 
-                    value.var = 'expr')
+  # Provided there are rows in the data.table, convert to wide.
+  if(nrow(filtered) > 0){
+    data.table::dcast(filtered, 
+                      transcript + gene + q ~ tissue, 
+                      value.var = 'expr')
+  }
 },  
 escape = c(-1,-2, -3),
 selection = 'none', #! Temporarily turning off row selection.
