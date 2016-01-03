@@ -43,34 +43,39 @@ volcanoTooltip = function(x) {
 # ggvis volcano output ----------------------------------------------------
 
 reactiveVolcano <- reactive({
-  
-  # -- x-axis label --
-  xLab = paste0(input$muscle1, ' / ', input$muscle2)
-  
-  # -- Main ggvis plot --
-  # mtcars %>% ggvis(~wt, ~mpg) %>% 
-  filterData %>% ggvis(x = ~logFC, y = ~logQ, key := ~id) %>%
+  if(input$tabs == 'volcano'){
+    # -- x-axis label --
+    xLab = paste0(input$muscle1, ' / ', input$muscle2)
     
-    # -- Draw scatter plot --
-    layer_points(size := 25, size.hover := 100, fill.hover := "royalblue",
-                 stroke := "#BD202E",  stroke.hover := "navy", strokeWidth.hover := 0.75,
-                 fill := "#BD202E",  opacity := 0.5) %>%
-    
-    # -- add tooltip --
-    # add_tooltip(volcanoTooltip, "hover")  %>%
-    
-    # -- add axis labels --
-    add_axis("x", title = paste("log(fold change in expression) (", xLab,")"),
-             properties = axis_props(
-               title = list(fontSize = 20),
-               axis = list(strokeWidth = 2),
-               labels = list(align = "center", fontSize = 16))) %>%
-    add_axis("y", title = "-log(q)",
-             tick_padding = 13,
-             title_offset = 50,
-             properties = axis_props(
-               title = list(fontSize = 20),
-               axis = list(strokeWidth = 2),
-               labels = list(align = "center", fontSize = 16))) %>%
-    set_options(width = 700, height = 500)
+    # -- Main ggvis plot --
+    # mtcars %>% ggvis(~wt, ~mpg) %>% 
+    filterData %>% ggvis(x = ~logFC, y = ~logQ, key := ~id) %>%
+      
+      # -- Draw scatter plot --
+      layer_points(size := 25, size.hover := 100, fill.hover := "royalblue",
+                   stroke := "#BD202E",  stroke.hover := "navy", strokeWidth.hover := 0.75,
+                   fill := "#BD202E",  opacity := 0.5) %>%
+      
+      # -- add tooltip --
+      # add_tooltip(volcanoTooltip, "hover")  %>%
+      
+      # -- add axis labels --
+      add_axis("x", title = paste("log(fold change in expression) (", xLab,")"),
+               properties = axis_props(
+                 title = list(fontSize = 20),
+                 axis = list(strokeWidth = 2),
+                 labels = list(align = "center", fontSize = 16))) %>%
+      add_axis("y", title = "-log(q)",
+               tick_padding = 13,
+               title_offset = 50,
+               properties = axis_props(
+                 title = list(fontSize = 20),
+                 axis = list(strokeWidth = 2),
+                 labels = list(align = "center", fontSize = 16))) %>%
+      set_options(width = 700, height = 500)
+  } else {
+    print('yuck')
+    mtcars %>%
+      ggvis(~wt, ~mpg)
+  }
 }) %>% bind_shiny("volcanoPlot")

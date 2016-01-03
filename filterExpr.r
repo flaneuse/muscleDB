@@ -105,7 +105,7 @@ filterData <- reactive({
       
       
       # Check that there's something to reshape.
-      if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
+      if(nrow(filtered) != 0 ){
       # Reshape to wide.
       filtered = data.table::dcast(filtered, 
                                    transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
