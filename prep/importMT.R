@@ -58,24 +58,24 @@ oldFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/c
 geneInfo = read_rds(oldFile) %>% 
   select(Transcript, shortName, geneSymbol, geneName, GO, EntrezLink, UCSCLink) %>% 
   mutate(uc = str_extract(Transcript, 'uc......'), # Remove extra crap from transcript ids
-             NM = str_extract(Transcript, 'N...............')) %>% 
+         NM = str_extract(Transcript, 'N...............')) %>% 
   mutate(transcript = ifelse(is.na(uc), NM, uc), # tidying up transcript name.
          
          geneLink = ifelse(geneSymbol == "", # Gene symbol w/ link to entrez page.
-                             "", paste0("<a href = '", EntrezLink, 
-                                              "' target = '_blank'>", geneSymbol, "</a>")), 
+                           "", paste0("<a href = '", EntrezLink, 
+                                      "' target = '_blank'>", geneSymbol, "</a>")), 
          transcriptLink = ifelse(UCSCLink == "",
-                           transcript, 
-                           paste0("<a href = '", UCSCLink,
-                                  "' target = '_blank'>", transcript, "</a>")) # transcript name w/ link to UCSC page
+                                 transcript, 
+                                 paste0("<a href = '", UCSCLink,
+                                        "' target = '_blank'>", transcript, "</a>")) # transcript name w/ link to UCSC page
   ) %>% 
   select(transcript, shortName, gene = geneSymbol, GO, geneLink, transcriptLink)
 
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
   mutate(
-         lb = expr - SE,
-         ub = expr + SE)
+    lb = expr - SE,
+    ub = expr + SE)
 
 
 saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-01-02.rds')
@@ -98,7 +98,7 @@ df_public = full_join(df_public, anovasWeb, by = 'transcript') %>%
 
 # Clean the transcript IDs into shortened versions ------------------------
 df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc......'),
-                   NM = str_extract(df_public$transcript, 'N...............')) %>% 
+                                 NM = str_extract(df_public$transcript, 'N...............')) %>% 
   mutate(fullTranscript = transcript, 
          expr = round(expr, digits = 2),
          SE = round(SE, digits = 2),
@@ -111,6 +111,23 @@ df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc.....
 # Merge in GO, ontology
 df_public = left_join(df_public, 
                       geneInfo, by = c("transcript" = "transcript"))
+
+# refactorise the tissue levels.
+df_public$tissue = factor(df_public$tissue,
+                          c('total aorta' = 'total aorta',
+                            # 'thoracic aorta' = 'thoracic aorta', 
+                            # 'abdominal aorta' = 'abdominal aorta', 
+                            'atria' = 'atria', 
+                            'left ventricle' = 'left ventricle',
+                            'right ventricle' = 'right ventricle',
+                            
+                            'diaphragm' = 'diaphragm',
+                            'eye' = 'eye', 
+                            'EDL' = 'EDL', 
+                            'FDB' = 'FDB', 
+                            # 'masseter' =  'masseter', 
+                            'plantaris' = 'plantaris',
+                            'soleus' = 'soleus'))
 
 
 df_public = data.table(df_public)
