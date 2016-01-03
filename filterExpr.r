@@ -6,8 +6,6 @@ filterData <- reactive({
     # Number to return at a specific time.
   num2Return = 2500
   
-  x = proc.time()
-  
   
   # Gene and muscle filtering -----------------------------------------------
   
@@ -41,8 +39,6 @@ filterData <- reactive({
   
   # Check if q-value filtering is turned on
   if(input$adv == FALSE & qCol %in% colnames(data)) {
-    
-    
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% input$muscles,   # muscles
@@ -54,11 +50,10 @@ filterData <- reactive({
       select_("-contains('_q')") %>% 
       filter(tissue %in% input$muscles,   # muscles
              shortName %like% geneInput,  # gene symbol
-             GO %like% geneInput) %>%     # gene ontology
+             GO %like% ont) %>%     # gene ontology
       mutate(q = NA)
   } else if(qCol %in% colnames(data)){
     # Check if the q values exist in the db.
-    
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% input$muscles,   # muscles
