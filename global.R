@@ -21,8 +21,24 @@ source('pagerui.R')
 
 data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds') %>% 
   select(-id)
-# data = data %>% 
-  # slice(1:2500)
 
 # Set the maximum of the expression, for the limits on the expr widget.
 maxInit = max(data$expr)
+
+# List of tissues
+tissueList = list(
+                  'total aorta' = 'total aorta',
+                  # 'thoracic aorta' = 'thoracic aorta', 
+                  # 'abdominal aorta' = 'abdominal aorta', 
+                  'atria' = 'atria', 
+                  'left ventricle' = 'left ventricle',
+                  'right ventricle' = 'right ventricle',
+
+                  'diaphragm' = 'diaphragm',
+                  'eye' = 'eye', 
+                  'EDL' = 'EDL', 
+                  'FDB' = 'FDB', 
+                  # 'masseter' =  'masseter', 
+                  'plantaris' = 'plantaris',
+                  'soleus' = 'soleus')
+# 'tongue' = 'tongue'),

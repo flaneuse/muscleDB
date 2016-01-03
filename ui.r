@@ -11,19 +11,7 @@ sidebar <- dashboardSidebar(
   
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
-                     choices = c('atria' = 'atria', 
-                                 'left ventricle' = 'left ventricle',
-                                 'total aorta' = 'total aorta', 
-                                 'right ventricle' = 'right ventricle',
-                                 'soleus' = 'soleus', 
-                                 # 'thoracic aorta' = 'thoracic aorta', 
-                                 # 'abdominal aorta' = 'abdominal aorta', 
-                                 'diaphragm' = 'diaphragm',
-                                 'eye' = 'eye', 
-                                 'EDL' = 'EDL', 'FDB' = 'FDB', 
-                                 # 'masseter' =  'masseter', 
-                                 'plantaris' = 'plantaris'), 
-                     # 'tongue' = 'tongue'),
+                     choices = tissueList,
                      selected = c('atria', 'left ventricle',
                                   'total aorta', 'right ventricle',
                                   'soleus', 
@@ -55,9 +43,7 @@ sidebar <- dashboardSidebar(
         Filters by the increase in expression, 
                          relative to a single muscle tissue</div>"))),
     radioButtons("ref", label = "reference tissue:", 
-                 choices = list("aorta" = "AOR", "atria" = "ATR",
-                                "diaphragm"="DIA", "EDL" = "EDL", "eye"="EYE",
-                                "left ventricle" = "LV", "right ventricle"="RV", "soleus" = "SOL"), selected = "AOR"),
+                 choices = tissueList, selected = "total aorta"),
     sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
