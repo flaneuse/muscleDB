@@ -8,6 +8,12 @@ library(ggvis)
 library(ggplot2)
 library(data.table)
 
+
+
+# Source javascript pagination code ---------------------------------------
+# Forked from https://github.com/wleepang/shiny-pager-ui
+source('pagerui.R')
+
 # Import in the Muscle Transcriptome database -----------------------------
 
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)

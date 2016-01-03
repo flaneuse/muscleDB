@@ -136,6 +136,7 @@ body <- dashboardBody(
     # -- Full table with mini-stats. --
     tabItem(tabName = "table",
             
+            fluidRow(pageruiInput('pager', page_current = 1, pages_total = 1)),
             # valueBoxes of min, max, avg.
             fluidRow(
               infoBoxOutput("maxExpr", width = 4),

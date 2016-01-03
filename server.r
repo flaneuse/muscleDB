@@ -23,6 +23,14 @@ shinyServer(
     
     # PLOT (MAIN) -------------------------------------------------------------
     
+    # PAGINATION
+    # pager_state = input$pager
+    # updatePageruiInput(session, 'pager', page_current = new_page_current)
+    # updatePageruiInput(session, 'pager', pages_total = new_pages_total)
+    # updatePageruiInput(session, 'pager', 
+    #                    page_current = new_page_current, 
+    #                    pages_total = new_pages_total)
+    
     # PLOT output
     source("formatPlot.r", local = TRUE)
     source("plot.r", local = TRUE)
