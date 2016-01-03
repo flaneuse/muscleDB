@@ -35,8 +35,8 @@ filterData <- reactive({
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
-
-    # SELECT DATA.
+  
+  # SELECT DATA.
   # Note: right now, if there's something in both the "gene" and "ont"
   # input boxes, they must BOTH be true (AND relationship).
   # For example, if you have gene = "Myod1" and ont = "kinase",
@@ -101,7 +101,7 @@ filterData <- reactive({
         select(transcriptLink, geneLink, tissue, expr, q, transcript, gene) %>% 
         mutate(exprVolcano = ifelse(expr == 0, 0.0001, expr)) # Correction so don't divide by 0. 
       
-
+      
       
       #Divide by each other.
       # create ID and column name.
@@ -115,12 +115,13 @@ filterData <- reactive({
       #                             ID = 1:length(foldChange))
       # colnames(filterVolcano)  = c("name", "transcript", "xLab", "FC", "logFC", "q", "logQ", "ID")
       # return(filterVolcano)  
-    }
-    
-    # Case 2: expr + FC filtering ---------------------------------------------
-    # If advanced filtering is checked, always filter on expression.
-    # Only use this case if a reference tissue is checked.
-    if(input$ref != 'none') {
+      
+    } else if(input$ref != 'none') {
+      
+      # Case 2: expr + FC filtering ---------------------------------------------
+      # If advanced filtering is checked, always filter on expression.
+      # Only use this case if a reference tissue is checked.
+      
       # -- Filter on expr change --
       # Check to make sure that expression filtering is on.  Otherwise, don't filter.
       filteredTranscripts = filtered %>%
@@ -163,7 +164,7 @@ filterData <- reactive({
     }
   }
   
-   
+  
   return(filtered)
 })
 
