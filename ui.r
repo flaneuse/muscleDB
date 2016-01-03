@@ -60,8 +60,8 @@ sidebar <- dashboardSidebar(
     id = "tabs",
     menuItemOutput("minExprInput"),
     menuItemOutput("maxExprInput"),
-    menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("table", tabName = "table", icon = icon("table")),
+    menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("plot", tabName = "plot", icon = icon("bar-chart")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
     menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
@@ -126,8 +126,8 @@ body <- dashboardBody(
             # valueBoxes of min, max, avg.
             fluidRow(
               infoBoxOutput("maxExpr", width = 4),
-              infoBoxOutput("avgExpr", width = 3),
-              infoBoxOutput("minExpr", width = 4),
+              infoBoxOutput("avgExpr", width = 4),
+              # infoBoxOutput("minExpr", width = 4),
               
               # Download data button
               column(1,

@@ -117,7 +117,6 @@ filterData <- reactive({
                id = 1:nrow(filtered),
                logQ = -log10(q))
       } else {
-        print('no data')
         filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
       }
       
