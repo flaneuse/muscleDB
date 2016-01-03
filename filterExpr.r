@@ -98,23 +98,21 @@ filterData <- reactive({
       
       filtered = filtered %>% 
         filter(transcript %in% filteredTranscripts$transcript) %>% 
-        select(transcriptLink, geneLink, tissue, expr, q, transcript, gene) %>% 
-        mutate(exprVolcano = ifelse(expr == 0, 0.0001, expr)) # Correction so don't divide by 0. 
+        select(transcript = transcriptLink, gene = geneLink, 
+               tissue, expr, q, transcriptName = transcript, geneSymbol = gene) %>% 
+        mutate(expr = ifelse(expr == 0, 0.0001, expr) # Correction so don't divide by 0. 
+        ) 
       
-      
-      
-      #Divide by each other.
-      # create ID and column name.
-      
-      # foldChange = filteredData[,1]/filteredData[,2]
-      # 
-      # filterVolcano <- data.frame(name = geneName, transcript = transcript,
-      #                             xLab = xLabel, 
-      #                             FC = foldChange, logFC = log10(foldChange), 
-      #                             q = q, logQ = -log10(q), 
-      #                             ID = 1:length(foldChange))
-      # colnames(filterVolcano)  = c("name", "transcript", "xLab", "FC", "logFC", "q", "logQ", "ID")
-      # return(filterVolcano)  
+      # Reshape to wide.
+      filtered = data.table::dcast(filtered, 
+                                   transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
+                                   value.var = 'expr') %>% 
+        # Calc fold change
+        mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
+        # filter on fold change
+        mutate(logFC = log10(FC),
+               id = 1:nrow(filtered),
+               logQ = -log10(q))
       
     } else if(input$ref != 'none') {
       
