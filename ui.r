@@ -43,7 +43,7 @@ sidebar <- dashboardSidebar(
         Filters by the increase in expression, 
                          relative to a single muscle tissue</div>"))),
     radioButtons("ref", label = "reference tissue:", 
-                 choices = tissueList, selected = "total aorta"),
+                 choices = c('none',tissueList), selected = "none"),
     sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
