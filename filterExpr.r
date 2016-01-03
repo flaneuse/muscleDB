@@ -2,11 +2,6 @@
 # the inputs change.
 filterData <- reactive({
   
-
-    # Number to return at a specific time.
-  num2Return = 2500
-  
-  
   # Gene and muscle filtering -----------------------------------------------
   
   # Per1, Per2, Per3, ....
@@ -75,10 +70,9 @@ filterData <- reactive({
   # filter(filtered, row_number(transcript) == 1L)
   
   
-  
   # Filter on expression & q-values ---------------------------------------------
   
-  if(input$maxExprVal != maxInit | input$minExprVal != 0){
+  if(input$maxExprVal != maxInit | input$minExprVal != 0 & input$adv == TRUE){
     # Check to make sure that filtering is on.  Otherwise, don't filter.
     # Quantitative filtering
     filteredTranscripts = filtered %>%
