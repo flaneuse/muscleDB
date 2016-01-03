@@ -10,8 +10,14 @@ filterData <- reactive({
   geneInput = paste0('^', input$geneInput)
   ont = paste0(input$GO)
   
+  # For fold change, adding in the FC-selected muscle if it's not already in the list
+  if(input$adv == TRUE & input$ref != 'none') {
+    selMuscles = c(input$ref, input$muscles)
+  } else{
+    selMuscles = input$muscles
+  }
   
-  muscleSymbols = plyr::mapvalues(input$muscles,
+  muscleSymbols = plyr::mapvalues(selMuscles,
                                   from = c('atria', 'left ventricle',
                                            'total aorta', 'right ventricle',
                                            'soleus', 
@@ -23,7 +29,10 @@ filterData <- reactive({
                                          'SOL', 'DIA',
                                          'EYE', 'EDL',
                                          'FDB', 'PLA'))
+  
+  
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
+  
   
   # SELECT DATA.
   # Note: right now, if there's something in both the "gene" and "ont"
@@ -36,14 +45,14 @@ filterData <- reactive({
   if(input$adv == FALSE & qCol %in% colnames(data)) {
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
-      filter(tissue %in% input$muscles,   # muscles
+      filter(tissue %in% selMuscles,   # muscles
              shortName %like% geneInput,  # gene symbol
              GO %like% ont)
-
+    
   }  else if (input$adv == FALSE) {
     filtered = data %>% 
       select_("-contains('_q')") %>% 
-      filter(tissue %in% input$muscles,   # muscles
+      filter(tissue %in% selMuscles,   # muscles
              shortName %like% geneInput,  # gene symbol
              GO %like% ont) %>%     # gene ontology
       mutate(q = NA)
@@ -51,14 +60,14 @@ filterData <- reactive({
     # Check if the q values exist in the db.
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
-      filter(tissue %in% input$muscles,   # muscles
+      filter(tissue %in% selMuscles,   # muscles
              shortName %like% geneInput,  # gene symbol
              GO %like% ont,               # gene ontology
              q < input$qVal
       )} else {
         filtered = data %>% 
           select(-contains('_q')) %>% 
-          filter(tissue %in% input$muscles,   # muscles
+          filter(tissue %in% selMuscles,   # muscles
                  shortName %like% geneInput,  # gene symbol
                  GO %like% ont                # gene ontology                 
           ) %>% 
@@ -70,21 +79,62 @@ filterData <- reactive({
   # filter(filtered, row_number(transcript) == 1L)
   
   
-  # Filter on expression & q-values ---------------------------------------------
+  # Filter on expression & fold change  ---------------------------------------------
   
-  if(input$maxExprVal != maxInit | input$minExprVal != 0 & input$adv == TRUE){
-    # Check to make sure that filtering is on.  Otherwise, don't filter.
-    # Quantitative filtering
-    filteredTranscripts = filtered %>%
-      filter(expr <= input$maxExprVal,
-             expr >= input$minExprVal) %>% 
-      select(transcript)
+  if(input$adv == TRUE | input$tabs == 'volcano'){
     
-    # Select the transcripts where at least one tissue meets the conditions.
-    filtered = filtered %>% 
-      filter(transcript %in% filteredTranscripts$transcript)
+    # Case 1: expr + FC filtering ---------------------------------------------
+    # If advanced filtering is checked, always filter on expression.
+    # Only use this case if a reference tissue is checked, 
+    # or if on a volcano plot and two tissues are selected
+    if(input$ref != 'none' | 
+       (input$tabs == 'volcano' & length(selMuscles) == 2)) {
+      # -- Filter on expr change --
+      # Check to make sure that expression filtering is on.  Otherwise, don't filter.
+      filteredTranscripts = filtered %>%
+        filter(expr <= input$maxExprVal,
+               expr >= input$minExprVal) %>% 
+        select(transcript)
+      
+      
+      # -- Filter on fold change --
+      # Running last since it's kind of annoying. 
+      # Assuming that whatever is the ref should be added no matter what...
+      numMuscles = length(selMuscles)
+      
+      # Pull out the expression values for the selected muscles
+      relExpr = filtered[tissue == input$ref, .(transcript, relExpr = expr)]
+      
+      # Figuring out which transcripts meet the fold change conditions.
+      filteredFC = left_join(filtered, relExpr,         # Safer way: doing a many-to-one merge in:
+                             by = c('transcript')) %>% 
+        mutate(`fold change`= expr/relExpr) %>%         # calc fold change
+        filter(`fold change` >= input$foldChange)       # filter FC
+      
+      # Select the transcripts where at least one tissue meets the conditions.
+      filtered = filtered %>% 
+        filter(transcript %in% filteredTranscripts$transcript &
+                 transcript %in% filteredFC$transcript
+        )
+    } else {
+      # Just filter on expression.
+      filteredTranscripts = filtered %>%
+        filter(expr <= input$maxExprVal,
+               expr >= input$minExprVal) %>% 
+        select(transcript)
+      
+      
+      # Select the transcripts where at least one tissue meets the conditions.
+      filtered = filtered %>% 
+        filter(transcript %in% filteredTranscripts$transcript)
+      
+    }
   }
   
   return(filtered)
 })
+
+
+
+
 
