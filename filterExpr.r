@@ -42,11 +42,13 @@ filterData <- reactive({
   # Check if q-value filtering is turned on
   if(input$adv == FALSE & qCol %in% colnames(data)) {
     
+    
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% input$muscles,   # muscles
              shortName %like% geneInput,  # gene symbol
              GO %like% ont)
+
   }  else if (input$adv == FALSE) {
     filtered = data %>% 
       select_("-contains('_q')") %>% 
@@ -95,6 +97,5 @@ filterData <- reactive({
   }
   
   return(filtered)
-  # print(proc.time() - x)
 })
 

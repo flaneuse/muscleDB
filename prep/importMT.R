@@ -57,9 +57,10 @@ oldFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/c
 
 geneInfo = read_rds(oldFile) %>% 
   select(Transcript, shortName, geneSymbol, geneName, GO, EntrezLink, UCSCLink) %>% 
-  mutate(uc = str_extract(Transcript, 'uc......'), # Remove extra crap
+  mutate(uc = str_extract(Transcript, 'uc......'), # Remove extra crap from transcript ids
              NM = str_extract(Transcript, 'N...............')) %>% 
   mutate(transcript = ifelse(is.na(uc), NM, uc), # tidying up transcript name.
+         
          geneLink = ifelse(geneSymbol == "", # Gene symbol w/ link to entrez page.
                              "", paste0("<a href = '", EntrezLink, 
                                               "' target = '_blank'>", geneSymbol, "</a>")), 
@@ -111,6 +112,8 @@ df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc.....
 df_public = left_join(df_public, 
                       geneInfo, by = c("transcript" = "transcript"))
 
+
+df_public = data.table(df_public)
 
 saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds')
 

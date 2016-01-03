@@ -8,12 +8,13 @@ output$table <- renderDataTable({
   
   # Remove cols not needed in the table.
   filtered = filtered %>% 
-    # mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
     select(transcript = transcriptLink, gene = geneLink, tissue, expr, id, q)
+ 
   
-  # Convert to table so can be used by tidyr.
+  # Leftover from SQL implementation. 
   # filtered = collect(filtered) 
   
+  # Convert to table so can be used by tidyr.  
   data.table::dcast(filtered, 
                     transcript + gene + id + q ~ tissue, 
                     value.var = 'expr')

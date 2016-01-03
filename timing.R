@@ -221,4 +221,4 @@ microbenchmark(data %>% filter(expr > 1000,
 # min       lq     mean   median       uq      max neval
 # 304.6636 310.1527 322.5199 320.1557 324.6389 456.4683    30
 
-# Pretty similar-- regardless of data.frame or data.table.
+# Pretty similar-- regardless of data.frame or data.table.  Faster for indiv. operation as dt, but when string together, doesn't seem to make a diff.

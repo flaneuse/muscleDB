@@ -14,7 +14,6 @@ library(data.table)
 # data = tbl(mt_source, 'MT')
 
 data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds')
-data = data.table(data)
 # data = data %>% 
   # slice(1:2500)
 
