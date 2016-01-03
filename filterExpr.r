@@ -13,7 +13,10 @@ filterData <- reactive({
   # For fold change, adding in the FC-selected muscle if it's not already in the list
   if(input$adv == TRUE & input$ref != 'none') {
     selMuscles = unique(c(input$ref, input$muscles))
-  } else{
+  } else if(input$tabs == 'volcano') # volcano plot     
+    # Select 2 muscles from the user input.
+    selMuscles = unique(c(input$muscle1, input$muscle2)) 
+  else {
     selMuscles = input$muscles
   }
   
@@ -32,8 +35,8 @@ filterData <- reactive({
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
-  print(qCol)
-  # SELECT DATA.
+
+    # SELECT DATA.
   # Note: right now, if there's something in both the "gene" and "ont"
   # input boxes, they must BOTH be true (AND relationship).
   # For example, if you have gene = "Myod1" and ont = "kinase",
@@ -82,12 +85,42 @@ filterData <- reactive({
   
   if(input$adv == TRUE | input$tabs == 'volcano'){
     
-    # Case 1: expr + FC filtering ---------------------------------------------
+    # Case 1: Volcano plot.
+    # -- Special cleanup for volcano plot --
+    if(input$tabs == 'volcano') {
+      # Two selected muscles for comparison filtered above.
+      
+      # Filter on expression
+      filteredTranscripts = filtered %>%
+        filter(expr <= input$maxExprVal,
+               expr >= input$minExprVal) %>% 
+        select(transcript)
+      
+      filtered = filtered %>% 
+        filter(transcript %in% filteredTranscripts$transcript) %>% 
+        select(transcriptLink, geneLink, tissue, expr, q, transcript, gene) %>% 
+        mutate(exprVolcano = ifelse(expr == 0, 0.0001, expr)) # Correction so don't divide by 0. 
+      
+
+      
+      #Divide by each other.
+      # create ID and column name.
+      
+      # foldChange = filteredData[,1]/filteredData[,2]
+      # 
+      # filterVolcano <- data.frame(name = geneName, transcript = transcript,
+      #                             xLab = xLabel, 
+      #                             FC = foldChange, logFC = log10(foldChange), 
+      #                             q = q, logQ = -log10(q), 
+      #                             ID = 1:length(foldChange))
+      # colnames(filterVolcano)  = c("name", "transcript", "xLab", "FC", "logFC", "q", "logQ", "ID")
+      # return(filterVolcano)  
+    }
+    
+    # Case 2: expr + FC filtering ---------------------------------------------
     # If advanced filtering is checked, always filter on expression.
-    # Only use this case if a reference tissue is checked, 
-    # or if on a volcano plot and two tissues are selected
-    if(input$ref != 'none' | 
-       (input$tabs == 'volcano' & length(selMuscles) == 2)) {
+    # Only use this case if a reference tissue is checked.
+    if(input$ref != 'none') {
       # -- Filter on expr change --
       # Check to make sure that expression filtering is on.  Otherwise, don't filter.
       filteredTranscripts = filtered %>%
@@ -116,7 +149,7 @@ filterData <- reactive({
                  transcript %in% filteredFC$transcript
         )
     } else {
-      # Just filter on expression.
+      # Case 3: just filter on expression.
       filteredTranscripts = filtered %>%
         filter(expr <= input$maxExprVal,
                expr >= input$minExprVal) %>% 
@@ -130,8 +163,11 @@ filterData <- reactive({
     }
   }
   
+   
   return(filtered)
 })
+
+
 
 
 
