@@ -14,6 +14,32 @@ options = list(searching = TRUE, stateSave = TRUE,
 )
 )
 
+
+volcanoTooltip = function(x) {
+  
+  # Nothing to tooltip.
+  if(is.null(x)) return(NULL)
+  
+  # Pull out an isolated instance of the data.
+  all_data <- isolate(filterData())
+  
+  # get gene symbol and transcript id.
+  geneName <- all_data[all_data$id == x$id, 1]
+  transcriptName <- all_data[all_data$id == x$id, 2]
+  
+  # Paste together the data.
+  paste0("<b>", geneName, "</b><br>",
+         transcriptName, "<br>",
+         "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
+         "q: ", format(10^-x[2], digits = 3, nsmall = 1))
+}
+
+output$volcanoPlot <- renderPlot({
+  
+  filtered = filterData()
+  
+  qplot(data = filtered, x = logFC, y = logQ)
+})
 # plotVolcano <- reactive({
 #   xLab = filterVolcano()$xLab[1]
 #   
@@ -21,7 +47,7 @@ options = list(searching = TRUE, stateSave = TRUE,
 #     xLab = NULL 
 #   }
 #   
-#   filterVolcano %>% ggvis(x = ~logFC, y = ~logQ, key := ~ID) %>% 
+#   filterVolcano %>% ggvis(x = ~logFC, y = ~logQ, key := ~id) %>% 
 #     layer_points(size := 25, size.hover := 100, fill.hover := "royalblue",
 #                  stroke := "#BD202E",  stroke.hover := "navy", strokeWidth.hover := 0.75, 
 #                  fill := "#BD202E",  opacity := 0.5) %>%
