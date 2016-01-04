@@ -4,7 +4,7 @@
 # Select just the expr cols and convert to wide df.
 output$heatmap <- renderD3heatmap({
   filteredData = filterData() %>% 
-    select(transcript, gene, id, tissue, expr) %>% 
+    select(transcript, gene, tissue, expr) %>% 
     spread(tissue, expr) %>% 
     slice(1:100)
   
@@ -15,7 +15,7 @@ output$heatmap <- renderD3heatmap({
 
   # Remove the non-numeric columns. 
   filteredData = filteredData %>% 
-    select(-id, -transcript, -gene)
+    select(-transcript, -gene)
   
   
   # Figure out how to scale the heatmap (no scaling, by row, log.)
