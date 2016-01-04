@@ -60,9 +60,9 @@ sidebar <- dashboardSidebar(
     id = "tabs",
     menuItemOutput("minExprInput"),
     menuItemOutput("maxExprInput"),
+    menuItem("plot", tabName = "plot", icon = icon("bar-chart")),
     menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
-    menuItem("plot", tabName = "plot", icon = icon("bar-chart")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
     menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
     menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
@@ -116,6 +116,7 @@ body <- dashboardBody(
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
+            plotOutput("plot2"),
             plotOutput("plot1")),
     
     
@@ -141,8 +142,7 @@ body <- dashboardBody(
             
             # Main table
             fluidRow(
-              box(status = NULL, width = 12,
-                  dataTableOutput("table"))),
+              div(dataTableOutput("table"), style = "font-size:80%")),
             
             # Summary stats @ bottom of table
             fluidRow(
