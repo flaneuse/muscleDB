@@ -58,10 +58,10 @@ shinyServer(
     
     
     output$test <- renderPrint({ # Test function for returning current page.
-      beg = input$table_state$start+1
-      end = input$table_state$length+input$table_state$start
-      # return(beg:end)
-      as.numeric(input$table_rows_selected)
+      iBeg = input$table_state$start+1
+      iEnd = input$table_state$length+input$table_state$start
+      return(beg:end)
+      # as.numeric(input$table_rows_selected)
     })
     
     # HEATMAP -----------------------------------------------------------------

@@ -21,12 +21,33 @@ grey90K = '#414042'
 grey60K = '#808285'
 nPlots = 25
 
+getPage <- reactive({
+  page = (input$nextPage - input$prevPage)
+  
+  if (page < 0) {
+    page = 0
+  } else {
+    page = page
+  }
+})
+
 output$plot1 <- renderPlot({
+  
+  pageNum = getPage()
+  
+  
+  iBeg = (pageNum)*nPlots + 1
+  iEnd = (pageNum + 1)*nPlots
+  
+  print(iBeg)
+  print(iEnd)
+  
   library(RColorBrewer)
   
   filteredData = filterData()
   
-  transcriptList = unique(filteredData$transcript)[1:nPlots]
+  # transcriptList = unique(filteredData$transcript)[1:nPlots]
+  transcriptList = unique(filteredData$transcript)[iBeg:iEnd]
   
   data2Plot = filteredData %>% 
     filter(transcript %in% transcriptList)

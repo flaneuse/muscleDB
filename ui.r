@@ -107,12 +107,15 @@ body <- dashboardBody(
     
     # -- Basic plot -- 
     tabItem(tabName = "plot", 
-            fluidRow(textOutput('test')),
             fluidRow(h5("MuscleDB is a database containing RNAseq expression
                         levels for 10 different muscle tissues.")),
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
+            fluidRow(column(2, fluidRow(actionButton("prevPage", label="", icon = icon("chevron-left")))),
+                     column(4, fluidRow(h5('change page'))),
+                     column(2, 
+                            fluidRow(actionButton("nextPage", label="", icon = icon("chevron-right"))))),
             plotOutput("plot1", height = "1000px")),
     
     
@@ -172,6 +175,10 @@ body <- dashboardBody(
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 
+            fluidRow(column(2, fluidRow(actionButton("prevPage", label="", icon = icon("chevron-left")))),
+                     column(4, fluidRow(h5('change page'))),
+                     column(2, 
+                            fluidRow(actionButton("nextPage", label="", icon = icon("chevron-right"))))),
             fluidRow(column(7,
                             d3heatmapOutput("heatmap",
                                             width = 500,
