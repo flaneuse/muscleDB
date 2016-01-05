@@ -64,12 +64,8 @@ sidebar <- dashboardSidebar(
     menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
-    menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
-    menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
-    menuItem("Charts", icon = icon("bar-chart-o"),
-             menuSubItem("Sub-item 1", tabName = "subitem1"),
-             menuSubItem("Sub-item 2", tabName = "subitem2")
-    ),
+    # menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
+    # menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
     menuItem("code", tabName = "code", icon = icon("code"))
   )
 )
@@ -123,7 +119,7 @@ body <- dashboardBody(
     # -- Full table with mini-stats. --
     tabItem(tabName = "table",
             
-            fluidRow(pageruiInput('pager', page_current = 1, pages_total = 1)),
+            # fluidRow(pageruiInput('pager', page_current = 1, pages_total = 1)),
             # valueBoxes of min, max, avg.
             fluidRow(
               infoBoxOutput("maxExpr", width = 4),
@@ -162,9 +158,9 @@ body <- dashboardBody(
                             fluidRow(br()),
                             fluidRow(br()),
                             fluidRow(br()),
-                            fluidRow(actionButton('saveVolcano', 'save selected rows')),
-                            fluidRow(br()),
-                            fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
+                            # fluidRow(actionButton('saveVolcano', 'save selected rows')),
+                            fluidRow(br())))),
+                            # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
     tabItem(tabName = "PCA", 
             fluidRow(column(5,
