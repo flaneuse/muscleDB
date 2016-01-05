@@ -28,5 +28,21 @@ options = list(searching = TRUE, stateSave = TRUE,
 output$volcanoPlot <- renderPlot({
   filteredData = filterData()
   
-  qplot(data = filteredData, y = logQ, x = logFC)
+# Temporary plot to be replaced by interactive version.  
+  ggplot(filteredData, aes(y = logQ, x = logFC)) +
+    geom_point(size = 3, alpha  = 0.3, colour = 'dodgerblue') +
+    theme(title = element_text(size = 32, color = grey90K),
+          axis.line = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text = element_text(size = 16, color = grey60K, family = 'Segoe UI Light'),
+          axis.title = element_text(size = 18, color = grey60K, family = 'Segoe UI Light'), 
+          legend.position="none",
+          panel.background = element_blank(),
+          panel.grid.major = element_line(color = grey60K, size = 0.2),
+          panel.border = element_blank(),
+          plot.margin = rep(unit(0, units = 'points'),4),
+          panel.background = element_blank(), 
+          strip.text = element_text(size=13, face = 'bold', color = grey60K, family = 'Segoe UI Semilight'),
+          strip.background = element_blank()
+    )
 })
