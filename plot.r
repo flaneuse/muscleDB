@@ -19,7 +19,7 @@ theme_xOnly<- function() {
 
 grey90K = '#414042'
 grey60K = '#808285'
-nPlots = 9
+nPlots = 25
 
 output$plot1 <- renderPlot({
   library(RColorBrewer)

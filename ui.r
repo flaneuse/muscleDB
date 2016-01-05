@@ -107,12 +107,13 @@ body <- dashboardBody(
     
     # -- Basic plot -- 
     tabItem(tabName = "plot", 
+            fluidRow(textOutput('test')),
             fluidRow(h5("MuscleDB is a database containing RNAseq expression
                         levels for 10 different muscle tissues.")),
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
-            plotOutput("plot1", height = "800px")),
+            plotOutput("plot1", height = "1000px")),
     
     
     # -- Full table with mini-stats. --
