@@ -165,11 +165,11 @@ body <- dashboardBody(
                             fluidRow(br())))),
                             # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
-    tabItem(tabName = "PCA", 
-            fluidRow(column(5,
-                            plotOutput("pcaPlot"),
-                            dataTableOutput("PCAload")),
-                     column(7,infoBoxOutput("PCAstats")))),
+    # tabItem(tabName = "PCA", 
+    #         fluidRow(column(5,
+    #                         plotOutput("pcaPlot"),
+    #                         dataTableOutput("PCAload")),
+    #                  column(7,infoBoxOutput("PCAstats")))),
     # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
     
     
