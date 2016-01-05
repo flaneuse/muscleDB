@@ -1,41 +1,44 @@
-# Widget showing the minimum expression value.
-output$minExpr <- renderInfoBox({
-  filteredData = filterData()
-  
-  minVal = min(filteredData[,sapply(filteredData, is.numeric)])
-  
-  iMin = rowSums(filteredData[,sapply(filteredData,is.numeric)]==minVal)
-  iMin = which(iMin > 0)
-  
-  
-  if (length(iMin) > 2) {
-    minGenes = paste0("in ", length(iMin),
-                      " different genes")
-  } else {
-    minGenes = paste0(filteredData[iMin,1], " (", strtrim(filteredData[iMin,2],10), ")")
-  }
-  
-  infoBox("minimum expression",
-          minVal,
-          minGenes,
-          #               HTML(paste0(minVal, '<br>',"fdjks")),"rjek",
-          icon = icon("chevron-down"),
-          fill = TRUE
-  )
-})
+# Widget showing the minimum, mean, and maximum expression value.
+# output$minExpr <- renderInfoBox({
+#   filteredData = filterData()
+#   
+#   print(dim())
+#   
+#   minVal = filteredData %>% 
+#     summarise(min = min(expr))
+#   
+#   # Find minimum value and which tissues have that value.
+#   minVal= minVal[[1]]
+#   
+#   iMin = which(filteredData$expr == minVal)
+#   
+#   
+#   if (length(iMin) > 2) {
+#     minGenes = paste0("in ", length(iMin),
+#                       " different tissues")
+#   } else {
+#     minTrans = filteredData$shortName[iMax]
+#     minTissue = filteredData$tissue[iMax]
+#     minGenes = paste0(minTrans, " (", minTissue, ")")
+#   }
+#   
+#   infoBox("minimum expression",
+#           minVal,
+#           minGenes,
+#           #               HTML(paste0(minVal, '<br>',"fdjks")),"rjek",
+#           icon = icon("chevron-down"),
+#           fill = TRUE
+#   )
+# })
 
 output$avgExpr <- renderInfoBox({
   filteredData = filterData()
   
-  #   minVal = round(filteredData  %>% select(contains("_mean")) %>% 
-  #                    summarise_each(funs(mean)),1)
-  
-  avgVal = round(mean(t(filteredData %>% select(contains("_mean")))),2)
-  
+  avgVal = filteredData %>% 
+    summarise(round(mean(expr),2))
   
   infoBox("mean expression",
           avgVal,
-          #               HTML(paste0(minVal, '<br>',"fdjks")),"rjek",
           icon = icon("minus"),
           fill = TRUE
   )
@@ -44,23 +47,26 @@ output$avgExpr <- renderInfoBox({
 output$maxExpr <- renderInfoBox({
   filteredData = filterData()
   
-  maxVal = max(filteredData[,sapply(filteredData, is.numeric)])
+  maxVal = filteredData %>% 
+    summarise(max = max(expr))
   
-  iMax = rowSums(filteredData[,sapply(filteredData,is.numeric)]==maxVal)
-  iMax = which(iMax > 0)
+  # Find maximum value and which tissues have that value.
+  maxVal= maxVal[[1]]
   
+  iMax = which(filteredData$expr == maxVal)
   
   if (length(iMax) > 2) {
     maxGenes = paste0("in ", length(iMax),
                       " different genes")
   } else {
-    maxGenes = paste0(filteredData[iMax,1], " (", strtrim(filteredData[iMax,2],10), ")")
+    maxTrans = filteredData$shortName[iMax]
+    maxTissue = filteredData$tissue[iMax]
+    maxGenes = paste0(maxTrans, " (", maxTissue, ")")
   }
   
   infoBox("maximum expression",
           maxVal,
           maxGenes,
-          #               HTML(paste0(minVal, '<br>',"fdjks")),"rjek",
           icon = icon("chevron-up"),
           fill = TRUE
   )

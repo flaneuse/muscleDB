@@ -3,6 +3,7 @@ library(stringr)
 library(dplyr)
 library(tidyr)
 library(readr)
+library(data.table)
 
 # Import and clean data.
 
@@ -40,37 +41,52 @@ SE = df %>%
 
 #! Need to spot check that everything is done properly.
 #! SE, stdev, 95% CI, ...?
-# Import GO and gene names ------------------------------------------------
-geneInfo = readRDS("~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/combData_2014-10-19.rds")
 
 
 
 # Calculate q-values ------------------------------------------------------
-source('~/GitHub/muscle-transcriptome/prep/ANOVAlookupTable.r')
+# Run previously; then imported.
+# source('~/GitHub/muscle-transcriptome/prep/ANOVAlookupTable.r')
 
-anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/MT_adjusted_TranscriptQuants.csv', 6)
+# anovas = ANOVAlookupTable('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/Muscle_Re-run_Mapstats_Quantfiles/MT_adjusted_TranscriptQuants.csv', 6)
+
+
+
+# Pull in the outdated data to get GO and gene names ----------------------
+oldFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/MTapp-v0-51/data/combData_2014-10-19.rds'
+
+geneInfo = read_rds(oldFile) %>% 
+  select(Transcript, shortName, geneSymbol, geneName, GO, EntrezLink, UCSCLink) %>% 
+  mutate(uc = str_extract(Transcript, 'uc......'), # Remove extra crap from transcript ids
+         NM = str_extract(Transcript, 'N...............')) %>% 
+  mutate(transcript = ifelse(is.na(uc), NM, uc), # tidying up transcript name.
+         
+         geneLink = ifelse(geneSymbol == "", # Gene symbol w/ link to entrez page.
+                           "", paste0("<a href = '", EntrezLink, 
+                                      "' target = '_blank'>", geneSymbol, "</a>")), 
+         transcriptLink = ifelse(UCSCLink == "",
+                                 transcript, 
+                                 paste0("<a href = '", UCSCLink,
+                                        "' target = '_blank'>", transcript, "</a>")) # transcript name w/ link to UCSC page
+  ) %>% 
+  select(transcript, shortName, gene = geneSymbol, GO, geneLink, transcriptLink)
 
 # Merge everything together -----------------------------------------------
 df = full_join(avg, SE, by = c("transcript", "tissue")) %>% 
   mutate(
-         lb = expr - SE,
-         ub = expr + SE,
-         shortName = 'foo',
-         gene = 'fu',
-         GO = 'moo',
-         entrezLink = 'html',
-         UCSCLink = 'html')
+    lb = expr - SE,
+    ub = expr + SE)
 
 
-
-
-# ! Fix the UCSC links, etc.
-
-saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2015-10-11.rds')
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-01-02.rds')
 
 
 # For the public version, remove 4 tissues.
 anovasWeb = readRDS('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/allANOVAs_forWeb_2015-10-18.rds')
+
+anovasWeb = anovasWeb %>% 
+  group_by(transcript) %>% 
+  mutate_each(funs(signif(., digits = 3)))
 
 df_public = df %>% 
   filter(tissue != 'thoracic aorta', tissue != 'masseter', 
@@ -82,17 +98,46 @@ df_public = full_join(df_public, anovasWeb, by = 'transcript') %>%
 
 # Clean the transcript IDs into shortened versions ------------------------
 df_public = df_public %>% mutate(uc = str_extract(df_public$transcript, 'uc......'),
-                   NM = str_extract(df_public$transcript, 'N...............')) %>% 
+                                 NM = str_extract(df_public$transcript, 'N...............')) %>% 
   mutate(fullTranscript = transcript, 
+         expr = round(expr, digits = 2),
+         SE = round(SE, digits = 2),
+         lb = round(lb, digits = 2),
+         ub = round(ub, digits = 2),
          transcript = ifelse(is.na(uc), NM, uc)) %>% 
   select(-fullTranscript, -uc, -NM)
 
-saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
-write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.csv')
+# Merge in GO, ontology
+df_public = left_join(df_public, 
+                      geneInfo, by = c("transcript" = "transcript"))
+
+# refactorise the tissue levels.
+df_public$tissue = factor(df_public$tissue,
+                          c('total aorta' = 'total aorta',
+                            # 'thoracic aorta' = 'thoracic aorta', 
+                            # 'abdominal aorta' = 'abdominal aorta', 
+                            'atria' = 'atria', 
+                            'left ventricle' = 'left ventricle',
+                            'right ventricle' = 'right ventricle',
+                            
+                            'diaphragm' = 'diaphragm',
+                            'eye' = 'eye', 
+                            'EDL' = 'EDL', 
+                            'FDB' = 'FDB', 
+                            # 'masseter' =  'masseter', 
+                            'plantaris' = 'plantaris',
+                            'soleus' = 'soleus'))
+
+
+df_public = data.table(df_public)
+
+saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.rds')
+
+write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.csv')
 
 # Copy to sqlite db -------------------------------------------------------
-db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3',
+db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3',
                 create = TRUE)
 
 data_sqlite = copy_to(db, df_public, temporary = FALSE,

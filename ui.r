@@ -1,22 +1,17 @@
 # Define sidebar for inputs -----------------------------------------------
 
 sidebar <- dashboardSidebar(
+  
+  # -- Gene filtering --
+  # Search form for symbols
   sidebarSearchForm(label = "search symbol (Myod1)", "geneInput", "searchButton"),
+  
+  # Search form for ontology
   sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
+  
+  # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
-                     choices = c('atria' = 'atria', 
-                                 'left ventricle' = 'left ventricle',
-                                 'total aorta' = 'total aorta', 
-                                 'right ventricle' = 'right ventricle',
-                                 'soleus' = 'soleus', 
-                                 # 'thoracic aorta' = 'thoracic aorta', 
-                                 # 'abdominal aorta' = 'abdominal aorta', 
-                                 'diaphragm' = 'diaphragm',
-                                 'eye' = 'eye', 
-                                 'EDL' = 'EDL', 'FDB' = 'FDB', 
-                                 # 'masseter' =  'masseter', 
-                                 'plantaris' = 'plantaris'), 
-                     # 'tongue' = 'tongue'),
+                     choices = tissueList,
                      selected = c('atria', 'left ventricle',
                                   'total aorta', 'right ventricle',
                                   'soleus', 
@@ -48,9 +43,7 @@ sidebar <- dashboardSidebar(
         Filters by the increase in expression, 
                          relative to a single muscle tissue</div>"))),
     radioButtons("ref", label = "reference tissue:", 
-                 choices = list("aorta" = "AOR", "atria" = "ATR",
-                                "diaphragm"="DIA", "EDL" = "EDL", "eye"="EYE",
-                                "left ventricle" = "LV", "right ventricle"="RV", "soleus" = "SOL"), selected = "AOR"),
+                 choices = c('none',tissueList), selected = "none"),
     sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
@@ -61,13 +54,14 @@ sidebar <- dashboardSidebar(
                                  min = 0, max = 1, value = 1)))
   ),
   
+  # -- Sidebar icons --
   sidebarMenu(
     # Setting id makes input$tabs give the tabName of currently-selected tab
     id = "tabs",
     menuItemOutput("minExprInput"),
     menuItemOutput("maxExprInput"),
-    menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("plot", tabName = "plot", icon = icon("bar-chart")),
+    menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
     menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
@@ -76,14 +70,16 @@ sidebar <- dashboardSidebar(
              menuSubItem("Sub-item 1", tabName = "subitem1"),
              menuSubItem("Sub-item 2", tabName = "subitem2")
     ),
-    menuItem("code", icon = icon("code"))
+    menuItem("code", tabName = "code", icon = icon("code"))
   )
 )
 
 
 
+# Header ------------------------------------------------------------------
 header <- dashboardHeader(
-  title = "Muscle Transcriptome Atlas",
+  title = "MuscleDB",
+  # -- Message bar --
   dropdownMenu(type = "messages", badgeStatus = NULL, icon = icon("question-circle"),
                messageItem("Muscle Transcriptome Atlas",
                            "about the database",
@@ -96,23 +92,89 @@ header <- dashboardHeader(
                ),
                messageItem("Website code and data scripts",
                            "find the code on Github", icon = icon("code"),
-                           href = "http://www.github.com")
+                           href = "https://github.com/flaneuse/muscle-transcriptome")
   )
 )
 
+
+
+# Body --------------------------------------------------------------------
+
 body <- dashboardBody(
   
+  # -- Import custom CSS --
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css")),
   
+  # -- Each tab --
   tabItems(
-    tabItem(tabName = "volcano", plotOutput("volcano")),
+    
+    # -- Basic plot -- 
+    tabItem(tabName = "plot", 
+            fluidRow(h5("MuscleDB is a database containing RNAseq expression
+                        levels for 10 different muscle tissues.")),
+            fluidRow(h6("Explore the database by filtering the data on the toolbar 
+                        at the left and with different visualizations on the bottom left. 
+                        Need help getting started? See our help page.")),
+            plotOutput("plot2"),
+            plotOutput("plot1")),
+    
+    
+    # -- Full table with mini-stats. --
+    tabItem(tabName = "table",
+            
+            fluidRow(pageruiInput('pager', page_current = 1, pages_total = 1)),
+            # valueBoxes of min, max, avg.
+            fluidRow(
+              infoBoxOutput("maxExpr", width = 4),
+              infoBoxOutput("avgExpr", width = 4),
+              # infoBoxOutput("minExpr", width = 4),
+              
+              # Download data button
+              column(1,
+                     downloadButton('downloadTable', label = NULL, 
+                                    class = 'btn btn-lg active btn-inverted hover btn-inverted'),
+                     h5(""))),
+            #           actionButton("saveRowsTable", "save rows",
+            #                        icon = NULL)
+            #     infoBox("dwndTable", downloadLink('downloadTable'), icon = icon("download"), width = 1)
+            
+            
+            # Main table
+            fluidRow(
+              div(dataTableOutput("table"), style = "font-size:80%")),
+            
+            # Summary stats @ bottom of table
+            fluidRow(
+              box(title = "Summary Statistics", solidHeader = TRUE, status = 'primary', width = 12,
+                  dataTableOutput("summaryTable")))),
+    
+    
+    # -- Volcano plot --
+    tabItem(tabName = "volcano", 
+            fluidRow(h4('Select two tissues to compare.')),
+            fluidRow(column(4, uiOutput('m1')),
+                     column(4, uiOutput('m2'))),
+            fluidRow(plotOutput("volcanoPlot")),
+            fluidRow(column(10, dataTableOutput("volcanoTable")),
+                     column(1, 
+                            fluidRow(br()),
+                            fluidRow(br()),
+                            fluidRow(br()),
+                            fluidRow(br()),
+                            fluidRow(actionButton('saveVolcano', 'save selected rows')),
+                            fluidRow(br()),
+                            fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
+    # -- PCA --
     tabItem(tabName = "PCA", 
             fluidRow(column(5,
                             plotOutput("pcaPlot"),
                             dataTableOutput("PCAload")),
                      column(7,infoBoxOutput("PCAstats")))),
     # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
+    
+    
+    # -- Heat map --
     tabItem(tabName = "heatMap", 
             fluidRow(column(7,
                             d3heatmapOutput("heatmap",
@@ -124,178 +186,19 @@ body <- dashboardBody(
                                                     "by column" = "col", "log" = "log")),
                             checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
                      ))),
-    tabItem(tabName = "plot", plotOutput("plot1")),
-    tabItem(tabName = "table",
-            # valueBoxes
-            fluidRow(
-              infoBoxOutput("maxExpr", width = 4),
-              infoBoxOutput("avgExpr", width = 3),
-              infoBoxOutput("minExpr", width = 4),
-              column(1,
-                     downloadButton('downloadTable', label = NULL, 
-                                    class = 'btn btn-lg active btn-inverted hover btn-inverted'),
-                     h5("")
-                     #           actionButton("saveRowsTable", "save rows",
-                     #                        icon = NULL)
-              )
-              #     infoBox("dwndTable", downloadLink('downloadTable'), icon = icon("download"), width = 1)
-            ),
-            
-            
-            # Boxes
-            fluidRow(textOutput('tester')),
-            fluidRow(
-              box(status = NULL, width = 12,
-                  dataTableOutput("table")
-              )
-            ),
-            fluidRow(
-              box(title = "Summary Statistics", solidHeader = TRUE, status = 'primary', width = 12,
-                  dataTableOutput("summaryTable")))
-            
-            
-    )
+    
+    # -- Code --
+    tabItem(tabName = "code",
+            source("abtCode.R", local = TRUE))
   ))
 
+
+
+# Dashboard definition (main call) ----------------------------------------
+
 dashboardPage(
-  title = "Muscle Transcriptome Atlas",  
+  title = "MuscleDB: A muscle transcriptome atlas",  
   header,
   sidebar,
   body
 )
-
-
-# 
-# sidebar <- dashboardSidebar(
-#   sidebarUserPanel("User Name",
-#                    subtitle = a(href = "#", icon("circle", class = "text-success"), "Online"),
-#                    # Image file should be in www/ subdir
-#                    image = "userimage.png"
-#   ),
-#   sidebarSearchForm(label = "Enter a number", "searchText", "searchButton"),
-#   sidebarMenu(
-#     # Setting id makes input$tabs give the tabName of currently-selected tab
-#     id = "tabs",
-#     menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-#     menuItem("Widgets", icon = icon("th"), tabName = "widgets", badgeLabel = "new",
-#              badgeColor = "green"),
-#     menuItem("Charts", icon = icon("bar-chart-o"),
-#              menuSubItem("Sub-item 1", tabName = "subitem1"),
-#              menuSubItem("Sub-item 2", tabName = "subitem2")
-#     )
-#   )
-# )
-# 
-# 
-# 
-# header <- dashboardHeader(
-#   title = "Muscle Atlas",
-#   
-#   # Dropdown menu for messages
-#   dropdownMenu(type = "messages", badgeStatus = "success",
-#                messageItem("Support Team",
-#                            "This is the content of a message.",
-#                            time = "5 mins"
-#                ),
-#                messageItem("Support Team",
-#                            "This is the content of another message.",
-#                            time = "2 hours"
-#                ),
-#                messageItem("New User",
-#                            "Can I get some help?",
-#                            time = "Today"
-#                )
-#   ),
-#   
-#   # Dropdown menu for notifications
-#   dropdownMenu(type = "notifications", badgeStatus = "warning",
-#                notificationItem(icon = icon("users"), status = "info",
-#                                 "5 new members joined today"
-#                ),
-#                notificationItem(icon = icon("warning"), status = "danger",
-#                                 "Resource usage near limit."
-#                ),
-#                notificationItem(icon = icon("shopping-cart", lib = "glyphicon"),
-#                                 status = "success", "25 sales made"
-#                ),
-#                notificationItem(icon = icon("user", lib = "glyphicon"),
-#                                 status = "danger", "You changed your username"
-#                )
-#   ),
-#   
-#   # Dropdown menu for tasks, with progress bar
-#   dropdownMenu(type = "tasks", badgeStatus = "danger",
-#                taskItem(value = 20, color = "aqua",
-#                         "Refactor code"
-#                ),
-#                taskItem(value = 40, color = "green",
-#                         "Design new layout"
-#                ),
-#                taskItem(value = 60, color = "yellow",
-#                         "Another task"
-#                ),
-#                taskItem(value = 80, color = "red",
-#                         "Write documentation"
-#                )
-#   )
-# )
-# 
-# 
-# body <- dashboardBody(
-#   
-#   # valueBoxes
-#   fluidRow(
-#     valueBox(
-#       uiOutput("orderNum"), "New Orders", icon = icon("credit-card"),
-#       href = "http://google.com"
-#     ),
-#     valueBox(
-#       tagList("60", tags$sup(style="font-size: 20px", "%")),
-#       "Approval Rating", icon = icon("line-chart"), color = "green"
-#     ),
-#     valueBox(
-#       htmlOutput("progress"), "Progress", icon = icon("users"), color = "purple"
-#     )
-#   ),
-#   
-#   # Boxes
-#   fluidRow(
-#     box(status = "primary",
-#         sliderInput("orders", "Orders", min = 1, max = 500, value = 120),
-#         selectInput("progress", "Progress",
-#                     choices = c("0%" = 0, "20%" = 20, "40%" = 40, "60%" = 60, "80%" = 80,
-#                                 "100%" = 100)
-#         )
-#     ),
-#     box(title = "Histogram box title",
-#         status = "warning", solidHeader = TRUE, collapsible = TRUE,
-#         plotOutput("plot", height = 250)
-#     )
-#   ),
-#   
-#   # Boxes with solid color, using `background`
-#   fluidRow(
-#     # Box with textOutput
-#     box(
-#       title = "Status summary",
-#       background = "green",
-#       width = 4,
-#       textOutput("status")
-#     ),
-#     
-#     # Box with HTML output, when finer control over appearance is needed
-#     box(
-#       title = "Status summary 2",
-#       width = 4,
-#       background = "red",
-#       uiOutput("status2")
-#     ),
-#     
-#     box(
-#       width = 4,
-#       background = "light-blue",
-#       p("This is content. The background color is set to light-blue")
-#     )
-#   )
-# )
-

@@ -373,9 +373,9 @@ x %>% ggvis(~tissue, ~ expr) %>%
   layer_points() %>% 
   add_tooltip(on = 'hover')
   
-  devtools::install_github("hadley/lazyeval", build_vignettes = FALSE)
-devtools::install_github("hadley/dplyr", build_vignettes = FALSE)
-devtools::install_github("rstudio/ggvis", build_vignettes = FALSE)
+#   devtools::install_github("hadley/lazyeval", build_vignettes = FALSE)
+# devtools::install_github("hadley/dplyr", build_vignettes = FALSE)
+# devtools::install_github("rstudio/ggvis", build_vignettes = FALSE)
 
 nasa %>%
   group_by(year, month) %>%

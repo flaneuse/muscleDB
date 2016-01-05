@@ -1,22 +1,30 @@
+
+# Table to display all the results ----------------------------------------
+
+
 output$table <- renderDataTable({
+  
   filtered = filterData()
   
   # Remove cols not needed in the table.
   filtered = filtered %>% 
-    # mutate(test = "<a href = 'http://www.google.com'>google</a>") %>% 
-    select(transcript, tissue, expr, id)
+    select(transcript = transcriptLink, gene = geneLink, tissue, expr, q)
   
-  # Convert to table so can be used by tidyr.
-  filtered = collect(filtered) 
   
-  filtered %>% 
-            spread(tissue, expr) %>% 
-    select(-id)
+  # Leftover from SQL implementation. 
+  # filtered = collect(filtered) 
   
+  # Provided there are rows in the data.table, convert to wide.
+  if(nrow(filtered) > 0){
+    data.table::dcast(filtered, 
+                      transcript + gene + q ~ tissue, 
+                      value.var = 'expr')
+  }
 },  
 escape = c(-1,-2, -3),
 selection = 'none', #! Temporarily turning off row selection.
 options = list(searching = FALSE, stateSave = TRUE,
+               pageLength = 25,
                rowCallback = JS(
                  'function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         if (aData[0])
