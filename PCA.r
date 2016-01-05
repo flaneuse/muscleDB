@@ -7,7 +7,7 @@ output$pcaPlot = renderPlot({
   PCA = data.frame(x$x, ID = 1:nrow(x$x))
   
   ggplot(PCA, aes(x = PC1, y = PC2)) + 
-    theme_laura() +
+    theme_bw() +
     geom_point(size = 3, alpha = 0.3, color = brewer.pal(9, "PuRd")[7])
   
   # PCA %>% ggvis(x = ~PC1, y = ~PC2, key := ~ID) %>% 
