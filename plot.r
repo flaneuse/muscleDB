@@ -33,7 +33,7 @@ output$plot1 <- renderPlot({
   
   maxExpr = max(data2Plot$expr)
   
-  yLim = c(-0.05*maxExpr, maxExpr)
+  yLim = c(-0.1*maxExpr, maxExpr)
   
   ggplot(data2Plot, aes(y= expr, x=tissue, label = round(expr, 1))) +
     coord_flip(ylim = yLim) +
