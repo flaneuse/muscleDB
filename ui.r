@@ -112,8 +112,7 @@ body <- dashboardBody(
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
-            plotOutput("plot2"),
-            plotOutput("plot1")),
+            plotOutput("plot1", height = "800px")),
     
     
     # -- Full table with mini-stats. --
