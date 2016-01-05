@@ -113,7 +113,7 @@ body <- dashboardBody(
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
             fluidRow(column(2, fluidRow(actionButton("prevPage", label="", icon = icon("chevron-left")))),
-                     column(4, fluidRow(h5('change page'))),
+                     column(4, fluidRow(h5('view next results'))),
                      column(2, 
                             fluidRow(actionButton("nextPage", label="", icon = icon("chevron-right"))))),
             plotOutput("plot1", height = "1000px")),
@@ -175,10 +175,10 @@ body <- dashboardBody(
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 
-            fluidRow(column(2, fluidRow(actionButton("prevPage", label="", icon = icon("chevron-left")))),
-                     column(4, fluidRow(h5('change page'))),
+            fluidRow(column(2, fluidRow(actionButton("prevPageHeat", label="", icon = icon("chevron-left")))),
+                     column(2, fluidRow(h5('view next 100 results'))),
                      column(2, 
-                            fluidRow(actionButton("nextPage", label="", icon = icon("chevron-right"))))),
+                            fluidRow(actionButton("nextPageHeat", label="", icon = icon("chevron-right"))))),
             fluidRow(column(7,
                             d3heatmapOutput("heatmap",
                                             width = 500,

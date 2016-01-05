@@ -1,12 +1,30 @@
 # Function to return a heatmap for MuscleDB.
 
-# Hack for now, to only look at small subset of data
-# Select just the expr cols and convert to wide df.
+
+
+getPageHeat <- reactive({
+  page = (input$nextPageHeat - input$prevPageHeat)
+  
+  if (page < 0) {
+    page = 0
+  } else {
+    page = page
+  }
+})
+
 output$heatmap <- renderD3heatmap({
+  nPlotsHeat = 100
+  pageNum_heat = getPageHeat()
+  
+  iBeg = (pageNum_heat)*nPlotsHeat + 1
+  iEnd = (pageNum_heat + 1)*nPlotsHeat
+  
+  # Hack for now, to only look at small subset of data
+  # Select just the expr cols and convert to wide df.
   filteredData = filterData() %>% 
     select(transcript, gene, tissue, expr) %>% 
     spread(tissue, expr) %>% 
-    slice(1:100)
+    slice(iBeg:iEnd)
   
   # Pull out the names to display
   heatNames = filteredData %>% 
