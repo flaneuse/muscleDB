@@ -58,3 +58,30 @@ output$heatmap <- renderD3heatmap({
             xaxis_height = 100, yaxis_width = 200
   )
 })
+
+output$heatmapScale = renderPlot({
+  nPlotsHeat = 100
+  pageNum_heat = getPageHeat()
+  
+  iBeg = (pageNum_heat)*nPlotsHeat + 1
+  iEnd = (pageNum_heat + 1)*nPlotsHeat
+  
+  # Hack for now, to only look at small subset of data
+  # Select just the expr cols and convert to wide df.
+  filteredData = filterData() %>% 
+    select(transcript, gene, tissue, expr) %>% 
+    spread(tissue, expr) %>% 
+    slice(iBeg:iEnd)
+  
+  
+  exprLimits = filteredData %>% 
+                  select(-transcript, -gene) %>% 
+                  summarise_each(funs(max, min))
+  
+  minExpr = min(exprLimits)
+  
+  maxExpr = max(exprLimits)
+  
+  
+    
+})

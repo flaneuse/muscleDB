@@ -194,7 +194,9 @@ body <- dashboardBody(
                                         choices = c("none" = "none", "by row" = "row", 
                                                     "by column" = "col", "log" = "log")),
                             checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
-                     ))),
+                     ))
+            # fluidRow(plotOutput("heatmapScale"))
+            ),
     
     # -- Code --
     tabItem(tabName = "code",
