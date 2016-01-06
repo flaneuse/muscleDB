@@ -10,7 +10,7 @@ sidebar <- dashboardSidebar(
   # sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
   selectizeInput('GO', label = 'search ontology', 
                  choices = NULL, 
-                 multiple = TRUE, 
+                 multiple = FALSE, 
                  options = list(maxOptions = 500,
                                 placeholder = 'search ontology',
                                 onInitialize = I('function() { this.setValue(""); }'))),
