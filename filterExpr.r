@@ -17,7 +17,7 @@ filterData <- reactive({
   if(is.null(input$GO)){
     ont = ""
   } else {
-    input$GO
+    ont = input$GO
   }
   
   # For fold change, adding in the FC-selected muscle if it's not already in the list
