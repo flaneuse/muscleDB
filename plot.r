@@ -39,10 +39,6 @@ output$plot1 <- renderPlot({
   iBeg = (pageNum)*nPlots + 1
   iEnd = (pageNum + 1)*nPlots
   
-  print(iBeg)
-  print(iEnd)
-  
-  library(RColorBrewer)
   
   filteredData = filterData()
   
