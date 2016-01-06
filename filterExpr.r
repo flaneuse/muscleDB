@@ -48,7 +48,8 @@ filterData <- reactive({
     filtered = data %>% 
       select_("-contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
-             shortName %like% geneInput,  # gene symbol
+             grepl(eval(geneInput), shortName, ignore.case = TRUE),
+             # shortName %like% geneInput,  # gene symbol
              GO %like% ont)
     
   }  else if (input$adv == FALSE) {
