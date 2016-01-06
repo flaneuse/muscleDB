@@ -48,17 +48,27 @@ output$plot1 <- renderPlot({
   data2Plot = filteredData %>% 
     filter(transcript %in% transcriptList)
   
-  maxExpr = max(data2Plot$expr)
   
-  yLim = c(-0.1*maxExpr, maxExpr)
-  
-  ggplot(data2Plot, aes(y= expr, x=tissue, label = round(expr, 1))) +
-    coord_flip(ylim = yLim) +
-    geom_bar(stat = "identity", fill = 'dodgerblue') +
-    geom_text(aes(x = tissue, y = 0), hjust = 1.1,
+  if(nrow(data2Plot) == 0) {
+    # no data
+    ggplot(data2Plot, aes(y= expr, x=tissue)) +
+      geom_blank() +
+      theme_void()
+    
+  } else {
+    print('yes')
+    maxExpr = max(data2Plot$expr)
+    
+    yLim = c(-0.1*maxExpr, maxExpr)
+    
+    ggplot(data2Plot, aes(y= expr, x=tissue, label = round(expr, 1))) +
+      coord_flip(ylim = yLim) +
+      geom_bar(stat = "identity", fill = 'dodgerblue') +
+      geom_text(aes(x = tissue, y = 0), hjust = 1.1,
                 family = 'Segoe UI Light', 
-               colour = 'blue') +
-    facet_wrap(~transcript) +
-    theme_xOnly()
+                colour = 'blue') +
+      facet_wrap(~transcript) +
+      theme_xOnly()
+  }
   
 })
