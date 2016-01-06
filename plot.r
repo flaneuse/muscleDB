@@ -46,7 +46,8 @@ output$plot1 <- renderPlot({
   transcriptList = unique(filteredData$transcript)[iBeg:iEnd]
   
   data2Plot = filteredData %>% 
-    filter(transcript %in% transcriptList)
+    filter(transcript %in% transcriptList) %>% 
+    mutate(transFacet = paste0(gene, '(', transcript, ')')) # Merge names for more informative output.
   
   
   if(nrow(data2Plot) == 0) {
@@ -56,7 +57,6 @@ output$plot1 <- renderPlot({
       theme_void()
     
   } else {
-    print('yes')
     maxExpr = max(data2Plot$expr)
     
     yLim = c(-0.1*maxExpr, maxExpr)
@@ -67,7 +67,7 @@ output$plot1 <- renderPlot({
       geom_text(aes(x = tissue, y = 0), hjust = 1.1,
                 family = 'Segoe UI Light', 
                 colour = 'blue') +
-      facet_wrap(~transcript) +
+      facet_wrap(~transFacet) +
       theme_xOnly()
   }
   
