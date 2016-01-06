@@ -1,6 +1,15 @@
 shinyServer(
   function(input, output, session) {
     
+    # SELECTIZE ---------------------------------------------------------------
+    
+    populateSelectize <- reactive({
+      updateSelectizeInput(session, 'GO', choices = GOs, 
+                           options = list(placeholder = "search ontology"), 
+                           server = TRUE)
+    })
+    
+    
     # FILTER ------------------------------------------------------------------
     
     # FILTER: Based on the inputs given by the users, filter down the large db into 
@@ -82,3 +91,4 @@ shinyServer(
     
     
   })
+

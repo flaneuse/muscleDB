@@ -7,7 +7,13 @@ sidebar <- dashboardSidebar(
   sidebarSearchForm(label = "search symbol (Myod1)", "geneInput", "searchButton"),
   
   # Search form for ontology
-  sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
+  # sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
+  selectizeInput('GO', label = 'search ontology', 
+                 choices = NULL, 
+                 multiple = TRUE, 
+                 options = list(maxOptions = 500,
+                                placeholder = 'search ontology',
+                                onInitialize = I('function() { this.setValue(""); }'))),
   
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,

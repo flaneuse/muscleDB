@@ -2,13 +2,23 @@
 # the inputs change.
 filterData <- reactive({
   
+  
+  # Selectize GO input ------------------------------------------------------
+  populateSelectize()
+  
+  
   # Gene and muscle filtering -----------------------------------------------
   
   # Per1, Per2, Per3, ....
   # Note: to change to exact matching, include '$' at the end of the string.
   # geneInput = paste0(input$geneInput, '%') # For SQL-based filtering
   geneInput = paste0('^', input$geneInput)
-  ont = paste0(input$GO)
+  
+  if(is.null(input$GO)){
+    ont = ""
+  } else {
+    input$GO
+  }
   
   # For fold change, adding in the FC-selected muscle if it's not already in the list
   if(input$adv == TRUE & input$ref != 'none') {
@@ -107,16 +117,16 @@ filterData <- reactive({
       
       # Check that there's something to reshape.
       if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
-      # Reshape to wide.
-      filtered = data.table::dcast(filtered, 
-                                   transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
-                                   value.var = 'expr') %>% 
-        # Calc fold change
-        mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
-        # filter on fold change
-        mutate(logFC = log10(FC),
-               id = 1:nrow(filtered),
-               logQ = -log10(q))
+        # Reshape to wide.
+        filtered = data.table::dcast(filtered, 
+                                     transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
+                                     value.var = 'expr') %>% 
+          # Calc fold change
+          mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
+          # filter on fold change
+          mutate(logFC = log10(FC),
+                 id = 1:nrow(filtered),
+                 logQ = -log10(q))
       } else {
         filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
       }
@@ -172,8 +182,6 @@ filterData <- reactive({
   
   return(filtered)
 })
-
-
 
 
 
