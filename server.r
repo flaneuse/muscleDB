@@ -77,6 +77,36 @@ shinyServer(
     
     
     # VOLCANO PLOT ------------------------------------------------------------
+    
+    # When a double-click happens, check if there's a brush on the plot.
+    # If so, zoom to the brush bounds; if not, reset the zoom.
+    # Code from RStudio (thanks, guys) http://shiny.rstudio.com/gallery/plot-interaction-zoom.html
+    
+    # Single zoomable plot (on left)
+    ranges <- reactiveValues(x = NULL, y = NULL)
+    
+    # output$volcanoPlot <- renderPlot({
+    #   ggplot(mtcars, aes(wt, mpg)) +
+    #     geom_point() +
+    #     coord_cartesian(xlim = ranges$x, ylim = ranges$y)
+    # })
+    # 
+    
+    # When a double-click happens, check if there's a brush on the plot.
+    # If so, zoom to the brush bounds; if not, reset the zoom.
+    observeEvent(input$volcanoDblclick, {
+      brush <- input$volcanoBrush
+      if (!is.null(brush)) {
+        ranges$x <- c(brush$xmin, brush$xmax)
+        ranges$y <- c(brush$ymin, brush$ymax)
+        
+      } else {
+        ranges$x <- NULL
+        ranges$y <- NULL
+      }
+    })
+    
+    
     output$m1 = renderUI(
            selectInput('muscle1', label = 'muscle 1',
                        choices = input$muscles,

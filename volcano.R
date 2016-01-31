@@ -31,6 +31,7 @@ output$volcanoPlot <- renderPlot({
 # Temporary plot to be replaced by interactive version.  
   ggplot(filteredData, aes(y = logQ, x = logFC)) +
     geom_point(size = 3, alpha  = 0.3, colour = 'dodgerblue') +
+    coord_cartesian(xlim = ranges$x, ylim = ranges$y) +
     theme(title = element_text(size = 32, color = grey90K),
           axis.line = element_blank(),
           axis.ticks = element_blank(),
