@@ -18,32 +18,46 @@ filteredData = left_join(filteredData, refExpr, by = 'tissue')
 
 
 pairwise = spread(filteredData %>% select(tissue, transcript, expr, refExpr),
-transcript, expr) %>% 
+                  transcript, expr) %>% 
   select(-tissue)
 
 correl = data.frame(cor(pairwise)) %>% 
-  select(refExpr) 
+  select(corr = refExpr) 
 
 correl = correl %>%
   mutate(transcript = row.names(correl)) %>% 
   filter(transcript != 'refExpr')
 
+filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE)
+
 
 yMax = max(abs(min(filteredData$refExpr)), max(filteredData$expr))
 
-ggplot(filteredData, aes(y = expr, x = tissue)) +
-  geom_bar(stat = 'identity', fill = 'dodgerblue') +
-  geom_bar(aes(y = refExpr), 
-           stat = 'identity', fill = grey50K) +
-  coord_flip() +
-  facet_wrap(~transcript) +
-  scale_y_continuous(limits = c(-1*yMax, yMax)) +
-  theme_xgrid() +
-  theme(panel.grid.major.x = element_line(colour = 'white', size = 0.3),
-        panel.ontop = TRUE)
+shading <- data.frame(x1 = c(0.8, 3.5, 0.8),
+                          y1 = c(0.8, 3.5, 3.5),
+                      x2 = c(0.8, 3.5, 3.5),
+                      y2 = c(0.8, 0.8, 3.5),
+                          group = c(1, 1, 1))
+
+# ggplot(filteredData, aes(y = expr, x = tissue)) +
+#   geom_bar(stat = 'identity', fill = 'dodgerblue') +
+#   geom_bar(aes(y = refExpr), 
+#            stat = 'identity', fill = grey50K) +
+#   coord_flip() +
+#   facet_wrap(~transcript) +
+#   scale_y_continuous(limits = c(-1*yMax, yMax)) +
+#   theme_xgrid() +
+#   theme(panel.grid.major.x = element_line(colour = 'white', size = 0.3),
+#         panel.ontop = TRUE)
 
 ggplot(filteredData, aes(x = expr, y = refExpr,
                          colour = tissue)) +
+  geom_polygon(aes(x = x1, y = y1, group = group), 
+               fill = grey15K,  colour = NA,
+               data = shading, alpha  = 0.3) +
+  geom_polygon(aes(x = x2, y = y2, group = group), 
+               fill = grey30K,  colour = NA,
+               data = shading, alpha = 0.3) +
   geom_abline(slope = 1, intercept = 0,
               colour = grey40K, size = 0.5,
               linetype = 2) +
@@ -70,17 +84,17 @@ ggplot(filteredData, aes(x = expr, y = refExpr,
                           'plantaris' = '#7bccc4',
                           'soleus' = '#33a02c',
                           'tongue' = '#b2df8a'))
-  
-  # 
-  #   # Temporary plgot to be replaced by interactive version.
-  #   filteredData %>%   
-  #     group_by(transcript) %>% 
-  #     ggvis(x = ~tissue, y = ~expr2, colour =: ~transcript) %>%
-  #     layer_bars()
-  # })%>% bind_shiny("compPlot")
-  # 
-  # # 
-  mtcars %>%   ggvis(~mpg, ~wt) %>%
+
+# 
+#   # Temporary plgot to be replaced by interactive version.
+#   filteredData %>%   
+#     group_by(transcript) %>% 
+#     ggvis(x = ~tissue, y = ~expr2, colour =: ~transcript) %>%
+#     layer_bars()
+# })%>% bind_shiny("compPlot")
+# 
+# # 
+mtcars %>%   ggvis(~mpg, ~wt) %>%
   layer_points() %>%
   layer_smooths() %>%
   bind_shiny("compPlot")
