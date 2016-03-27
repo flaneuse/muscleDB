@@ -10,4 +10,4 @@ In this repository, we’re developing a web-based platform to explore, visualiz
 please vote for your preferred tissues [here](https://docs.google.com/forms/d/1iL9V7HPm5CRekPrkrPmLciZmNWK-g09elIYLnFbV59g/viewform?usp=send_form). 
 
 * If there are any compelling reasons you'd like us to consider your favorite tissues, 
-please email muscle.transcriptome.atlas@gmail.com
+please email muscle.database@gmail.com
