@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
-		<title>My blog</title>
+		<title>MuscleDB</title>
 		<description>A jekyll theme</description>
-		<link>https://scotte.github.io/jekyll-clean/jekyll-clean</link>
-		<atom:link href="https://scotte.github.io/jekyll-clean/jekyll-clean/feed.xml" rel="self" type="application/rss+xml" />
+		<link>https://flaneuse.github.io/muscleDB/muscleDB</link>
+		<atom:link href="https://flaneuse.github.io/muscleDB/muscleDB/feed.xml" rel="self" type="application/rss+xml" />
 		
 	</channel>
 </rss>
