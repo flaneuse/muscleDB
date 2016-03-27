@@ -43,6 +43,9 @@ shinyServer(
     # PLOT output
     source("plot.R", local = TRUE)
     
+    # COMPARISON output
+    source("comparison.R", local = TRUE)
+    
     # PCA ---------------------------------------------------------------------
     
     # # PCA output

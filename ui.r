@@ -71,7 +71,7 @@ sidebar <- dashboardSidebar(
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
     # menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
-    # menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
+    menuItem("compare genes", tabName = "compare", icon = icon("line-chart")),
     menuItem("code", tabName = "code", icon = icon("code"))
   )
 )
@@ -183,6 +183,10 @@ body <- dashboardBody(
     #                  column(7,infoBoxOutput("PCAstats")))),
     # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
     
+    
+    # -- Compare genes --
+    tabItem(tabName = "compare",
+            fluidRow(ggvisOutput("compPlot"))),
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 
