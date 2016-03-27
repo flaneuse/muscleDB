@@ -17,3 +17,8 @@ please vote for your preferred tissues [here](https://docs.google.com/forms/d/1i
 * If there are any compelling reasons you'd like us to consider your favorite tissues, 
 please email muscle.transcriptome.atlas@gmail.com
 
+
+### Acknowledgements
+
+* This site was built using <a href="http://jekyllrb.com">Jekyll</a>, based on a theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+* This content can be shared and adapted for non-commercial purposes under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/2.0/)
