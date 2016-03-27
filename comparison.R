@@ -50,6 +50,9 @@ shading <- data.frame(x1 = c(0.8, 3.5, 0.8),
 #   theme(panel.grid.major.x = element_line(colour = 'white', size = 0.3),
 #         panel.ontop = TRUE)
 
+xMin = 0.8
+yMax = 3.5
+
 ggplot(filteredData, aes(x = expr, y = refExpr,
                          colour = tissue)) +
   geom_polygon(aes(x = x1, y = y1, group = group), 
@@ -61,11 +64,17 @@ ggplot(filteredData, aes(x = expr, y = refExpr,
   geom_abline(slope = 1, intercept = 0,
               colour = grey40K, size = 0.5,
               linetype = 2) +
+  annotate(geom = 'text', x = xMin, y = yMax * 0.95,
+           hjust = 0, 
+           label = 'lower expression than ref.', colour = grey70K, size = 3) +
+  annotate(geom = 'text', x = yMax * 0.95, y = xMin*0.95,
+           hjust = 1,
+           label = 'higher expression than ref.', colour = grey90K, size = 3) +
   # geom_smooth(method = "lm", se = FALSE, 
   # colour = grey40K, size = 0.5) +
   geom_point(size = 4) +
   facet_wrap(~transcript) +
-  ylab('uc007afc') +
+  ylab('ref. - uc007afc') +
   theme_xygrid() +
   theme(axis.title.x = element_blank()) +
   coord_cartesian(xlim = c(0.8, 3.5), ylim = c(0.8, 3.5)) +
