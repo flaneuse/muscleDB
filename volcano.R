@@ -2,7 +2,7 @@
 
 output$volcanoTable <- renderDataTable({
   filtered = filterData()
-  
+  brushedPoints(filtered, input$volcanoBrush)
 },  
 escape = c(-1,-2, -3),
 options = list(searching = TRUE, stateSave = TRUE,
