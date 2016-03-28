@@ -5,4 +5,5 @@ layout: default
 
 # Using MuscleDB
 
-1. Queries aren't case sensitive.
+  <li><a href="/muscleDB/2016/03/basicSearches">Basic Searching</a></li>
+  <li><a href="muscleDB/2016/03/advancedFiltering">Advanced Filtering</a></li>
