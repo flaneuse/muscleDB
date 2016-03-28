@@ -1,14 +1,14 @@
 output$compPlot = renderPlotly({
-  transcriptList = c('uc033fhy', 'uc007afa')
+
+  filteredData = filterData()
   
-  refExpr = data %>% 
-    filter(transcript == 'uc007afc') %>% 
+  refGene = filteredData$transcript[1]
+  
+  refExpr = filteredData %>% 
+    filter(transcript == refGene) %>% 
     mutate(refExpr = expr) %>% 
     select(tissue, refExpr)
   
-  
-  filteredData = data %>%
-    filter(transcript %in% transcriptList)
   
   filteredData = left_join(filteredData, refExpr, by = 'tissue')
   
@@ -24,20 +24,22 @@ output$compPlot = renderPlotly({
     mutate(transcript = row.names(correl)) %>% 
     filter(transcript != 'refExpr')
   
-  filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE)
+  filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE) %>% 
+    mutate(transFacet = paste0(gene, '(', transcript, ')'))
   
   
-  yMax = max(abs(min(filteredData$refExpr)), max(filteredData$expr))
+  yMax = max(max(filteredData$refExpr), max(filteredData$expr))
+  yMin = min(min(filteredData$refExpr), min(filteredData$expr))
   
-  shading <- data.frame(x1 = c(0.8, 3.5, 0.8),
-                        y1 = c(0.8, 3.5, 3.5),
-                        x2 = c(0.8, 3.5, 3.5),
-                        y2 = c(0.8, 0.8, 3.5),
+  
+  shading <- data.frame(x1 = c(yMin, yMax, yMin),
+                        y1 = c(yMin, yMax, yMax),
+                        x2 = c(yMin, yMax, yMax),
+                        y2 = c(yMin, yMin, yMax),
                         group = c(1, 1, 1))
   
   
-  xMin = 0.8
-  yMax = 3.5
+
   
   x = ggplot(filteredData, aes(x = expr, y = refExpr,
                                colour = tissue)) +
@@ -50,16 +52,16 @@ output$compPlot = renderPlotly({
     geom_abline(slope = 1, intercept = 0,
                 colour = grey40K, size = 0.5,
                 linetype = 2) +
-    annotate(geom = 'text', x = xMin, y = yMax * 0.95,
+    annotate(geom = 'text', x = yMin, y = yMax * 0.95,
              hjust = 0, 
              label = 'lower expression than ref.', colour = grey70K, size = 3) +
-    annotate(geom = 'text', x = yMax * 0.95, y = xMin*1.05,
+    annotate(geom = 'text', x = yMax * 0.95, y = yMin*1.05,
              hjust = 1,
              label = 'higher expression than ref.', colour = grey90K, size = 3) +
     # geom_smooth(method = "lm", se = FALSE, 
     # colour = grey40K, size = 0.5) +
     geom_point(size = 4) +
-    facet_wrap(~transcript) +
+    facet_wrap(~transFacet) +
     ylab('ref. - uc007afc') +
     theme_bw() +
     theme(
@@ -80,7 +82,7 @@ output$compPlot = renderPlotly({
       panel.grid.minor.x = element_blank(),
       panel.grid.major.x = element_line(size = 0.2, color = grey80K),
       axis.title.x = element_blank()) +
-    coord_cartesian(xlim = c(0.8, 3.5), ylim = c(0.8, 3.5)) +
+    coord_cartesian(xlim = c(yMin, yMax), ylim = c(yMin, yMax)) +
     scale_colour_manual(values = 
                           c('total aorta' = '#b15928',
                             'thoracic aorta' = '#ffff99',
