@@ -1,118 +1,126 @@
-# comparison = reactive({
-#   filteredData = filterData()
-# 
-library(llamar)
-
-transcriptList = c('uc033fhy', 'uc007afa')
-
-refExpr = data %>% 
-  filter(transcript == 'uc007afc') %>% 
-  mutate(refExpr = expr) %>% 
-  select(tissue, refExpr)
-
-
-filteredData = data %>%
-  filter(transcript %in% transcriptList)
-
-filteredData = left_join(filteredData, refExpr, by = 'tissue')
-
-
-pairwise = spread(filteredData %>% select(tissue, transcript, expr, refExpr),
-                  transcript, expr) %>% 
-  select(-tissue)
-
-correl = data.frame(cor(pairwise)) %>% 
-  select(corr = refExpr) 
-
-correl = correl %>%
-  mutate(transcript = row.names(correl)) %>% 
-  filter(transcript != 'refExpr')
-
-filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE)
-
-
-yMax = max(abs(min(filteredData$refExpr)), max(filteredData$expr))
-
-shading <- data.frame(x1 = c(0.8, 3.5, 0.8),
-                          y1 = c(0.8, 3.5, 3.5),
-                      x2 = c(0.8, 3.5, 3.5),
-                      y2 = c(0.8, 0.8, 3.5),
-                          group = c(1, 1, 1))
-
-# ggplot(filteredData, aes(y = expr, x = tissue)) +
-#   geom_bar(stat = 'identity', fill = 'dodgerblue') +
-#   geom_bar(aes(y = refExpr), 
-#            stat = 'identity', fill = grey50K) +
-#   coord_flip() +
-#   facet_wrap(~transcript) +
-#   scale_y_continuous(limits = c(-1*yMax, yMax)) +
-#   theme_xgrid() +
-#   theme(panel.grid.major.x = element_line(colour = 'white', size = 0.3),
-#         panel.ontop = TRUE)
-
-xMin = 0.8
-yMax = 3.5
-
-ggplot(filteredData, aes(x = expr, y = refExpr,
-                         colour = tissue)) +
-  geom_polygon(aes(x = x1, y = y1, group = group), 
-               fill = grey15K,  colour = NA,
-               data = shading, alpha  = 0.3) +
-  geom_polygon(aes(x = x2, y = y2, group = group), 
-               fill = grey30K,  colour = NA,
-               data = shading, alpha = 0.3) +
-  geom_abline(slope = 1, intercept = 0,
-              colour = grey40K, size = 0.5,
-              linetype = 2) +
-  annotate(geom = 'text', x = xMin, y = yMax * 0.95,
-           hjust = 0, 
-           label = 'lower expression than ref.', colour = grey70K, size = 3) +
-  annotate(geom = 'text', x = yMax * 0.95, y = xMin*0.95,
-           hjust = 1,
-           label = 'higher expression than ref.', colour = grey90K, size = 3) +
-  # geom_smooth(method = "lm", se = FALSE, 
-  # colour = grey40K, size = 0.5) +
-  geom_point(size = 4) +
-  facet_wrap(~transcript) +
-  ylab('ref. - uc007afc') +
-  theme_xygrid() +
-  theme(axis.title.x = element_blank()) +
-  coord_cartesian(xlim = c(0.8, 3.5), ylim = c(0.8, 3.5)) +
-  scale_colour_manual(values = 
-                        c('total aorta' = '#b15928',
-                          'thoracic aorta' = '#ffff99',
-                          'AA' = '#fed976',
-                          'atria' = '#ff7f00',
-                          'left ventricle' = '#e31a1c',
-                          'right ventricle' = '#fb9a99',
-                          'diaphragm' = '#6a3d9a',
-                          'eye' = '#cab2d6',
-                          'EDL' = '#1f78b4',
-                          'FDB' = '#a6cee3',
-                          'masseter' = '#1d91c0',
-                          'plantaris' = '#7bccc4',
-                          'soleus' = '#33a02c',
-                          'tongue' = '#b2df8a'))
-
-# 
-#   # Temporary plgot to be replaced by interactive version.
-#   filteredData %>%   
-#     group_by(transcript) %>% 
-#     ggvis(x = ~tissue, y = ~expr2, colour =: ~transcript) %>%
-#     layer_bars()
-# })%>% bind_shiny("compPlot")
-# 
+output$compPlot = renderPlotly({
+  transcriptList = c('uc033fhy', 'uc007afa')
+  
+  refExpr = data %>% 
+    filter(transcript == 'uc007afc') %>% 
+    mutate(refExpr = expr) %>% 
+    select(tissue, refExpr)
+  
+  
+  filteredData = data %>%
+    filter(transcript %in% transcriptList)
+  
+  filteredData = left_join(filteredData, refExpr, by = 'tissue')
+  
+  
+  pairwise = spread(filteredData %>% select(tissue, transcript, expr, refExpr),
+                    transcript, expr) %>% 
+    select(-tissue)
+  
+  correl = data.frame(cor(pairwise)) %>% 
+    select(corr = refExpr) 
+  
+  correl = correl %>%
+    mutate(transcript = row.names(correl)) %>% 
+    filter(transcript != 'refExpr')
+  
+  filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE)
+  
+  
+  yMax = max(abs(min(filteredData$refExpr)), max(filteredData$expr))
+  
+  shading <- data.frame(x1 = c(0.8, 3.5, 0.8),
+                        y1 = c(0.8, 3.5, 3.5),
+                        x2 = c(0.8, 3.5, 3.5),
+                        y2 = c(0.8, 0.8, 3.5),
+                        group = c(1, 1, 1))
+  
+  
+  xMin = 0.8
+  yMax = 3.5
+  
+  x = ggplot(filteredData, aes(x = expr, y = refExpr,
+                               colour = tissue)) +
+    geom_polygon(aes(x = x1, y = y1, group = group), 
+                 fill = grey15K,  colour = NA,
+                 data = shading, alpha  = 0.3) +
+    geom_polygon(aes(x = x2, y = y2, group = group), 
+                 fill = grey30K,  colour = NA,
+                 data = shading, alpha = 0.3) +
+    geom_abline(slope = 1, intercept = 0,
+                colour = grey40K, size = 0.5,
+                linetype = 2) +
+    annotate(geom = 'text', x = xMin, y = yMax * 0.95,
+             hjust = 0, 
+             label = 'lower expression than ref.', colour = grey70K, size = 3) +
+    annotate(geom = 'text', x = yMax * 0.95, y = xMin*1.05,
+             hjust = 1,
+             label = 'higher expression than ref.', colour = grey90K, size = 3) +
+    # geom_smooth(method = "lm", se = FALSE, 
+    # colour = grey40K, size = 0.5) +
+    geom_point(size = 4) +
+    facet_wrap(~transcript) +
+    ylab('ref. - uc007afc') +
+    theme_bw() +
+    theme(
+      text = element_text(colour = grey80K),
+      plot.title = element_text(hjust = 0),
+      rect = element_blank(),
+      plot.background = element_blank(),
+      axis.text = element_text(size = 12,  color = grey80K),
+      title =  element_text(size = 15, hjust = 0, color = grey90K),
+      axis.title =  element_text(size = 14,  color = grey80K, hjust = 0.5, vjust = -0.25),
+      strip.text = element_text(size=14, face = 'bold', hjust = 0.05, vjust = -2.5, color = grey70K),
+      legend.position = 'none',
+      strip.background = element_blank(),
+      axis.ticks = element_blank(),
+      panel.margin = unit(3, 'lines'),
+      panel.grid.major.y = element_line(size = 0.2, color = grey80K),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_line(size = 0.2, color = grey80K),
+      axis.title.x = element_blank()) +
+    coord_cartesian(xlim = c(0.8, 3.5), ylim = c(0.8, 3.5)) +
+    scale_colour_manual(values = 
+                          c('total aorta' = '#b15928',
+                            'thoracic aorta' = '#ffff99',
+                            'AA' = '#fed976',
+                            'atria' = '#ff7f00',
+                            'left ventricle' = '#e31a1c',
+                            'right ventricle' = '#fb9a99',
+                            'diaphragm' = '#6a3d9a',
+                            'eye' = '#cab2d6',
+                            'EDL' = '#1f78b4',
+                            'FDB' = '#a6cee3',
+                            'masseter' = '#1d91c0',
+                            'plantaris' = '#7bccc4',
+                            'soleus' = '#33a02c',
+                            'tongue' = '#b2df8a'))
+  
+  
+  
+  ggplotly(x)
+  
+})
 # # 
-mtcars %>%   ggvis(~mpg, ~wt) %>%
-  layer_points() %>%
-  layer_smooths() %>%
-  bind_shiny("compPlot")
-
-
-# n= n %>% mutate(expr1 = n/maxN)
-
-# n %>% ggvis(x=~c(1:8), y=~expr/maxN) %>% 
-#   layer_bars(fill:="dodgerblue") %>%
-#   scale_numeric("y", domain = c(0, 1)) %>%
-#                   hide_axis("y") %>%
-#                   hide_axis("x")
+# #   # Temporary plgot to be replaced by interactive version.
+# #   filteredData %>%   
+# #     group_by(transcript) %>% 
+# #     ggvis(x = ~tissue, y = ~expr2, colour =: ~transcript) %>%
+# #     layer_bars()
+# # })%>% bind_shiny("compPlot")
+# # 
+# # # 
+# mtcars %>%   ggvis(~mpg, ~wt) %>%
+#   layer_points() %>%
+#   layer_smooths() %>%
+#   bind_shiny("compPlot")
+# 
+# 
+# # n= n %>% mutate(expr1 = n/maxN)
+# 
+# # n %>% ggvis(x=~c(1:8), y=~expr/maxN) %>% 
+# #   layer_bars(fill:="dodgerblue") %>%
+# #   scale_numeric("y", domain = c(0, 1)) %>%
+# #                   hide_axis("y") %>%
+# #                   hide_axis("x")

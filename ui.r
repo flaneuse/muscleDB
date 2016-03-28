@@ -186,7 +186,7 @@ body <- dashboardBody(
     
     # -- Compare genes --
     tabItem(tabName = "compare",
-            fluidRow(ggvisOutput("compPlot"))),
+            fluidRow(plotlyOutput("compPlot"))),
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 

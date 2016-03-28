@@ -8,6 +8,8 @@ library(ggvis)
 library(ggplot2)
 library(rCharts)
 library(data.table)
+library(llamar)
+library(plotly)
 
 
 
