@@ -76,71 +76,11 @@ A database of muscle tissue gene expression data
 
         </div>
         <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/muscleDB/2016/03/advancedFiltering">Mar 27, 2016 - Advanced Filtering</a></h1>
             
-<div class="article">
-    <div class="well">
-        <h1><a href="/muscleDB/2016/03/basicSearches">Mar 27, 2016 - Basic Searching</a></h1>
-        
-        <div class="content">
-            <h1 id="basic-searches-in-muscledb">Basic Searches in MuscleDB</h1>
-
-<p>When you search the atlas, you can filter the database by: <br />
-    1. gene symbol (like ‘Per1’)<br />
-    2. gene ontology (like ‘GTPase activity’)<br />
-    3. muscle tissue type<br />
-    4. expression level<br />
-    5. p-value (statistically significant difference between tissues (based on a two-way ANOVA))<br />
-    6. change in expression, relative to another tissue type.</p>
-
-<h1 id="starting-a-basic-search">Starting a basic search</h1>
-<p>All the search options are located in a menu at the far left side, in charcoal grey. To hide or show the options, click the three lines just to the right of the MuscleDB title at the very top of the page.</p>
-
-<h4 id="by-gene-symbol">by gene symbol</h4>
-<p>If you want to search by gene name, you’ll need to know the NCBI Gene Symbol or the UCSC transcript name. 
-For instance, for the gene period circadian clock 1, you can enter either <a href="http://www.ncbi.nlm.nih.gov/gene/18626" target="_blank">Per1</a> or <a href="https://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc007jpf.1&amp;db=mm10" target="_blank">uc007jpf.1</a> into the ‘select a gene’ box.</p>
-
-<ul>
-  <li>Searches are case-insensitive (it doesn’t matter if you type “Per” or “per” or even “PER”).</li>
-  <li>All searches will start with the gene symbol name. So when you enter “per”, you will get <a href="http://www.ncbi.nlm.nih.gov/gene/18626" target="_blank">Per1</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/18627" target="_blank">Per2</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/74183" target="_blank">Perm1</a>, …</li>
-  <li>To return an exact query, add a <strong>$</strong> to the end of your search. For instance, to select <a href="http://www.ncbi.nlm.nih.gov/gene/14313" target="_blank">FST</a> and not <a href="http://www.ncbi.nlm.nih.gov/gene/14314" target="_blank">FSTL</a>, type “FST$”</li>
-  <li>To return a series of gene symbols that end in numbers, add <strong>[0-9]</strong> after the search term. For instance, to select Per1, Per2, and Per3 (but not Perm1), search “Per[0-9]”.</li>
-  <li>Nerdy detail: the search queries are built upon regular expression matching, so most <a href="http://regexr.com/" target="_blank">regex</a> syntax should work, with some modifications for R.</li>
-</ul>
-
-<h4 id="by-gene-ontology">by gene ontology</h4>
-<p>Let’s say you wanted instead to search by gene ontology — in other words, by gene class. 
-Select the ‘search ontology’ button, and enter your ontology term. In this example, we’ll look for all genes with GTPase activity.</p>
-
-<ul>
-  <li>As you start typing ‘GTPase activity’, a dropdown menu will appear with all the possible gene classes.</li>
-  <li>It may take a few seconds for the list of possiblities to pop up.</li>
-  <li>You can only select one gene ontology term.</li>
-  <li>You can combine searching both gene symbols and ontologies.</li>
-</ul>
-
-<h4 id="selecting-muscle-tissues">selecting muscle tissues</h4>
-<p>You can also select which muscle tissues interest you. By default, all tissues are checked. For this example, we’ll look at just expression in the atria and eye tissues. Deselect the other muscles in the toolbar at the left.</p>
-
-<h1 id="displaying-the-information">Displaying the information</h1>
-<p>At the bottom of the plot options, just below ‘advanced filtering’, are the different ways to display the data. You can choose to show:</p>
-
-<ul>
-  <li><strong>plot</strong> (default): a bar graph of the expression levels in the tissues (in FPKM, Fragments Per Kilobase per Million reads) for each transcript, and options to save the plots.</li>
-  <li><strong>table</strong>: numeric table with the gene symbols, transcript names, expression levels in the tissues (in FPKM, Fragments Per Kilobase per Million reads), and the q-value (difference between tissues from a two-way ANOVA).</li>
-  <li><strong>volcano plot</strong>: volcano plot comparing two muscles, showing the logarithm of q-value versus the logarithm of the fold-change in expression</li>
-  <li><strong>heat map</strong>: a dynamic heat map comparing the expression level of each transcript for each tissue.</li>
-  <li><strong>compare genes</strong>: a series of scatter plots comparing the expression levels to a particular reference tissue.</li>
-</ul>
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/muscleDB/2016/03/advancedFiltering">Mar 27, 2016 - Advanced Filtering</a></h1>
-        
-        <div class="content">
+            <div class="post-content">
             <h1 id="advanced-filtering-the-muscle-transcriptome-atlas">Advanced filtering the Muscle Transcriptome Atlas</h1>
 
 <p>Once you have basic searching down, you can further limit your search results by filtering by expression level, -value, and/or fold change.</p>
@@ -178,20 +118,22 @@ Select the ‘search ontology’ button, and enter your ontology term. In this e
   <li>Note that fold change filters are best used in conjunction with an expression filter. If the reference tissue has low expression (&lt; 1 FPKM), any fold change will be large since you’re dividing by a number less than zero.</li>
 </ul>
 
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+                <a class="btn btn-default" href="/muscleDB/2016/03/basicSearches" class="next">Newer Post</a>
+              
+              
+</div>
+
         </div>
     </div>
 </div>
 
 
-<div class="pagination">
-  
-  <span class="page_number ">Page: 1 of 1</span>
-  
-</div>
-
-        </div>
-    </div>
-</div>
 
 <div class="container-fluid">
     <div class="row-fluid">

@@ -63,5 +63,49 @@ Select the ‘search ontology’ button, and enter your ontology term. In this e
 				<guid isPermaLink="true">https://flaneuse.github.io/muscleDB/muscleDB/2016/03/basicSearches</guid>
 			</item>
 		
+			<item>
+				<title>Advanced Filtering</title>
+				<description>&lt;h1 id=&quot;advanced-filtering-the-muscle-transcriptome-atlas&quot;&gt;Advanced filtering the Muscle Transcriptome Atlas&lt;/h1&gt;
+
+&lt;p&gt;Once you have basic searching down, you can further limit your search results by filtering by expression level, -value, and/or fold change.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;expression level&lt;/strong&gt; allows you to select transcripts within a range of expression values (in FPKM)&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;q-value&lt;/strong&gt; allows you to select transcripts with q-values ≤ a value&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;fold change&lt;/strong&gt; allows you to select transcripts with a fold change in expression ≥ a value, relative to a reference tissue.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;filtering-by-expression-level&quot;&gt;Filtering by expression level&lt;/h1&gt;
+&lt;p&gt;To filter by expression level, tick the expression level box, located just below the search button. This will cause a dropdown menu to appear, where you can put in the minimum and maximum expression level values, in FPKM. For instance, you might want to filter out transcripts with very low expression levels (&amp;lt; 1 FPKM). The graphs and tables will automatically update.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If &lt;strong&gt;any&lt;/strong&gt; muscle tissue has expression within the range of values, the transcript will be included.&lt;/li&gt;
+  &lt;li&gt;The table will update, and the 1,462 transcripts we had is filtered down to 1,173&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;filtering-by-q-value&quot;&gt;Filtering by q-value&lt;/h1&gt;
+&lt;p&gt;To sort by q-value, tick the q-value box, located just below the search button. This will cause a dropdown menu to appear, where you can select the maximum q-value. The graphs and tables will automatically update.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;q is the false discovery rate, calculated using the Benjamini &amp;amp; Hochberg (1995) method&lt;/li&gt;
+  &lt;li&gt;q-values can be entered either as a decimal or in scientific notation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;filtering-by-fold-change&quot;&gt;Filtering by fold change&lt;/h1&gt;
+&lt;p&gt;To sort by fold change, tick the fold change box, located just below the search button. This will cause a dropdown menu to appear, where you can select the reference tissue and the numeric threshold for the fold change. The graphs and tables will automatically update.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Fold change for a transcript is calculated by dividing the expression of all the muscles relative to its expression in the reference tissue.&lt;/li&gt;
+  &lt;li&gt;Transcripts with fold changes ≥ to the threshold for &lt;strong&gt;any&lt;/strong&gt; of the muscle tissues will be selected.&lt;/li&gt;
+  &lt;li&gt;As a result, the filtered transcripts will be ones where the expression is upregulated relative to the reference tissue.&lt;/li&gt;
+  &lt;li&gt;If the reference tissue isn’t one of the muscles selected in the muscle filter, it will be added.&lt;/li&gt;
+  &lt;li&gt;Note that fold change filters are best used in conjunction with an expression filter. If the reference tissue has low expression (&amp;lt; 1 FPKM), any fold change will be large since you’re dividing by a number less than zero.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Sun, 27 Mar 2016 00:00:00 -0400</pubDate>
+				<link>https://flaneuse.github.io/muscleDB/muscleDB/2016/03/advancedFiltering</link>
+				<guid isPermaLink="true">https://flaneuse.github.io/muscleDB/muscleDB/2016/03/advancedFiltering</guid>
+			</item>
+		
 	</channel>
 </rss>
