@@ -63,7 +63,7 @@ A database of muscle tissue gene expression data
 <div class="sidebar well">
 <h1>Links</h1>
 <ul>
-  <li><a href="/muscleDB/2016/03/basicSearches/">Basic Searching</a></li>
+  <li><a href="/muscleDB/2016/03/basicSearches">Basic Searching</a></li>
   <li><a href="#">Advanced Filtering</a></li>
   <li><a href="#">Plot Types</a></li>
   <li><a href="#">Saving Data</a></li>
@@ -96,12 +96,24 @@ A database of muscle tissue gene expression data
 <p>If you want to search by gene name, you’ll need to know the NCBI Gene Symbol or the UCSC transcript name. 
 For instance, for the gene period circadian clock 1, you can enter either <a href="http://www.ncbi.nlm.nih.gov/gene/18626" target="_blank">Per1</a> or <a href="https://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc007jpf.1&amp;db=mm10" target="_blank">uc007jpf.1</a> into the ‘select a gene’ box.</p>
 
+<ul>
+  <li>Searches are case-insensitive (it doesn’t matter if you type “Per” or “per” or even “PER”).</li>
+  <li>All searches will start with the gene symbol name. So when you enter “per”, you will get <a href="http://www.ncbi.nlm.nih.gov/gene/18626" target="_blank">Per1</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/18627" target="_blank">Per2</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/74183" target="_blank">Perm1</a>, …</li>
+  <li>To return an exact query, add a <strong>$</strong> to the end of your search. For instance, to select <a href="http://www.ncbi.nlm.nih.gov/gene/14313" target="_blank">FST</a> and not <a href="http://www.ncbi.nlm.nih.gov/gene/14314" target="_blank">FSTL</a>, type “FST$”</li>
+  <li>To return a series of gene symbols that end in numbers, add <strong>[0-9]</strong> after the search term. For instance, to select Per1, Per2, and Per3 (but not Perm1), search “Per[0-9]”.</li>
+  <li>Nerdy detail: the search queries are built upon regular expression matching, so most <a href="http://regexr.com/" target="_blank">regex</a> syntax should work, with some modifications for R.</li>
+</ul>
+
 <h4 id="by-gene-ontology">by gene ontology</h4>
 <p>Let’s say you wanted instead to search by gene ontology — in other words, by gene class. 
-Select the ‘search ontology’ button, and enter your ontology term. In this example, we’ll look for all genes with GTPase activity. As you start typing ‘GTPase activity’, a dropdown menu will appear with all the possible gene classes.
-It may take a few seconds for the list of possiblities to pop up.
-You can add as many gene names or ontology terms from the list; just click to add them.
-At this time, you can only search gene names OR ontologies, not both at the same time.</p>
+Select the ‘search ontology’ button, and enter your ontology term. In this example, we’ll look for all genes with GTPase activity.</p>
+
+<ul>
+  <li>As you start typing ‘GTPase activity’, a dropdown menu will appear with all the possible gene classes.</li>
+  <li>It may take a few seconds for the list of possiblities to pop up.</li>
+  <li>You can only select one gene ontology term.</li>
+  <li>You can combine searching both gene symbols and ontologies.</li>
+</ul>
 
 <h4 id="selecting-muscle-tissues">selecting muscle tissues</h4>
 <p>You can also select which muscle tissues interest you. By default, all tissues are checked. For this example, we’ll look at just expression in the atria and eye tissues. Deselect the other muscles in the toolbar at the left.</p>
