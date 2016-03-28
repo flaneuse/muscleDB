@@ -80,7 +80,7 @@ sidebar <- dashboardSidebar(
 
 # Header ------------------------------------------------------------------
 header <- dashboardHeader(
-  title = "MuscleDB",
+  title = "MuscleDB: beta",
   # -- Message bar --
   dropdownMenu(type = "messages", badgeStatus = NULL, icon = icon("question-circle"),
                messageItem("Muscle Transcriptome Atlas",
@@ -107,7 +107,7 @@ body <- dashboardBody(
   # -- Import custom CSS --
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css")),
-  
+
   # -- Each tab --
   tabItems(
     
@@ -174,7 +174,7 @@ body <- dashboardBody(
                             fluidRow(br()),
                             # fluidRow(actionButton('saveVolcano', 'save selected rows')),
                             fluidRow(br())))),
-                            # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
+    # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
     # tabItem(tabName = "PCA", 
     #         fluidRow(column(5,
@@ -205,7 +205,7 @@ body <- dashboardBody(
                             checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
                      ))
             # fluidRow(plotOutput("heatmapScale"))
-            ),
+    ),
     
     # -- Code --
     tabItem(tabName = "code",
