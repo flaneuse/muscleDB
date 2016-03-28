@@ -2,9 +2,54 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>MuscleDB</title>
-		<description>A jekyll theme</description>
+		<description>A database of muscle tissue gene expression data</description>
 		<link>https://flaneuse.github.io/muscleDB/muscleDB</link>
 		<atom:link href="https://flaneuse.github.io/muscleDB/muscleDB/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Basic Searching</title>
+				<description>&lt;h1 id=&quot;basic-searches-in-muscledb&quot;&gt;Basic Searches in MuscleDB&lt;/h1&gt;
+
+&lt;p&gt;When you search the atlas, you can filter the database by: &lt;br /&gt;
+    1. gene symbol (like ‘Per1’)&lt;br /&gt;
+    2. gene ontology (like ‘GTPase activity’)&lt;br /&gt;
+    3. muscle tissue type&lt;br /&gt;
+    4. expression level&lt;br /&gt;
+    5. p-value (statistically significant difference between tissues (based on a two-way ANOVA))&lt;br /&gt;
+    6. change in expression, relative to another tissue type.&lt;/p&gt;
+
+&lt;h1 id=&quot;starting-a-basic-search&quot;&gt;Starting a basic search&lt;/h1&gt;
+&lt;p&gt;All the search options are located in a menu at the far left side, in charcoal grey. To hide or show the options, click the three lines just to the right of the MuscleDB title at the very top of the page.&lt;/p&gt;
+
+&lt;h4 id=&quot;by-gene-symbol&quot;&gt;by gene symbol&lt;/h4&gt;
+&lt;p&gt;If you want to search by gene name, you’ll need to know the NCBI Gene Symbol or the UCSC transcript name. 
+For instance, for the gene period circadian clock 1, you can enter either &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/gene/18626&quot; target=&quot;_blank&quot;&gt;Per1&lt;/a&gt; or &lt;a href=&quot;https://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc007jpf.1&amp;amp;db=mm10&quot; target=&quot;_blank&quot;&gt;uc007jpf.1&lt;/a&gt; into the ‘select a gene’ box.&lt;/p&gt;
+
+&lt;h4 id=&quot;by-gene-ontology&quot;&gt;by gene ontology&lt;/h4&gt;
+&lt;p&gt;Let’s say you wanted instead to search by gene ontology — in other words, by gene class. 
+Select the ‘search ontology’ button, and enter your ontology term. In this example, we’ll look for all genes with GTPase activity. As you start typing ‘GTPase activity’, a dropdown menu will appear with all the possible gene classes.
+It may take a few seconds for the list of possiblities to pop up.
+You can add as many gene names or ontology terms from the list; just click to add them.
+At this time, you can only search gene names OR ontologies, not both at the same time.&lt;/p&gt;
+
+&lt;h4 id=&quot;selecting-muscle-tissues&quot;&gt;selecting muscle tissues&lt;/h4&gt;
+&lt;p&gt;You can also select which muscle tissues interest you. By default, all tissues are checked. For this example, we’ll look at just expression in the atria and eye tissues. Deselect the other muscles in the toolbar at the left.&lt;/p&gt;
+
+&lt;h1 id=&quot;displaying-the-information&quot;&gt;Displaying the information&lt;/h1&gt;
+&lt;p&gt;At the bottom of the plot options, just below ‘advanced filtering’, are the different ways to display the data. You can choose to show:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;plot&lt;/strong&gt; (default): a bar graph of the expression levels in the tissues (in FPKM, Fragments Per Kilobase per Million reads) for each transcript, and options to save the plots.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;table&lt;/strong&gt;: numeric table with the gene symbols, transcript names, expression levels in the tissues (in FPKM, Fragments Per Kilobase per Million reads), and the q-value (difference between tissues from a two-way ANOVA).&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;volcano plot&lt;/strong&gt;: volcano plot comparing two muscles, showing the logarithm of q-value versus the logarithm of the fold-change in expression&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;heat map&lt;/strong&gt;: a dynamic heat map comparing the expression level of each transcript for each tissue.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;compare genes&lt;/strong&gt;: a series of scatter plots comparing the expression levels to a particular reference tissue.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Sun, 27 Mar 2016 00:00:00 -0400</pubDate>
+				<link>https://flaneuse.github.io/muscleDB/muscleDB/2016/03/basicSearches</link>
+				<guid isPermaLink="true">https://flaneuse.github.io/muscleDB/muscleDB/2016/03/basicSearches</guid>
+			</item>
 		
 	</channel>
 </rss>
