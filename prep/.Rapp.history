@@ -1,2 +1,0 @@
-load("/Users/laurahughes/GitHub/muscle-transcriptome/prep/2015-10-17_allPQ.rds")
-load("/Users/laurahughes/GitHub/muscle-transcriptome/prep/pairwiseANOVAs_trimmed_2015-10-18.rds")
