@@ -80,7 +80,7 @@ sidebar <- dashboardSidebar(
 
 # Header ------------------------------------------------------------------
 header <- dashboardHeader(
-  title = "MuscleDB",
+  title = "MuscleDB (beta)",
   # -- Message bar --
   dropdownMenu(type = "messages", badgeStatus = NULL, icon = icon("question-circle"),
                messageItem("Muscle Transcriptome Atlas",

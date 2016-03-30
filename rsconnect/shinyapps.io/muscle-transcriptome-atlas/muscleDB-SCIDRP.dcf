@@ -1,0 +1,9 @@
+name: muscleDB-SCIDRP
+account: muscle-transcriptome-atlas
+server: shinyapps.io
+appId: 91275
+bundleId: 406494
+url: https://muscle-transcriptome-atlas.shinyapps.io/muscleDB-SCIDRP/
+when: 1459348659.25279
+asMultiple: FALSE
+asStatic: FALSE
