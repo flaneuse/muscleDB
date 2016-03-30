@@ -26,6 +26,7 @@ To sort by q-value, tick the q-value box, located just below the search button. 
 
 * q is the false discovery rate, calculated using the Benjamini & Hochberg (1995) method
 * q-values can be entered either as a decimal or in scientific notation.
+* q-values can only be filtered for the entire set of 10 muscles, each pairwise set, or each group of muscle types: cardiac (atria, left ventricle, right ventricle) or skeletal (diaphragm, eye, EDL, FDB, plantaris, soleus)
 
 
 
