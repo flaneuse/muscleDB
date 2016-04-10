@@ -1,6 +1,5 @@
 output$pcaPlot = renderPlot({
   
-  library(RColorBrewer)
   
   x = calcPCA()
   
@@ -8,7 +7,9 @@ output$pcaPlot = renderPlot({
   
   ggplot(PCA, aes(x = PC1, y = PC2)) +
     theme_bw() +
-    geom_point(size = 3, alpha = 0.3, color = brewer.pal(9, "PuRd")[7])
+    xlab('principal component 1') +
+    ylab('principal component 2') + 
+    geom_point(size = 3, alpha = 0.3, color = '#ce1256')
 })
 
 
@@ -17,7 +18,8 @@ output$pcaPlot = renderPlot({
 output$PCApts <- renderDataTable({
   filtered = calcPCA()
   
-  filtered = data.frame(filtered$x, ID = 1:nrow(filtered$x))
+  filtered = data.frame(filtered$x, ID = 1:nrow(filtered$x)) %>% 
+    select(PC1, PC2)
   
   brushedPoints(filtered, input$pcaBrush)
 },  
@@ -49,4 +51,27 @@ observeEvent(input$pcaDblclick, {
     ranges$x <- NULL
     ranges$y <- NULL
   }
+})
+
+
+# Loading table -----------------------------------------------------------
+
+
+output$PCAload = renderDataTable({
+  PCA = calcPCA()
+  
+  PCA$rotation[,1:2]
+})
+
+
+# Info box ----------------------------------------------------------------
+
+
+output$PCAstats = renderInfoBox({
+  PCA = calcPCA()
+  
+  stats = cumsum((PCA$sdev)^2) / sum(PCA$sdev^2)
+  infoBox("PCA stats", subtitle = "Percent variance explained by PC1",
+          width = 12,
+          value = round(stats[1]*100,1))
 })
