@@ -107,7 +107,7 @@ body <- dashboardBody(
     # -- Basic plot -- 
     tabItem(tabName = "plot", 
             fluidRow(h5("MuscleDB is a database containing RNAseq expression
-                        levels for 10 different muscle tissues.")),
+                        levels for mouse muscle tissues.")),
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
@@ -170,6 +170,7 @@ body <- dashboardBody(
     # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
     tabItem(tabName = "PCA",
+            fluidRow(h4('Principal Components of Selected Tissues')),
             fluidRow(column(5,
                             plotOutput("pcaPlot", 
                                        dblclick = "pcaDblclick",
@@ -177,8 +178,9 @@ body <- dashboardBody(
                                          id = "pcaBrush",
                                          resetOnNew = TRUE)),
                             dataTableOutput("PCAload")),
-                     column(7,
-                            infoBoxOutput("PCAstats"),
+                     column(4,
+                            infoBoxOutput("PCAstats", width = 12),
+                            helpText(''),
                             dataTableOutput("PCApts")))),
     
     
