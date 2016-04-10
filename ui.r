@@ -180,7 +180,8 @@ body <- dashboardBody(
                             dataTableOutput("PCAload")),
                      column(4,
                             infoBoxOutput("PCAstats", width = 12),
-                            helpText(''),
+                            helpText('Zoom on a region by highlighting the graph and double clicking'),
+                            helpText('Highlight a point on the graph by clicking a row in the table'),
                             dataTableOutput("PCApts")))),
     
     
