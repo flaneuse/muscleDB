@@ -35,12 +35,16 @@ filterData <- reactive({
                                            'total aorta', 'right ventricle',
                                            'soleus', 
                                            'diaphragm',
-                                           'eye', 'EDL', 'FDB', 
+                                           'eye', 'EDL', 'FDB',
+                                           'thoracic aorta', 'abdominal aorta',
+                                           'tongue', 'masseter',
                                            'plantaris'),
                                   to = c('ATR', 'LV',
                                          'AOR', 'RV',
                                          'SOL', 'DIA',
                                          'EYE', 'EDL',
+                                         'TA', 'AA', 
+                                         'TON', 'MAS',
                                          'FDB', 'PLA'))
   
   
