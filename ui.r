@@ -18,15 +18,7 @@ sidebar <- dashboardSidebar(
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
                      choices = tissueList,
-                     selected = c('atria', 'left ventricle',
-                                  'total aorta', 'right ventricle',
-                                  'soleus', 
-                                  # 'thoracic aorta', 
-                                  # 'abdominal aorta', 
-                                  'diaphragm',
-                                  'eye', 'EDL', 'FDB', 
-                                  # 'masseter', 'tongue'
-                                  'plantaris')),
+                     selected = allTissues),
   
   # Conditional for advanced filtering options.
   checkboxInput("adv", "advanced filtering", value = FALSE),
@@ -106,7 +98,8 @@ body <- dashboardBody(
   
   # -- Import custom CSS --
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css")),
+    tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css"),
+    includeScript("google-analytics.js")), # -- Include Google Analytics file --
 
   # -- Each tab --
   tabItems(
