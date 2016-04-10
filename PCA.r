@@ -1,38 +1,52 @@
 output$pcaPlot = renderPlot({
   
   library(RColorBrewer)
-
+  
   x = calcPCA()
   
   PCA = data.frame(x$x, ID = 1:nrow(x$x))
   
-  ggplot(PCA, aes(x = PC1, y = PC2)) + 
+  ggplot(PCA, aes(x = PC1, y = PC2)) +
     theme_bw() +
     geom_point(size = 3, alpha = 0.3, color = brewer.pal(9, "PuRd")[7])
+})
+
+
+# Data table for filtered points ------------------------------------------
+
+output$PCApts <- renderDataTable({
+  filtered = calcPCA()
   
-  # PCA %>% ggvis(x = ~PC1, y = ~PC2, key := ~ID) %>% 
-  #   layer_points(size := 25, size.hover := 100, fill.hover := "royalblue",
-  #                stroke := "#BD202E",  stroke.hover := "navy", strokeWidth.hover := 0.75, 
-  #                fill := "#BD202E",  opacity := 0.5) %>% 
-  #   add_tooltip(PCATooltip, "hover")
+  filtered = data.frame(filtered$x, ID = 1:nrow(filtered$x))
   
-  
-#   PCATooltip <- function(x) {
-#     if(is.null(x)) return(NULL)
-#     
-#     x$ID
-    #   all_data <- isolate(filterVolcano())
-    #   geneName <- all_data[all_data$ID == x$ID, 1]
-    #   transcriptName <- strtrim(all_data[all_data$ID == x$ID, 2],10)
-    #   paste0("<b>", geneName, "</b><br>",
-    #          transcriptName, "<br>",
-    #          "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
-    #          "p/q: ", format(10^-x[2], digits = 3, nsmall = 1))
-  # }
-  
-  # plot(x$x)
-  
-  # cumsum((x$sdev)^2) / sum(x$sdev^2)
-  
-  # Brush to select.
+  brushedPoints(filtered, input$pcaBrush)
+},  
+escape = c(-1,-2, -3),
+options = list(searching = TRUE, stateSave = TRUE,
+               pageLength = 25,
+               rowCallback = JS(
+                 'function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                 if (aData[0])
+                 $("td:eq(0)", nRow).css("color", "#293C97");
+                 $("td", nRow).css("text-align", "center");
+                 }')
+)
+)
+
+
+# Brush/zoom --------------------------------------------------------------
+
+
+# When a double-click happens, check if there's a brush on the plot.
+# If so, zoom to the brush bounds; if not, reset the zoom.
+observeEvent(input$pcaDblclick, {
+  brush <- input$pcaBrush
+  if (!is.null(brush)) {
+    ranges$x <- c(brush$xmin, brush$xmax)
+    ranges$y <- c(brush$ymin, brush$ymax)
+    
+  } else {
+    ranges$x <- NULL
+    ranges$y <- NULL
+  }
 })

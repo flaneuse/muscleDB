@@ -171,10 +171,15 @@ body <- dashboardBody(
     # -- PCA --
     tabItem(tabName = "PCA",
             fluidRow(column(5,
-                            plotOutput("pcaPlot"),
+                            plotOutput("pcaPlot", 
+                                       dblclick = "pcaDblclick",
+                                       brush = brushOpts(
+                                         id = "pcaBrush",
+                                         resetOnNew = TRUE)),
                             dataTableOutput("PCAload")),
-                     column(7,infoBoxOutput("PCAstats")))),
-    # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
+                     column(7,
+                            infoBoxOutput("PCAstats"),
+                            dataTableOutput("PCApts")))),
     
     
     # -- Compare genes --
