@@ -62,7 +62,7 @@ sidebar <- dashboardSidebar(
     menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
-    # menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
+    menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
     menuItem("compare genes", tabName = "compare", icon = icon("line-chart")),
     menuItem("code", tabName = "code", icon = icon("code"))
   )
@@ -169,11 +169,11 @@ body <- dashboardBody(
                             fluidRow(br())))),
     # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
-    # tabItem(tabName = "PCA", 
-    #         fluidRow(column(5,
-    #                         plotOutput("pcaPlot"),
-    #                         dataTableOutput("PCAload")),
-    #                  column(7,infoBoxOutput("PCAstats")))),
+    tabItem(tabName = "PCA",
+            fluidRow(column(5,
+                            plotOutput("pcaPlot"),
+                            dataTableOutput("PCAload")),
+                     column(7,infoBoxOutput("PCAstats")))),
     # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
     
     

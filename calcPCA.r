@@ -1,6 +1,9 @@
 calcPCA <- reactive({
   filteredData = filterData() %>% 
-    select(contains(expr))
+    select(transcript, tissue, expr) %>% 
+    spread(tissue, expr) %>% 
+    select(-transcript)
   
   PCA = prcomp(filteredData, scale = TRUE, center = TRUE)
+  
 })

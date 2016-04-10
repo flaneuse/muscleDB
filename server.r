@@ -48,25 +48,25 @@ shinyServer(
     
     # PCA ---------------------------------------------------------------------
     
-    # # PCA output
-    # source("calcPCA.R", local = TRUE)
-    # source("PCA.R", local = TRUE)
-    # 
-    # output$PCAload = renderDataTable({
-    #   PCA = calcPCA()
-    #   
-    #   PCA$rotation[,1:2]
-    # })
-    # 
-    # output$PCAstats = renderInfoBox({
-    #   PCA = calcPCA()
-    #   
-    #   stats = cumsum((PCA$sdev)^2) / sum(PCA$sdev^2)
-    #   infoBox("PCA stats", subtitle = "Percent variance explained by PC1", 
-    #           width = 12,
-    #           value = round(stats[1]*100,1))
-    # })
-    # 
+    # PCA output
+    source("calcPCA.R", local = TRUE)
+    source("PCA.R", local = TRUE)
+
+    output$PCAload = renderDataTable({
+      PCA = calcPCA()
+
+      PCA$rotation[,1:2]
+    })
+
+    output$PCAstats = renderInfoBox({
+      PCA = calcPCA()
+
+      stats = cumsum((PCA$sdev)^2) / sum(PCA$sdev^2)
+      infoBox("PCA stats", subtitle = "Percent variance explained by PC1",
+              width = 12,
+              value = round(stats[1]*100,1))
+    })
+
     # 
     # output$test <- renderPrint({ # Test function for returning current page.
     #   iBeg = input$table_state$start+1
