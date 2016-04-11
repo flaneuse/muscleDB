@@ -22,6 +22,15 @@ output$pcaPlot = renderPlot({
   
   
   if (length(s)) {
+    # If the plot has been zoomed in, convert b/w the indices.
+    
+    if(!is.null(ranges$x)){    # After double click; highlight those w/i plot window
+      PCA = PCA %>% 
+        filter(PC1 >= ranges$x[1], PC1 <= ranges$x[2], 
+               PC2 >= ranges$y[1], PC2 <= ranges$y[2])
+    }
+    
+    
     mainPlot + 
       geom_point(data = PCA[s, , drop = FALSE], 
                  colour = accentColour, 
@@ -44,14 +53,18 @@ output$PCApts <- renderDataTable({
   
   # Return only the first two PCs.
   filtered = data.frame(filtered$x, ID = 1:nrow(filtered$x)) %>% 
-    select(PC1, PC2)
+    select(gene, transcript, PC1, PC2)
   
   # Check if there's brushing activated.  If not, display all.
-  
   brush <- input$pcaBrush
+  
   if (!is.null(brush)) {
-    brushedPoints(filtered, brush)
-  } else{
+    brushedPoints(filtered, brush) # Highlight only those brushed
+  } else if(!is.null(ranges$x)){    # After double click; highlight those w/i plot window
+    filtered %>% 
+      filter(PC1 >= ranges$x[1], PC1 <= ranges$x[2], 
+             PC2 >= ranges$y[1], PC2 <= ranges$y[2])
+  } else {
     filtered
   }
 },  
