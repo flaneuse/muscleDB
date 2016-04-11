@@ -85,6 +85,7 @@ shinyServer(
     observeEvent(input$volcanoDblclick, {
       brush <- input$volcanoBrush
       if (!is.null(brush)) {
+        
         ranges$x <- c(brush$xmin, brush$xmax)
         ranges$y <- c(brush$ymin, brush$ymax)
         

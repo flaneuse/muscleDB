@@ -100,7 +100,7 @@ body <- dashboardBody(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css"),
     includeScript("google-analytics.js")), # -- Include Google Analytics file --
-
+  
   # -- Each tab --
   tabItems(
     
@@ -173,10 +173,10 @@ body <- dashboardBody(
             fluidRow(h4('Principal Components of Selected Tissues')),
             fluidRow(column(5,
                             plotOutput("pcaPlot", 
-                                       dblclick = "pcaDblclick",
+                                       click = "pcaDblclick",
                                        brush = brushOpts(
-                                         id = "pcaBrush",
-                                         resetOnNew = TRUE)),
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)),
                             dataTableOutput("PCAload")),
                      column(4,
                             infoBoxOutput("PCAstats", width = 12),
@@ -188,14 +188,14 @@ body <- dashboardBody(
     # -- Compare genes --
     tabItem(tabName = "compare",
             fluidRow(column(3, selectizeInput("compRef", 
-                                           label = 'ref. transcript',
-                                           choices = letters)),
+                                              label = 'ref. transcript',
+                                              choices = letters)),
                      column(6, radioButtons("sortBy", label = 'sort by',
-                                         choices = c('most similar' = 'most', 
-                                                     'least similar' = 'least', 
-                                                     'alphabetically' = 'alpha'), 
-                                         selected = 'most',
-                                         inline = TRUE))),
+                                            choices = c('most similar' = 'most', 
+                                                        'least similar' = 'least', 
+                                                        'alphabetically' = 'alpha'), 
+                                            selected = 'most',
+                                            inline = TRUE))),
             fluidRow(plotlyOutput("compPlot", height = "1500px"))),
     
     # -- Heat map --

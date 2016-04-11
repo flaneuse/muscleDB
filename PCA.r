@@ -6,7 +6,7 @@ output$pcaPlot = renderPlot({
   
   ptSize = 3
   
-  
+  # Call the PCA calculation
   x = calcPCA()
   
   PCA = data.frame(x$x, ID = 1:nrow(x$x))
@@ -15,7 +15,8 @@ output$pcaPlot = renderPlot({
     theme_bw() +
     xlab('principal component 1') +
     ylab('principal component 2') + 
-    geom_point(size = ptSize, alpha = 0.3, colour = mainColour)
+    geom_point(size = ptSize, alpha = 0.3, colour = mainColour) +
+    coord_cartesian(xlim = ranges$x, ylim = ranges$y)
   
   s = input$PCApts_rows_selected
   
@@ -78,9 +79,7 @@ observeEvent(input$pcaDblclick, {
   if (!is.null(brush)) {
     ranges$x <- c(brush$xmin, brush$xmax)
     ranges$y <- c(brush$ymin, brush$ymax)
-    # print(ranges)
-    # print(brush)
-    
+
   } else {
     ranges$x <- NULL
     ranges$y <- NULL
