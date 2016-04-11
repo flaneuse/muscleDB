@@ -35,8 +35,16 @@ ggplot(x ,
   theme_xgrid() +
   xlab('log(fold change)')
 
-x %>% 
-    ggvis(y = ~logFC,
+filtered %>% 
+  filter(!is.na(tissue),
+         transcript =='uc007aew') %>% 
+    ggvis(y = ~expr,
           x = ~tissue) %>% 
   layer_bars()
 
+filtered %>% 
+  filter(!is.na(tissue),
+         transcript =='uc007aet') %>% 
+  ggvis(y = ~expr,
+        x = ~tissue) %>% 
+  layer_bars()
