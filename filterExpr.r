@@ -30,6 +30,7 @@ filterData <- reactive({
     selMuscles = input$muscles
   }
   
+  # Generate key for muscles
   muscleSymbols = plyr::mapvalues(selMuscles,
                                   from = c('atria', 'left ventricle',
                                            'total aorta', 'right ventricle',
@@ -42,10 +43,10 @@ filterData <- reactive({
                                   to = c('ATR', 'LV',
                                          'AOR', 'RV',
                                          'SOL', 'DIA',
-                                         'EYE', 'EDL',
+                                         'EYE', 'EDL', 'FDB',
                                          'TA', 'AA', 
                                          'TON', 'MAS',
-                                         'FDB', 'PLA'))
+                                         'PLA'))
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
@@ -99,7 +100,7 @@ filterData <- reactive({
   
   if(input$adv == TRUE | input$tabs == 'volcano'){
     
-    # Case 1: Volcano plot.
+    # -- Case 1: Volcano plot. --
     # -- Special cleanup for volcano plot --
     if(input$tabs == 'volcano') {
       # Two selected muscles for comparison filtered above.
@@ -154,7 +155,9 @@ filterData <- reactive({
       numMuscles = length(selMuscles)
       
       # Pull out the expression values for the selected muscles
-      relExpr = filtered[tissue == input$ref, .(transcript, relExpr = expr)]
+      relExpr = filtered %>% 
+        filter(tissue == input$ref) %>% 
+        select(transcript, relExpr = expr)
       
       # Figuring out which transcripts meet the fold change conditions.
       filteredFC = left_join(filtered, relExpr,         # Safer way: doing a many-to-one merge in:
@@ -168,7 +171,7 @@ filterData <- reactive({
                  transcript %in% filteredFC$transcript
         )
     } else {
-      # Case 3: just filter on expression.
+      # -- Case 3: just filter on expression. --
       filteredTranscripts = filtered %>%
         filter(expr <= input$maxExprVal,
                expr >= input$minExprVal) %>% 
