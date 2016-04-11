@@ -106,14 +106,14 @@ filterData <- reactive({
     if(input$tabs == 'volcano') {
       # Two selected muscles for comparison filtered above.
       
-      # Filter on expression
+      # Filter on expression: find tissues with any values within the range.
       filteredTranscripts = filtered %>%
         filter(expr <= input$maxExprVal,
                expr >= input$minExprVal) %>% 
         select(transcript)
       
       filtered = filtered %>% 
-        filter(transcript %in% filteredTranscripts$transcript) %>% 
+        filter(transcript %in% filteredTranscripts$transcript) %>%  # FIlter
         select(transcript = transcriptLink, gene = geneLink, 
                tissue, expr, q, transcriptName = transcript, geneSymbol = gene) %>% 
         mutate(expr = ifelse(expr == 0, 0.0001, expr) # Correction so don't divide by 0. 
@@ -123,22 +123,21 @@ filterData <- reactive({
       # Check that there's something to reshape.
       if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
         
-        glimpse(filtered)
-        
         # Create a lagged variable
-        filtered = filtered %>% 
-          ungroup() %>% 
+        filtered = filtered %>%
+          ungroup() %>%
           group_by(transcriptName) %>% 
           mutate(lagged = lag(expr),
                  led = lead(expr),
                  FC = ifelse(is.na(led),           # Calc fold change
                              expr / lagged,
                              expr / led)) %>% 
-          filter(tissue == input$muscle2, 
-                 FC >= input$foldChange) %>% # filter on fold change
+          filter(tissue == input$muscle2) %>%  # remove half the values
           mutate(logFC = log10(FC),
-                 id = 1:nrow(filtered),
-                 logQ = -log10(q))
+                 logQ = -log10(q),
+                 id = dense_rank(transcript))
+        
+        
       } else {
         filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
       }
