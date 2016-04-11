@@ -21,12 +21,12 @@ filterData <- reactive({
   }
   
   # For fold change, adding in the FC-selected muscle if it's not already in the list
-  if(input$adv == TRUE & input$ref != 'none') {
-    selMuscles = unique(c(input$ref, input$muscles))
-  } else if(input$tabs == 'volcano') # volcano plot     
+  if(input$tabs == 'volcano') {# volcano plot     
     # Select 2 muscles from the user input.
-    selMuscles = unique(c(input$muscle1, input$muscle2)) 
-  else {
+    selMuscles = unique(c(input$muscle1, input$muscle2))
+  } else if(input$adv == TRUE & input$ref != 'none') {
+    selMuscles = unique(c(input$ref, input$muscles))
+  } else { 
     selMuscles = input$muscles
   }
   
@@ -46,7 +46,8 @@ filterData <- reactive({
                                          'EYE', 'EDL', 'FDB',
                                          'TA', 'AA', 
                                          'TON', 'MAS',
-                                         'PLA'))
+                                         'PLA'),
+                                  warn_missing = FALSE)
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
@@ -80,8 +81,8 @@ filterData <- reactive({
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont,               # gene ontology
-             q < input$qVal
-      )} else {
+             q < input$qVal)
+      } else {
         filtered = data %>% 
           select(-contains('_q')) %>% 
           filter(tissue %in% selMuscles,   # muscles
@@ -121,13 +122,20 @@ filterData <- reactive({
       
       # Check that there's something to reshape.
       if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
-        # Reshape to wide.
-        filtered = data.table::dcast(filtered, 
-                                     transcript + gene + q + transcriptName + geneSymbol ~ tissue, 
-                                     value.var = 'expr') %>% 
-          # Calc fold change
-          mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
-          # filter on fold change
+        
+        glimpse(filtered)
+        
+        # Create a lagged variable
+        filtered = filtered %>% 
+          ungroup() %>% 
+          group_by(transcriptName) %>% 
+          mutate(lagged = lag(expr),
+                 led = lead(expr),
+                 FC = ifelse(is.na(led),           # Calc fold change
+                             expr / lagged,
+                             expr / led)) %>% 
+          filter(tissue == input$muscle2, 
+                 FC >= input$foldChange) %>% # filter on fold change
           mutate(logFC = log10(FC),
                  id = 1:nrow(filtered),
                  logQ = -log10(q))
@@ -137,7 +145,7 @@ filterData <- reactive({
       
     } else if(input$ref != 'none') {
       
-      # Case 2: expr + FC filtering ---------------------------------------------
+      # -- Case 2: expr + FC filtering ---------------------------------------------
       # If advanced filtering is checked, always filter on expression.
       # Only use this case if a reference tissue is checked.
       
