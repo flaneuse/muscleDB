@@ -82,15 +82,15 @@ filterData <- reactive({
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont,               # gene ontology
              q < input$qVal)
-      } else {
-        filtered = data %>% 
-          select(-contains('_q')) %>% 
-          filter(tissue %in% selMuscles,   # muscles
-                 grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
-                 GO %like% ont                # gene ontology                 
-          ) %>% 
-          mutate(q = NA)
-      }
+  } else {
+    filtered = data %>% 
+      select(-contains('_q')) %>% 
+      filter(tissue %in% selMuscles,   # muscles
+             grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
+             GO %like% ont                # gene ontology                 
+      ) %>% 
+      mutate(q = NA)
+  }
   
   
   
@@ -123,16 +123,10 @@ filterData <- reactive({
       # Check that there's something to reshape.
       if(nrow(filtered) != 0 & input$muscle1 != input$muscle2){
         
-        # Create a lagged variable
-        filtered = filtered %>%
-          ungroup() %>%
-          group_by(transcriptName) %>% 
-          mutate(lagged = lag(expr),
-                 led = lead(expr),
-                 FC = ifelse(is.na(led),           # Calc fold change
-                             expr / lagged,
-                             expr / led)) %>% 
-          filter(tissue == input$muscle2) %>%  # remove half the values
+        
+        filtered = filtered %>% 
+          spread(tissue, expr) %>% 
+          mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
           mutate(logFC = log10(FC),
                  logQ = -log10(q),
                  id = dense_rank(transcript))
