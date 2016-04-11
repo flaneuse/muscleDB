@@ -1,7 +1,12 @@
 # volcano table -----------------------------------------------------------
 
 output$volcanoTable <- renderDataTable({
-  filtered = filterData()
+  filtered = filterData() %>% 
+    select(-transcriptName, -geneSymbol) %>% 
+    mutate(FC = signif(FC, 3),
+           logFC = signif(logFC, 3),
+           logQ = signif(logQ, 3))
+  
   brushedPoints(filtered, input$volcanoBrush)
   
   
@@ -105,3 +110,18 @@ output$volcanoPlot <- renderPlot({
           strip.background = element_blank()
     )
 })
+
+
+# Save volcano csv --------------------------------------------------------
+
+output$csvVolcano <- downloadHandler(
+  filename = function() {
+    paste('volcano_data-', Sys.Date(), '.csv', sep='')
+  },
+  content = function(file) {
+    filteredData = filterData() %>% 
+      select(-transcript, -gene)
+    
+    write.csv(filteredData, file)
+  }
+)

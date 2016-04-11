@@ -128,12 +128,11 @@ filterData <- reactive({
           spread(tissue, expr) %>% 
           mutate_(.dots = setNames(paste0('`', input$muscle1,'` / `', input$muscle2,'`'), 'FC')) %>% 
           mutate(logFC = log10(FC),
-                 logQ = -log10(q),
-                 id = dense_rank(transcript))
-        
+                 logQ = -log10(q))
+                 # id = dense_rank(transcript))
         
       } else {
-        filtered = data.table(id = 0, FC = 0, logFC = 0, logQ = 0, name = 'no data')
+        filtered = data.table(id = 0, name = 'no data', FC = 0, logFC = 0, logQ = 0, geneSymbol = NA, transcriptName = NA)
       }
       
     } else if(input$ref != 'none') {
