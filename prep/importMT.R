@@ -122,7 +122,8 @@ df$tissue = factor(df$tissue,
                      'FDB' = 'FDB', 
                      'masseter' =  'masseter',
                      'plantaris' = 'plantaris',
-                     'soleus' = 'soleus'))
+                     'soleus' = 'soleus',
+                     'tongue' = 'tongue'))
 
 # Public version ----------------------------------------------------------
 
