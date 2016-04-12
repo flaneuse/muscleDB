@@ -16,7 +16,7 @@ library(RColorBrewer)
 
 # Source javascript pagination code ---------------------------------------
 # Forked from https://github.com/wleepang/shiny-pager-ui
-source('pagerui.R')
+# source('pagerui.R')
 
 # Import in the Muscle Transcriptome database -----------------------------
 
