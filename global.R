@@ -10,6 +10,7 @@ library(rCharts)
 library(data.table)
 library(llamar)
 library(plotly)
+library(RColorBrewer)
 
 
 
