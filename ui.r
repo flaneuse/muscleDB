@@ -194,6 +194,10 @@ body <- dashboardBody(
                                                         'alphabetically' = 'alpha'), 
                                             selected = 'most',
                                             inline = TRUE))),
+            fluidRow(column(2, fluidRow(actionButton("prevComp", label="", icon = icon("chevron-left")))),
+                     column(4, fluidRow(h5('view next results'))),
+                     column(2, 
+                            fluidRow(actionButton("nextComp", label="", icon = icon("chevron-right"))))),
             fluidRow(plotOutput("compPlot", height = "1500px"))),
     
     # -- Heat map --

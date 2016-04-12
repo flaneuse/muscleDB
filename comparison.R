@@ -18,7 +18,14 @@ output$g1 = renderUI({
 
 output$compPlot = renderPlot({
   
+  # Pull out the current Page Number
+  pageNum = getCompPage()
   
+  
+  iBeg = (pageNum)*nPlots + 1
+  iEnd = (pageNum + 1)*nPlots
+  
+        
   # filter data
   filteredData = filterData() %>% 
     mutate(fullName = paste0(gene, ' (', transcript, ')'))
@@ -87,6 +94,13 @@ output$compPlot = renderPlot({
   filteredData$fullName = factor(filteredData$fullName, orderNames)
   
   
+  # Select just the transcripts that fit within the current page.
+  transcriptList = unique(filteredData$transcript)[iBeg:iEnd]
+  
+  filteredData = filteredData %>% 
+    filter(transcript %in% transcriptList)
+  
+  
   # Plot --------------------------------------------------------------------
   
   ggplot(filteredData,
@@ -107,3 +121,15 @@ output$compPlot = renderPlot({
 })
 
 
+
+# Comparison pagination ---------------------------------------------------
+
+getCompPage <- reactive({
+  page = (input$nextComp - input$prevComp)
+  
+  if (page < 0) {
+    page = 0
+  } else {
+    page = page
+  }
+})
