@@ -187,16 +187,14 @@ body <- dashboardBody(
     
     # -- Compare genes --
     tabItem(tabName = "compare",
-            fluidRow(column(3, selectizeInput("compRef", 
-                                              label = 'ref. transcript',
-                                              choices = letters)),
+            fluidRow(column(3, uiOutput('g1')), # selectize input to select the ref. tissue
                      column(6, radioButtons("sortBy", label = 'sort by',
                                             choices = c('most similar' = 'most', 
                                                         'least similar' = 'least', 
                                                         'alphabetically' = 'alpha'), 
                                             selected = 'most',
                                             inline = TRUE))),
-            fluidRow(plotlyOutput("compPlot", height = "1500px"))),
+            fluidRow(plotOutput("compPlot", height = "1500px"))),
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 

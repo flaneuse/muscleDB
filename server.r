@@ -1,6 +1,7 @@
 shinyServer(
   function(input, output, session) {
     
+    
     # SELECTIZE ---------------------------------------------------------------
     
     populateSelectize <- reactive({
