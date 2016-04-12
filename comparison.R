@@ -38,36 +38,53 @@ output$compPlot = renderPlot({
   filteredData = left_join(filteredData, refExpr, by = 'tissue') %>% 
     filter(fullName != input$compRef) %>% 
     mutate(FC = expr / refExpr,
-           logFC = log10(FC))
+           logFC = log10(FC),
+           logFC = ifelse(is.infinite(logFC), NA, logFC)) # correct for infinite values
   
   
   # Calculate correlation coefficient ---------------------------------------
   
-  # pairwise = spread(filteredData %>% select(tissue, transcript, expr, refExpr),
-  #                   transcript, expr) %>% 
-  #   select(-tissue)
-  # 
-  # correl = data.frame(cor(pairwise)) %>% 
-  #   select(corr = refExpr) 
-  # 
-  # correl = correl %>%
-  #   mutate(transcript = row.names(correl)) %>% 
-  #   filter(transcript != 'refExpr')
-  # 
-  # filteredData = left_join(filteredData, correl, by = "transcript", copy = TRUE) %>% 
-  #   mutate(transFacet = paste0(gene, '(', transcript, ')'))
+  # Splay outward
+  pairwise = spread(filteredData %>% select(tissue, transcript, expr, refExpr),
+                    transcript, expr) %>%
+    select(-tissue)
+
+  # Calculate correlation
+  correl = data.frame(cor(pairwise)) %>%
+    select(corr = refExpr)
+
+  correl = correl %>%
+    mutate(transcript = row.names(correl))
   
+  # Merge in with the master
+  filteredData = left_join(filteredData, correl, by = "transcript")
   
   # Calculate limits for the plot
-  yMax = max(abs(filteredData$logFC))
+  yMax = max(abs(filteredData$logFC), na.rm = TRUE)
   
-  glimpse(filteredData)
   
   # Refactorize -------------------------------------------------------------
   
   # Reverse tissue names
   filteredData$tissue = factor(filteredData$tissue, levels = rev(levels(filteredData$tissue)))
   
+  if (input$sortBy == 'most') {
+    orderNames = filteredData %>% 
+      arrange(desc(corr)) # Sort by correlation coefficient, in descending order
+    
+    orderNames = orderNames$fullName
+    
+  } else if (input$sortBy == 'least') {
+    orderNames = filteredData %>% 
+      arrange(corr) # Sort by correlation coefficient, in ascending order
+    
+    orderNames = orderNames$fullName
+  } else {
+    orderNames = sort(filteredData$fullName)
+  }
+  
+  
+  filteredData$fullName = factor(filteredData$fullName, orderNames)
   
   
   # Plot --------------------------------------------------------------------
