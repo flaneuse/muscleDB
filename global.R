@@ -23,7 +23,7 @@ source('pagerui.R')
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
-data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10.rds') %>% 
+data = readRDS('data/expr_2016-04-10.rds') %>% 
   select(-id)
 
 GOs = readRDS("data/allOntologyTerms.rds")
