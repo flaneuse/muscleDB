@@ -234,13 +234,56 @@ xWidth = 0.3
 ggplot(df_tidy, aes(x = muscleID,
                     xend = muscleID + xWidth,
                     fill = expr)) +
-  geom_segment(aes(y = expr, yend = expr)) +
   geom_rect(aes(ymin = lb, ymax = ub,
                 xmin = muscleID,
                 xmax= muscleID + xWidth),
             alpha = .7) +
+  geom_segment(aes(y = expr, yend = expr),
+               colour = grey90K) +
   facet_wrap(~transcript) +
   theme_xgrid() +
   scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  coord_flip()
+
+
+# all points, banded, hollow centers --------------------------------------
+
+
+ggplot(df_tidy, aes(x = muscle, xend = muscle)) +
+  geom_point(aes(y = expr1), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  geom_point(aes(y =  expr2), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  geom_point(aes(y =  expr3), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  geom_point(aes(y =  expr4), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  geom_point(aes(y =  expr5), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  geom_point(aes(y =  expr6), size = sizeDot,
+             alpha = alphaDot,
+             colour = grey90K, shape = 21) +
+  # geom_segment(aes(yend = 0, y =  expr), 
+  # # size = 0.2,
+  # colour = grey50K) +
+  geom_linerange(aes(colour = expr, 
+                     ymin = minExpr, 
+                     ymax = maxExpr),
+                 size = 0.25,
+                 alpha = 1) +
+  geom_point(aes(y = expr, fill = expr), 
+             alpha = 1, size = sizeDot,
+             colour = grey90K, shape = 21) +
+  scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  scale_colour_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  facet_wrap(~transcript) +
+  theme_xgrid() +
+  theme(axis.text.y = element_text(size = 10), 
+        panel.border = element_rect(colour = grey90K, fill = NA, size = 0.2)) +
   coord_flip()
 
