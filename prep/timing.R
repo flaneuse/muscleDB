@@ -242,7 +242,7 @@ saveRDS(df, 'data/expr_2016-04-10_small.rds')
 input = NULL
 input$geneInput = 'uc0'
 input$GO = 'kinase'
-input$ref = 'LV'
+input$ref = 'left ventricle'
 input$muscles = c('atria', 'left ventricle',
                   'total aorta', 'right ventricle',
                   'soleus', 
@@ -251,8 +251,12 @@ input$muscles = c('atria', 'left ventricle',
                   'thoracic aorta', 'abdominal aorta',
                   'tongue', 'masseter',
                   'plantaris')
-input$q = 1
+input$qVal = 1
 input$tabs = 'notVolcano'
+input$adv = TRUE
+input$maxExprVal = 1e6
+input$minExprVal = 1
+
 
 # data prep
 geneInput = paste0('^', input$geneInput)
@@ -302,8 +306,56 @@ qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
 library(tidyr)
 library(dplyr)
 library(data.table)
+library(microbenchmark)
 
-data = readRDS('data/expr_2016-04-10.rds')
+data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10.rds')
 
-GOs = readRDS("data/allOntologyTerms.rds")
+GOs = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/allOntologyTerms.rds')
+
+# split data into two tables
+qVals = data %>% 
+  select(id, contains('q')) %>% 
+  distinct()
+
+smData = data %>% 
+  select(-contains('q'))
+
+
+# Basic filtering / merging
+
+filtered = data %>% 
+  select_("-contains('_q')", q = qCol) %>% 
+  filter(tissue %in% selMuscles,   # muscles
+         grepl(eval(geneInput), transcript, ignore.case = TRUE),  # gene symbol
+         GO %like% ont,               # gene ontology
+         q < input$qVal)
+
+# Baseline: all data Unit: milliseconds
+# min      lq     mean  median       uq      max neval
+# 491.7325 504.276 518.0987 512.013 540.5665 553.0165    10
+microbenchmark(data %>% 
+                 select_("-contains('_q')", q = qCol) %>% 
+                 filter(tissue %in% selMuscles,   # muscles
+                        grepl(eval(geneInput), transcript, ignore.case = TRUE),  # gene symbol
+                        GO %like% ont,               # gene ontology
+                        q < input$qVal), times = 10)
+
+# min       lq    mean   median       uq      max neval
+# 529.3549 547.9918 570.042 566.4815 574.8051 631.8543    10
+microbenchmark({
+  filtered = smData %>% 
+    filter(tissue %in% selMuscles,   # muscles
+           grepl(eval(geneInput), transcript, ignore.case = TRUE),  # gene symbol
+           GO %like% ont)
+  
+  filteredQ = qVals %>% 
+    select_('id', q = qCol) %>% 
+    filter(q < input$qVal)
+  
+  filtered = filtered %>% 
+    filter(id %in% filteredQ$id)
+  
+  left_join(filtered, filteredQ, by = 'id')
+  
+}, times = 10)
 
