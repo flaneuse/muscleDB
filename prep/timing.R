@@ -333,6 +333,7 @@ filtered = data %>%
 # Baseline: all data Unit: milliseconds
 # min      lq     mean  median       uq      max neval
 # 491.7325 504.276 518.0987 512.013 540.5665 553.0165    10
+# 480.541 489.2287 494.8896 493.1172 497.3798 521.3991    10
 microbenchmark(data %>% 
                  select_("-contains('_q')", q = qCol) %>% 
                  filter(tissue %in% selMuscles,   # muscles
@@ -342,6 +343,7 @@ microbenchmark(data %>%
 
 # min       lq    mean   median       uq      max neval
 # 529.3549 547.9918 570.042 566.4815 574.8051 631.8543    10
+# No GO: 515.1447 518.1921 530.573 526.3044 531.0613 588.7164    10
 microbenchmark({
   filtered = smData %>% 
     filter(tissue %in% selMuscles,   # muscles
