@@ -20,8 +20,8 @@ profvis(data%>%
 # 20 ms
 
 microbenchmark(df_public%>% 
-          filter(expr > 100) %>% 
-          collect())
+                 filter(expr > 100) %>% 
+                 collect())
 
 data_rds = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.rds')
 
@@ -72,7 +72,7 @@ rdsFile = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2
 
 microbenchmark(mt_source = 
                  src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-01-02.sqlite3'),
-data = tbl(mt_source, 'MT'), times = 5)   
+               data = tbl(mt_source, 'MT'), times = 5)   
 
 # Unit: milliseconds
 # expr       min        lq      mean    median        uq       max neval cld
@@ -132,7 +132,7 @@ data2 = data.table(data1)
 #tidyr
 microbenchmark(x = data1 %>%  
                  spread(tissue, expr) %>% 
-  select(-id), times = 5)
+                 select(-id), times = 5)
 # Unit: seconds
 # expr     min       lq     mean   median       uq      max neval
 # x 3.35939 3.371684 3.686335 3.632538 3.954592 4.113469     5
@@ -198,10 +198,10 @@ muscleSymbols = plyr::mapvalues(muscles,
 qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
 
 microbenchmark(data[expr > 1000 & 
-       tissue %in% muscles &
-       transcript %like% geneInput &
-       GO %like% GO &
-       `DIA.EDL.EYE.FDB.PLA.SOL_q` < 1e-5, ], times = 30)
+                      tissue %in% muscles &
+                      transcript %like% geneInput &
+                      GO %like% GO &
+                      `DIA.EDL.EYE.FDB.PLA.SOL_q` < 1e-5, ], times = 30)
 # Unit: milliseconds
 # expr
 # data[expr > 1000 & tissue %in% muscles & transcript %like% geneInput &      GO %like% GO & DIA.EDL.EYE.FDB.PLA.SOL_q < 1e-05, ]
@@ -210,8 +210,8 @@ microbenchmark(data[expr > 1000 &
 
 microbenchmark(data %>% filter(expr > 1000,
                                tissue %in% muscles,
-                                 transcript %like% geneInput,
-                                 GO %like% GO,
+                               transcript %like% geneInput,
+                               GO %like% GO,
                                `DIA.EDL.EYE.FDB.PLA.SOL_q` < 1e-5),
                times = 30)
 
@@ -222,3 +222,88 @@ microbenchmark(data %>% filter(expr > 1000,
 # 304.6636 310.1527 322.5199 320.1557 324.6389 456.4683    30
 
 # Pretty similar-- regardless of data.frame or data.table.  Faster for indiv. operation as dt, but when string together, doesn't seem to make a diff.
+
+
+# Small version of data ---------------------------------------------------
+
+data = readRDS('data/expr_2016-04-10.rds') %>% 
+  select(-id)
+
+
+df = data %>% 
+  filter(!(transcript %like% 'NM'),
+         transcript %like% 'uc00')
+
+saveRDS(df, 'data/expr_2016-04-10_small.rds')
+
+
+# test inputs -------------------------------------------------------------
+
+input = NULL
+input$geneInput = 'uc0'
+input$GO = 'kinase'
+input$ref = 'LV'
+input$muscles = c('atria', 'left ventricle',
+                  'total aorta', 'right ventricle',
+                  'soleus', 
+                  'diaphragm',
+                  'eye', 'EDL', 'FDB',
+                  'thoracic aorta', 'abdominal aorta',
+                  'tongue', 'masseter',
+                  'plantaris')
+input$q = 1
+input$tabs = 'notVolcano'
+
+# data prep
+geneInput = paste0('^', input$geneInput)
+
+if(is.null(input$GO)){
+  ont = ""
+} else {
+  ont = input$GO
+}
+
+# For fold change, adding in the FC-selected muscle if it's not already in the list
+if(input$tabs == 'volcano') {# volcano plot     
+  # Select 2 muscles from the user input.
+  selMuscles = unique(c(input$muscle1, input$muscle2))
+} else if(input$adv == TRUE & input$ref != 'none') {
+  selMuscles = unique(c(input$ref, input$muscles))
+} else { 
+  selMuscles = input$muscles
+}
+
+# Generate key for muscles
+muscleSymbols = plyr::mapvalues(selMuscles,
+                                from = c('atria', 'left ventricle',
+                                         'total aorta', 'right ventricle',
+                                         'soleus', 
+                                         'diaphragm',
+                                         'eye', 'EDL', 'FDB',
+                                         'thoracic aorta', 'abdominal aorta',
+                                         'tongue', 'masseter',
+                                         'plantaris'),
+                                to = c('ATR', 'LV',
+                                       'AOR', 'RV',
+                                       'SOL', 'DIA',
+                                       'EYE', 'EDL', 'FDB',
+                                       'TA', 'AA', 
+                                       'TON', 'MAS',
+                                       'PLA'),
+                                warn_missing = FALSE)
+
+
+qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
+
+
+
+
+# testing two split db ----------------------------------------------------
+library(tidyr)
+library(dplyr)
+library(data.table)
+
+data = readRDS('data/expr_2016-04-10.rds')
+
+GOs = readRDS("data/allOntologyTerms.rds")
+
