@@ -69,9 +69,14 @@ df_tidy = df_tidy %>%
          std = sd(c(expr1, expr2, expr3, expr4, expr5, expr6)),
          lb = expr - 1.96*std,
          ub = expr + 1.96*std,
+         minExpr = min(expr1, expr2, expr3, expr4, expr5, expr6),
+         maxExpr = max(expr1, expr2, expr3, expr4, expr5, expr6),
          uc = str_extract(Transcript, 'uc......'), # Remove extra crap from transcript ids
          NM = str_extract(Transcript, 'N...............')) %>% 
-  mutate(transcript = ifelse(is.na(uc), NM, uc)) # tidying up transcript name.
+  mutate(transcript = ifelse(is.na(uc), NM, uc)) %>% 
+  ungroup() %>% 
+  group_by(transcript) %>% 
+  mutate(muscleID = row_number()) # tidying up transcript name.
 
 
 # fully long df -----------------------------------------------------------
@@ -129,31 +134,41 @@ ggplot(df_tidy, aes(y = muscle, yend = muscle,
         panel.border = element_rect(colour = grey90K, fill = NA, size = 0.2))
 
 
+
+# ugly violin, possibly wrong ---------------------------------------------
+
+
+ggplot(df_tidiest, aes(y = indivExpr, x = muscle))+
+  geom_violin()+
+  coord_flip() +
+  facet_wrap(~transcript)
+
+
 # With error bard ---------------------------------------------------------
 
 ggplot(df_tidy, aes(x = muscle, xend = muscle,
                     fill = expr)) +
-  geom_point(aes(y = expr1), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_point(aes(y =  expr2), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_point(aes(y =  expr3), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_point(aes(y =  expr4), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_point(aes(y =  expr5), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_point(aes(y =  expr6), size = sizeDot,
-             alpha = alphaDot,
-             colour = grey90K, shape = 21) +
-  geom_segment(aes(yend = 0, y =  expr), 
-               size = 0.5,
-               colour = grey50K) +
+  # geom_point(aes(y = expr1), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_point(aes(y =  expr2), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_point(aes(y =  expr3), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_point(aes(y =  expr4), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_point(aes(y =  expr5), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_point(aes(y =  expr6), size = sizeDot,
+  #            alpha = alphaDot,
+  #            colour = grey90K, shape = 21) +
+  # geom_segment(aes(yend = 0, y =  expr), 
+               # # size = 0.2,
+               # colour = grey50K) +
   geom_linerange(aes(colour = expr, 
                  ymin = lb, ymax = ub),
                  size = 1,
@@ -169,8 +184,63 @@ ggplot(df_tidy, aes(x = muscle, xend = muscle,
         panel.border = element_rect(colour = grey90K, fill = NA, size = 0.2)) +
   coord_flip()
 
-ggplot(df_tidiest, aes(y = indivExpr, x = muscle))+
-  geom_violin()+
-  coord_flip() +
-  facet_wrap(~transcript)
+
+
+# with all points, banded -------------------------------------------------
+
+ggplot(df_tidy, aes(x = muscle, xend = muscle,
+                    fill = expr)) +
+geom_point(aes(y = expr1), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+geom_point(aes(y =  expr2), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+geom_point(aes(y =  expr3), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+geom_point(aes(y =  expr4), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+geom_point(aes(y =  expr5), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+geom_point(aes(y =  expr6), size = sizeDot,
+           alpha = alphaDot,
+           colour = grey90K, shape = 21) +
+# geom_segment(aes(yend = 0, y =  expr), 
+# # size = 0.2,
+# colour = grey50K) +
+geom_linerange(aes(colour = expr, 
+                   ymin = minExpr, 
+                   ymax = maxExpr),
+               size = 0.25,
+               alpha = 1) +
+  geom_point(aes(y = expr), 
+             alpha = 1, size = sizeDot,
+             colour = grey90K, shape = 21) +
+  scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  scale_colour_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  facet_wrap(~transcript) +
+  theme_xgrid() +
+  theme(axis.text.y = element_text(size = 10), 
+        panel.border = element_rect(colour = grey90K, fill = NA, size = 0.2)) +
+  coord_flip()
+
+
+# gradient plot -----------------------------------------------------------
+xWidth = 0.3
+
+ggplot(df_tidy, aes(x = muscleID,
+                    xend = muscleID + xWidth,
+                    fill = expr)) +
+  geom_segment(aes(y = expr, yend = expr)) +
+  geom_rect(aes(ymin = lb, ymax = ub,
+                xmin = muscleID,
+                xmax= muscleID + xWidth),
+            alpha = .7) +
+  facet_wrap(~transcript) +
+  theme_xgrid() +
+  scale_fill_gradientn(colours = brewer.pal(9, 'YlGnBu')) +
+  coord_flip()
 
