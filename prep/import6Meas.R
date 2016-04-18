@@ -67,8 +67,8 @@ df_tidy = df_tidy %>%
   rowwise() %>% 
   mutate(expr = sum(expr1, expr2, expr3, expr4, expr5, expr6)/6, 
          std = sd(c(expr1, expr2, expr3, expr4, expr5, expr6)),
-         lb = expr - 1.96*std,
-         ub = expr + 1.96*std,
+         lb = expr - (1.96*std)/sqrt(6),
+         ub = expr + (1.96*std)/sqrt(6),
          minExpr = min(expr1, expr2, expr3, expr4, expr5, expr6),
          maxExpr = max(expr1, expr2, expr3, expr4, expr5, expr6),
          uc = str_extract(Transcript, 'uc......'), # Remove extra crap from transcript ids
