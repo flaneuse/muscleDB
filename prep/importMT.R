@@ -196,3 +196,18 @@ db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_pu
 data_sqlite = copy_to(db, df_public, temporary = FALSE,
                       name = 'MT',
                       indexes = list('expr', 'transcript', 'tissue'))
+
+
+
+# Create small version ----------------------------------------------------
+
+
+data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10.rds') %>% 
+  select(-id)
+
+
+df = data %>% 
+  filter(!(transcript %like% 'NM'),
+         transcript %like% 'uc00')
+
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10_small.rds')
