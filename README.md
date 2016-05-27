@@ -11,3 +11,6 @@ please vote for your preferred tissues [here](https://docs.google.com/forms/d/1i
 
 * If there are any compelling reasons you'd like us to consider your favorite tissues, 
 please email muscle.database@gmail.com
+
+
+This content can be shared and adapted for non-commercial purposes under a Creative Commons Attribution-NonCommercial 4.0 International License
