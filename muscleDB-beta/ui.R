@@ -42,7 +42,7 @@ sidebar <- dashboardSidebar(
                          relative to a single muscle tissue</div>"))),
     radioButtons("ref", label = "reference tissue:", 
                  choices = c('none',tissueList), selected = "none"),
-    sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
+    numericInput("foldChange", label = 'fold change threshold', min = 0, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
     HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'>
