@@ -62,14 +62,14 @@ filterData <- reactive({
   # Check if q-value filtering is turned on
   if(input$adv == FALSE & qCol %in% colnames(data)) {
     filtered = data %>% 
-      select_("-contains('_q')", q = qCol) %>% 
+      select_("-dplyr::contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),
              GO %like% ont)
     
   }  else if (input$adv == FALSE) {
     filtered = data %>% 
-      select_("-contains('_q')") %>% 
+      select_("-dplyr::contains('_q')") %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont) %>%     # gene ontology
@@ -77,14 +77,14 @@ filterData <- reactive({
   } else if(qCol %in% colnames(data)){
     # Check if the q values exist in the db.
     filtered = data %>% 
-      select_("-contains('_q')", q = qCol) %>% 
+      select_("-dplyr::contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont,               # gene ontology
              q < input$qVal)
   } else {
     filtered = data %>% 
-      select(-contains('_q')) %>% 
+      select(-dplyr::contains('_q')) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont                # gene ontology                 
