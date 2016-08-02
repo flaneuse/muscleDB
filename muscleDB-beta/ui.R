@@ -18,15 +18,7 @@ sidebar <- dashboardSidebar(
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
                      choices = tissueList,
-                     selected = c('atria', 'left ventricle',
-                                  'total aorta', 'right ventricle',
-                                  'soleus', 
-                                  # 'thoracic aorta', 
-                                  # 'abdominal aorta', 
-                                  'diaphragm',
-                                  'eye', 'EDL', 'FDB', 
-                                  # 'masseter', 'tongue'
-                                  'plantaris')),
+                     selected = allTissues),
   
   # Conditional for advanced filtering options.
   checkboxInput("adv", "advanced filtering", value = FALSE),
@@ -50,7 +42,7 @@ sidebar <- dashboardSidebar(
                          relative to a single muscle tissue</div>"))),
     radioButtons("ref", label = "reference tissue:", 
                  choices = c('none',tissueList), selected = "none"),
-    sliderInput("foldChange", label=NULL, min = 1.0, max = 21, value = 1, step = 0.5, width="100%"),
+    numericInput("foldChange", label = 'fold change threshold', min = 0, value = 1, step = 0.5, width="100%"),
     
     # -- q-value. --
     HTML("<div style = 'padding-left:1em; color:#00b3dd; font-weight:bold'>
@@ -70,8 +62,8 @@ sidebar <- dashboardSidebar(
     menuItem("table", tabName = "table", icon = icon("table")),
     menuItem("volcano plot", tabName = "volcano", icon = icon("ellipsis-v")),
     menuItem("heat map", tabName = "heatMap", icon = icon("th", lib = "glyphicon")),
-    # menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
-    # menuItem("compare genes", tabName = "compare", icon = icon("line-chart")), 
+    menuItem("PCA", tabName = "PCA", icon = icon("arrows")),
+    menuItem("compare genes", tabName = "compare", icon = icon("line-chart")),
     menuItem("code", tabName = "code", icon = icon("code"))
   )
 )
@@ -80,7 +72,7 @@ sidebar <- dashboardSidebar(
 
 # Header ------------------------------------------------------------------
 header <- dashboardHeader(
-  title = "MuscleDB",
+  title = "MuscleDB (beta)",
   # -- Message bar --
   dropdownMenu(type = "messages", badgeStatus = NULL, icon = icon("question-circle"),
                messageItem("Muscle Transcriptome Atlas",
@@ -94,7 +86,7 @@ header <- dashboardHeader(
                ),
                messageItem("Website code and data scripts",
                            "find the code on Github", icon = icon("code"),
-                           href = "https://github.com/flaneuse/muscle-transcriptome")
+                           href = "https://github.com/flaneuse/muscleDB")
   )
 )
 
@@ -106,7 +98,8 @@ body <- dashboardBody(
   
   # -- Import custom CSS --
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css")),
+    tags$link(rel = "stylesheet", type = "text/css", href = "customStyle.css"),
+    includeScript("google-analytics.js")), # -- Include Google Analytics file --
   
   # -- Each tab --
   tabItems(
@@ -114,7 +107,7 @@ body <- dashboardBody(
     # -- Basic plot -- 
     tabItem(tabName = "plot", 
             fluidRow(h5("MuscleDB is a database containing RNAseq expression
-                        levels for 10 different muscle tissues.")),
+                        levels for mouse muscle tissues.")),
             fluidRow(h6("Explore the database by filtering the data on the toolbar 
                         at the left and with different visualizations on the bottom left. 
                         Need help getting started? See our help page.")),
@@ -174,15 +167,38 @@ body <- dashboardBody(
                             fluidRow(br()),
                             # fluidRow(actionButton('saveVolcano', 'save selected rows')),
                             fluidRow(br())))),
-                            # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
+    # fluidRow(downloadButton('csvVolcano', 'save to .csv'))))),    
     # -- PCA --
-    # tabItem(tabName = "PCA", 
-    #         fluidRow(column(5,
-    #                         plotOutput("pcaPlot"),
-    #                         dataTableOutput("PCAload")),
-    #                  column(7,infoBoxOutput("PCAstats")))),
-    # h5("disclaimer; PCA loadings; % variance; brush; save --> table / graph / --> input")),
+    tabItem(tabName = "PCA",
+            fluidRow(h4('Principal Components of Selected Tissues')),
+            fluidRow(column(5,
+                            plotOutput("pcaPlot", 
+                                       click = "pcaDblclick",
+                                       brush = brushOpts(
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)),
+                            dataTableOutput("PCAload")),
+                     column(4,
+                            infoBoxOutput("PCAstats", width = 12),
+                            helpText('Zoom on a region by highlighting the graph and double clicking'),
+                            helpText('Highlight a point on the graph by clicking a row in the table'),
+                            dataTableOutput("PCApts")))),
     
+    
+    # -- Compare genes --
+    tabItem(tabName = "compare",
+            fluidRow(column(3, uiOutput('g1')), # selectize input to select the ref. tissue
+                     column(6, radioButtons("sortBy", label = 'sort by',
+                                            choices = c('most similar' = 'most', 
+                                                        'least similar' = 'least', 
+                                                        'alphabetically' = 'alpha'), 
+                                            selected = 'most',
+                                            inline = TRUE))),
+            fluidRow(column(2, fluidRow(actionButton("prevComp", label="", icon = icon("chevron-left")))),
+                     column(4, fluidRow(h5('view next results'))),
+                     column(2, 
+                            fluidRow(actionButton("nextComp", label="", icon = icon("chevron-right"))))),
+            fluidRow(plotOutput("compPlot", height = "1500px"))),
     
     # -- Heat map --
     tabItem(tabName = "heatMap", 
@@ -201,7 +217,7 @@ body <- dashboardBody(
                             checkboxInput("orderHeat", label = "group genes by similarity?", value = FALSE)
                      ))
             # fluidRow(plotOutput("heatmapScale"))
-            ),
+    ),
     
     # -- Code --
     tabItem(tabName = "code",
