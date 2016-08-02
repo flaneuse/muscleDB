@@ -86,11 +86,11 @@ header <- dashboardHeader(
                messageItem("Muscle Transcriptome Atlas",
                            "about the database",
                            icon = icon("bar-chart"),
-                           href="https://muscle-transcriptome-atlas.shinyapps.io/how-to/"
+                           href="http://flaneuse.github.io/muscleDB/about.html"
                ),
                messageItem("Need help getting started?",
                            "click here", icon = icon("question-circle"),
-                           href="https://muscle-transcriptome-atlas.shinyapps.io/how-to/"
+                           href="http://flaneuse.github.io/muscleDB/help.html"
                ),
                messageItem("Website code and data scripts",
                            "find the code on Github", icon = icon("code"),
