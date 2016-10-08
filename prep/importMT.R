@@ -183,14 +183,14 @@ df_public = data.table(df_public)
 
 # save files --------------------------------------------------------------
 
-saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10.rds')
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-10-08.rds')
 
-saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-04-10.rds')
+saveRDS(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-10-08.rds')
 
-write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-04-10.csv')
+write.csv(df_public, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-10-08.csv')
 
 # Copy to sqlite db -------------------------------------------------------
-db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-04-10.sqlite3',
+db = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2016-10-08.sqlite3',
                 create = TRUE)
 
 data_sqlite = copy_to(db, df_public, temporary = FALSE,
@@ -202,12 +202,12 @@ data_sqlite = copy_to(db, df_public, temporary = FALSE,
 # Create small version ----------------------------------------------------
 
 
-data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10.rds') %>% 
+data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-10-08.rds') %>% 
   select(-id)
 
-
+# 
 df = data %>% 
   filter(!(transcript %like% 'NM'),
-         transcript %like% 'uc00')
+         transcript %like% 'uc')
 
-saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-04-10_small.rds')
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2016-10-08_small.rds')
