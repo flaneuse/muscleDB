@@ -18,7 +18,7 @@ df = data %>%
   spread(tissue, expr) %>% 
   mutate(FC = signif(`abdominal aorta`/`total aorta`, 3),
          logFC = signif(log(`abdominal aorta`/`total aorta`), 3),
-         logQ = signif(log(AA.AOR_q), 3)) %>% 
+         logQ = -1 * signif(log(AA.AOR_q), 3)) %>% 
   slice(1:1000)
 
 
@@ -30,11 +30,6 @@ server <- function(input, output) {
     # all_data <- isolate(filterVolcano())
     geneName = df[df$id == x$id, 'gene']
     transcriptName  = df[df$id == x$id, 'transcript']
-    # strtrim(all_data[all_data$ID == x$ID, 2],10)
-    # paste0("<b>", geneName, "</b><br>",
-    # transcriptName, "<br>",
-    # "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
-    # "p/q: ", format(10^-x[2], digits = 3, nsmall = 1))
     
     paste0("<b>", geneName, "</b><br>",
            transcriptName, "<br>",
@@ -45,10 +40,23 @@ server <- function(input, output) {
   
   lb <- linked_brush(keys = df$id, "#fee090")
   
+  # A subset of df, of only the selected points
+  selected <- lb$selected
+  
+  df_selected <- reactive({
+    # if(sum(selected()) > 0){
+      df[selected(), ]
+    # } else{
+        # df
+      # }
+  })
+  
   df %>% 
+    # remove things @ Inf, -Inf
     filter(is.finite(logFC)) %>% 
-    ggvis(x = ~logFC, y = ~-1*logQ, key := ~id) %>% 
     
+    # main setup
+    ggvis(x = ~logFC, y = ~logQ, key := ~id) %>% 
     layer_points(opacity := alpha_dot,
                  size := size_dot,
                  
@@ -56,30 +64,25 @@ server <- function(input, output) {
                  fill := fill_dot,
                  stroke := stroke_dot,
                  strokeWidth := stroke_width,
-
+                 
                  size.hover := size_dot * 4,
                  fill.hover := fill_hover,
                  stroke.hover := stroke_hover, 
                  strokeWidth.hover := stroke_width,
-                 fill.brush := "green") %>% 
-    lb$input() %>% 
+                 fill.brush := fill_hover) %>% 
+    lb$input() %>%
     
     add_tooltip(volcanoTooltip, "hover")  %>%
     bind_shiny('plot1')
   
   
   
-  # A subset of cocaine, of only the selected points
-  selected <- lb$selected
-  df_selected <- reactive({
-    df[selected(), ]
-  })
   
   df %>% 
     filter(!is.na(logQ)) %>% 
-    ggvis(~logQ) %>% 
+    ggvis(x = ~logQ) %>% 
     add_data(df_selected) %>% 
-    layer_densities() %>% 
+    layer_densities(fill := fill_dot) %>% 
     bind_shiny('plot2')
   
   df %>% 
@@ -91,54 +94,30 @@ server <- function(input, output) {
 }
 
 ui <- fluidPage(
-    mainPanel(ggvisOutput("plot1"),
-              ggvisOutput("plot2"),
-              ggvisOutput("plot3"))
-  )
+  mainPanel(ggvisOutput("plot1"),
+            ggvisOutput("plot2"),
+            ggvisOutput("plot3"))
+)
 
 shinyApp(ui = ui, server = server)
 
 
 
 
-  # # Add axis labels
-  # add_axis("x", title = paste("log(fold change in expression) (", xLab,")"),
-  #          properties = axis_props(
-  #            title = list(fontSize = 20),
-  #            axis = list(strokeWidth = 2),
-  #            labels = list(align = "center", fontSize = 16))) %>%
-  # add_axis("y", title = "-log(q)",
-  #          tick_padding = 13,
-  #          title_offset = 50,
-  #          properties = axis_props(
-  #            title = list(fontSize = 20),
-  #            axis = list(strokeWidth = 2),
-  #            labels = list(align = "center", fontSize = 16))) %>%
-  # set_options(width = 700, height = 500)
+# # Add axis labels
+# add_axis("x", title = paste("log(fold change in expression) (", xLab,")"),
+#          properties = axis_props(
+#            title = list(fontSize = 20),
+#            axis = list(strokeWidth = 2),
+#            labels = list(align = "center", fontSize = 16))) %>%
+# add_axis("y", title = "-log(q)",
+#          tick_padding = 13,
+#          title_offset = 50,
+#          properties = axis_props(
+#            title = list(fontSize = 20),
+#            axis = list(strokeWidth = 2),
+#            labels = list(align = "center", fontSize = 16))) %>%
+# set_options(width = 700, height = 500)
 
 
 
-
-set.seed(1233)
-cocaine <- cocaine[sample(1:nrow(cocaine), 500), ]
-
-cocaine$id <- seq_len(nrow(cocaine))
-
-lb <- linked_brush(keys = cocaine$id, "red")
-
-cocaine %>%
-  ggvis(~weight, ~price, key := ~id) %>%
-  layer_points(fill := lb$fill, fill.brush := "red", opacity := 0.3) %>%
-  lb$input()
-
-# A subset of cocaine, of only the selected points
-selected <- lb$selected
-cocaine_selected <- reactive({
-  cocaine[selected(), ]
-})
-
-cocaine %>%
-  ggvis(~potency) %>%
-  layer_histograms(width = 5, boundary = 0) %>%
-  add_data(cocaine_selected) %>%
-  layer_histograms(width = 5, boundary = 0, fill := "#dd3333")
