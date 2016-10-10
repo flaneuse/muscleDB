@@ -9,22 +9,7 @@ stroke_dot = '#313695'
 fill_hover = '#d53e4f'
 stroke_hover = '#9e0142'
 
-volcanoTooltip <- function(x) {
-  if(is.null(x)) return(NULL)
-  # all_data <- isolate(filterVolcano())
-  geneName = df[df$id == x$id, 'gene']
-  transcriptName  = df[df$id == x$id, 'transcript']
-    # strtrim(all_data[all_data$ID == x$ID, 2],10)
-  # paste0("<b>", geneName, "</b><br>",
-  # transcriptName, "<br>",
-  # "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
-  # "p/q: ", format(10^-x[2], digits = 3, nsmall = 1))
-  
-  paste0("<b>", geneName, "</b><br>",
-         transcriptName, "<br>",
-         "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
-         "q: ", format(10^-x[2], digits = 3, nsmall = 1))
-}
+
 
 # toy df
 df = data %>% 
@@ -36,7 +21,30 @@ df = data %>%
          logQ = signif(log(AA.AOR_q), 3)) %>% 
   slice(1:1000)
 
+
+
 server <- function(input, output) {
+  
+  volcanoTooltip <- function(x) {
+    if(is.null(x)) return(NULL)
+    # all_data <- isolate(filterVolcano())
+    geneName = df[df$id == x$id, 'gene']
+    transcriptName  = df[df$id == x$id, 'transcript']
+    # strtrim(all_data[all_data$ID == x$ID, 2],10)
+    # paste0("<b>", geneName, "</b><br>",
+    # transcriptName, "<br>",
+    # "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
+    # "p/q: ", format(10^-x[2], digits = 3, nsmall = 1))
+    
+    paste0("<b>", geneName, "</b><br>",
+           transcriptName, "<br>",
+           "fold change: ", format(10^x[1], digits = 3, nsmall = 1), "<br>",
+           "q: ", format(10^-x[2], digits = 3, nsmall = 1))
+  }
+  
+  
+  lb <- linked_brush(keys = df$id, "#fee090")
+  
   df %>% 
     filter(is.finite(logFC)) %>% 
     ggvis(x = ~logFC, y = ~-1*logQ, key := ~id) %>% 
@@ -44,6 +52,7 @@ server <- function(input, output) {
     layer_points(opacity := alpha_dot,
                  size := size_dot,
                  
+                 # fill := lb$fill,
                  fill := fill_dot,
                  stroke := stroke_dot,
                  strokeWidth := stroke_width,
@@ -51,14 +60,25 @@ server <- function(input, output) {
                  size.hover := size_dot * 4,
                  fill.hover := fill_hover,
                  stroke.hover := stroke_hover, 
-                 strokeWidth.hover := stroke_width) %>% 
+                 strokeWidth.hover := stroke_width,
+                 fill.brush := "green") %>% 
+    lb$input() %>% 
     
     add_tooltip(volcanoTooltip, "hover")  %>%
     bind_shiny('plot1')
   
+  
+  
+  # A subset of cocaine, of only the selected points
+  selected <- lb$selected
+  df_selected <- reactive({
+    df[selected(), ]
+  })
+  
   df %>% 
     filter(!is.na(logQ)) %>% 
     ggvis(~logQ) %>% 
+    add_data(df_selected) %>% 
     layer_densities() %>% 
     bind_shiny('plot2')
   
@@ -66,6 +86,7 @@ server <- function(input, output) {
     filter(!is.na(logFC)) %>% 
     ggvis(~logFC) %>% 
     layer_densities() %>% 
+    add_data(df_selected) %>% 
     bind_shiny('plot3')
 }
 
