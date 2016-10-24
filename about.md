@@ -24,4 +24,4 @@ Anyone is welcome to freely use and adapt both the raw data as well as the [Shin
 ### Acknowledgements
 
 * This site was built using <a href="http://jekyllrb.com">Jekyll</a>, based on a theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
-* This content can be shared and adapted for non-commercial purposes under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/2.0/){:target="_blank"}
+* This content can be shared and adapted for non-commercial purposes under a [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/){:target="_blank"}
