@@ -61,7 +61,8 @@ rownames(anova_data) <- rownames(geneExpr)
 colMuscles = NULL
 
 for (j in 1:length(muscles)){
-  colMuscles = c(colMuscles, grep(muscles[j], colnames(geneExpr)))
+  # Regex modified to be the muscle name + single digit, to avoid TA1 and TAN1 confusion.
+  colMuscles = c(colMuscles, grep(paste0("^", muscles[j], "[0-9]"), colnames(geneExpr)))
 }
 
 # ___________________________________________________________________________________
