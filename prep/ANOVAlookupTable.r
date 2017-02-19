@@ -1,3 +1,5 @@
+# n is the number of tissues to compare in ANOVA calc.
+
 ANOVAlookupTable <- function (geneExprFileName, 
                               numRep = 6, 
                               muscles = c('AOR', 'ATR', 'DIA', 'EDL', 'EYE', 
