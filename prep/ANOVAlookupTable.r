@@ -1,6 +1,6 @@
 # n is the number of tissues to compare in ANOVA calc.
 
-ANOVAlookupTable <- function (geneExprFileName, 
+ANOVAlookupTable <- function (geneExprData, 
                               numRep = 6, 
                               muscles = c('AOR', 'ATR', 'DIA', 'EDL', 'EYE', 
                                           'LV', 'RV', 'SOL', 'TON', 'TA',
@@ -10,13 +10,23 @@ ANOVAlookupTable <- function (geneExprFileName,
   
   source("calcANOVA.r")
   
-  print('Starting ANOVA calculation.')
+
+  # Check the data is a matrix.
+  if(!is.matrix(geneExprData)) {
+    geneExpr = as.matrix(geneExprData)
+  } else {
+    geneExpr = geneExprData
+  }
   
-  # Read in file
-  print('Reading in file... this will take a second.')
-  geneExpr = as.matrix(read.csv(geneExprFileName, row.names=1))
+
   
-  print('... done!  Let the calculation begin.')
+  # print('Starting ANOVA calculation.')
+  # 
+  # # Read in file
+  # print('Reading in file... this will take a second.')
+  # geneExpr = as.matrix(read.csv(geneExprFileName, row.names=1))
+  # 
+  # print('... done!  Let the calculation begin.')
   
   # Define the muscle tissues to be examined.
   muscles = sort(muscles) # Check that the muscles are in the proper order to match the tissues to the lookup table
@@ -26,9 +36,12 @@ ANOVAlookupTable <- function (geneExprFileName,
   # Initialize data frame containing all the values.
   if (onlyPairwise) {
     numCombs = choose(numMuscles,n) * 2
+    
+    muscleCounter = n
   } else {
     numCombs = (2^numMuscles - numMuscles - 1) * 2 # Since not calculating the ANOVA of a single tissue...
     
+    muscleCounter = n:numMuscles
   }
   
   ANOVAvals = matrix(data=NA,nrow = nrow(geneExpr), ncol= numCombs)
@@ -36,7 +49,7 @@ ANOVAlookupTable <- function (geneExprFileName,
   rownames(ANOVAvals) = rownames(geneExpr)
   counter = 1
   
-  for (i in n:numMuscles) {
+  for (i in muscleCounter) {
     # Update console so you know where you're at in the loop.
     print(paste("Finding all combinations of", i, "(of", numMuscles, ") ..."))
     print(paste("Counter is at", counter, "of", numCombs))
