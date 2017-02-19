@@ -30,10 +30,12 @@ outputDir = '~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/'
 
 
 # import raw data  --------------------------------------------------------
-rawdata = read_excel(rawDataFile)
+importeddata = read_excel(rawDataFile)
 
-rawdata = rawdata %>% 
-  select(Transcript, Coordinates, Length, contains('MIN_ANTI'))
+# MAKE SURE THERE'S NO GUNK AT THE BOTTOM OF THE SHEET.
+rawdata = importeddata %>% 
+  select(Transcript, Coordinates, Length, contains('MIN_ANTI')) %>% 
+  filter(!is.na(Transcript))
 
 # Convert to a matrix; ANOVAs will only work w/ matrix output
 rawdata = as.matrix(rawdata)
