@@ -31,3 +31,6 @@ All files are within the ['prep' directory](https://github.com/flaneuse/muscleDB
 * run app to double check everything works.
 
 # Upload to server and restart Shiny server.
+1. Copy the new .rds data file into the data directory
+* replace the new `global.R` file
+* deploy and restart the server.
