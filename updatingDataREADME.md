@@ -21,3 +21,13 @@ All files are within the ['prep' directory](https://github.com/flaneuse/muscleDB
 * update the dplyr selection to include the new tissues for avg, SE
 * if adding new genes, update the transcript crosswalk file to get the new gene ontology terms.
 * import the newly calculated ANOVAs
+* Change the re-factorization to include new muscle tissues.
+* Copy .rds file into the `data` folder of the Shiny app.
+
+# Change data source in Shiny app 
+## within `global.R`:
+1. update the call to data (`data = readRDS('data/expr_2017-02-19.rds')`)
+* update `tissueList`, `allTissues`
+* run app to double check everything works.
+
+# Upload to server and restart Shiny server.

@@ -24,7 +24,7 @@ library(RColorBrewer)
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
-data = readRDS('data/expr_2016-10-08.rds')
+data = readRDS('data/expr_2017-02-19.rds')
 
 GOs = readRDS("data/allOntologyTerms.rds")
 
@@ -32,25 +32,27 @@ GOs = readRDS("data/allOntologyTerms.rds")
 maxInit = max(data$expr)
 
 # List of tissues
-tissueList = list(
-                  'total aorta' = 'total aorta',
-                  'thoracic aorta' = 'thoracic aorta',
-                  'abdominal aorta' = 'abdominal aorta',
-                  'atria' = 'atria', 
-                  'left ventricle' = 'left ventricle',
-                  'right ventricle' = 'right ventricle',
-                  'diaphragm' = 'diaphragm',
-                  'eye' = 'eye', 
-                  'EDL' = 'EDL', 
-                  'FDB' = 'FDB', 
-                  'masseter' =  'masseter',
-                  'plantaris' = 'plantaris',
-                  'soleus' = 'soleus',
-                  'tongue' = 'tongue')
+tissueList = list('total aorta' = 'total aorta',
+                'thoracic aorta' = 'thoracic aorta',
+                'abdominal aorta' = 'abdominal aorta',
+                'atria' = 'atria', 
+                'left ventricle' = 'left ventricle',
+                'right ventricle' = 'right ventricle',
+                'diaphragm' = 'diaphragm',
+                'eye' = 'eye', 
+                'EDL' = 'EDL', 
+                'FDB' = 'FDB',
+                'gastrocnemius' = 'gastrocnemius',
+                'masseter' =  'masseter',
+                'plantaris' = 'plantaris',
+                'quadriceps' = 'quadriceps',
+                'soleus' = 'soleus',
+                'tibialis anterior' = 'tibialis anterior',
+                'tongue' = 'tongue')
 
 allTissues = c('atria', 'left ventricle',
                'total aorta', 'right ventricle',
-               'soleus', 
+               'soleus', 'tibialis anterior', 'quadriceps', 'gastrocnemius',
                'thoracic aorta',
                'abdominal aorta',
                'diaphragm',
