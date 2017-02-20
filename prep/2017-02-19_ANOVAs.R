@@ -40,6 +40,9 @@ rawdata = importeddata %>%
 # Convert to a matrix; ANOVAs will only work w/ matrix output
 rawdata = as.matrix(rawdata)
 
+# Make sure to rename the row names as the first column.
+row.names(rawdata) = rawdata[,'Transcript']
+
 # 1. run ALL TISSUES ------------------------------------------------------
 anovas = ANOVAlookupTable(rawdata, muscles = allMusc, onlyPairwise = TRUE, n = length(allMusc))
 saveRDS(anovas, paste0(outputDir, 'allANOVAs_2017-02-19.rds'))
@@ -103,7 +106,7 @@ smooth = readRDS('allSmoothANOVAs_2017-02-19.rds')
 smooth = data.frame(transcript = row.names(smooth), smooth)
 
 
-pairwise = readRDS(paste0(outputDir,'pairwiseANOVAs_trimmed_2017-02-19.rds'))
+pairwise = readRDS(paste0(outputDir,'pairwiseANOVAs_2017-02-19.rds'))
 pairwise = data.frame(transcript = row.names(pairwise), pairwise)
 
 

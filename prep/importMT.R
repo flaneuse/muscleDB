@@ -105,7 +105,7 @@ df = full_join(avg, SE, by = c("transcript", "tissue")) %>%
 
 
 # Merge in ANOVAs ---------------------------------------------------------
-anovas = readRDS('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/allANOVAs_merged_2015-10-18.rds')
+anovas = readRDS('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/allANOVAs_merged_2017-02-19.rds')
 
 anovas = anovas %>% 
   group_by(transcript) %>% 
