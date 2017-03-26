@@ -18,7 +18,7 @@ sidebar <- dashboardSidebar(
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
                      choices = tissueList,
-                     selected = allTissues),
+                     selected = selTissues),
   
   # Conditional for advanced filtering options.
   checkboxInput("adv", "advanced filtering", value = FALSE),

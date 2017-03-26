@@ -59,3 +59,11 @@ allTissues = c('atria', 'left ventricle',
                'eye', 'EDL', 'FDB', 
                'masseter', 'tongue',
                'plantaris')
+
+# skelMuscles = c('DIA', 'EDL', 'EYE', 'SOL', 'TON','FDB', 'MAS', 'PLA', 'TAN', 'QUAD', 'GAS')
+selTissues = c(
+               'soleus', 'tibialis anterior', 'quadriceps', 
+               'diaphragm',
+               'eye', 'EDL', 'FDB', 'gastrocnemius',
+               'masseter', 'tongue',
+               'plantaris')
