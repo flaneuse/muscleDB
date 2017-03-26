@@ -101,7 +101,6 @@ output$volcanoPlot <- renderPlot({
           axis.text = element_text(size = 16, color = grey60K, family = 'Segoe UI Light'),
           axis.title = element_text(size = 18, color = grey60K, family = 'Segoe UI Light'),
           legend.position="none",
-          panel.background = element_blank(),
           panel.grid.major = element_line(color = grey60K, size = 0.2),
           panel.border = element_blank(),
           plot.margin = rep(unit(0, units = 'points'),4),
