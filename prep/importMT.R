@@ -54,7 +54,8 @@ SE = df %>%
          eye = EYE_standard_error, EDL = EDL_standard_error, FDB = FDB_standard_error, 
          masseter = MAS_standard_error, plantaris = PLA_standard_error, 
          tongue = TON_standard_error,
-         `tibialis anterior` = TAN_mean, quadriceps = Quad_Mean, gastrocnemius = GAS_mean) %>% 
+         `tibialis anterior` = TAN_standarderror, 
+         quadriceps = Quad_standarderror, gastrocnemius = GAS_standarderror) %>% 
   gather(tissue, SE, -transcript)
 
 
