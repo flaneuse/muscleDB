@@ -4,7 +4,16 @@ sidebar <- dashboardSidebar(
   
   # -- Gene filtering --
   # Search form for symbols
-  sidebarSearchForm(label = "search symbol (Myod1)", "geneInput", "searchButton"),
+  # sidebarSearchForm(label = "search symbol (Myod1)", "geneInput", "searchButton"),
+  # selectizeInput("geneInput", label = "search symbol (e.g. Myod1)", 
+  #           multiple = FALSE, 
+  #           options = list(maxOptions = 500,
+  #                          placeholder = 'search symbol (e.g. Myod1)',
+  #                          onInitialize = I('function() { this.setValue(""); }')),
+  #             choices = NULL,
+  #             selected = "Myod1"),
+  
+  textInput("geneInput", label = "search symbol (e.g. Myod1", value = "Myod1"),
   
   # Search form for ontology
   # sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),

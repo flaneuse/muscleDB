@@ -10,6 +10,13 @@ shinyServer(
                            server = TRUE)
     })
     
+    # populateSelectize <- reactive({
+    #   updateSelectizeInput(session, 'geneInput', choices = shortNameList, 
+    #                        selected = 'Myod1',
+    #                        options = list(placeholder = "search symbol (e.g. Myod1)"), 
+    #                        server = TRUE)
+    # })
+    
     
     # FILTER ------------------------------------------------------------------
     

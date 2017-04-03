@@ -24,7 +24,7 @@ library(RColorBrewer)
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
-data = readRDS('data/expr_2017-02-19.rds')
+data = readRDS('data/expr_2017-04-02.rds')
 
 GOs = readRDS("data/allOntologyTerms.rds")
 
@@ -67,3 +67,5 @@ selTissues = c(
                'eye', 'EDL', 'FDB', 'gastrocnemius',
                'masseter', 'tongue',
                'plantaris')
+
+# shortNameList = unique(data$shortName)
