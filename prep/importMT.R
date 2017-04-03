@@ -109,6 +109,7 @@ df = full_join(avg, SE, by = c("transcript", "tissue")) %>%
 anovas = readRDS('~/Dropbox/Muscle Transcriptome Atlas/RUM_Re-analysis/ANOVAs/allANOVAs_merged_2017-02-19.rds')
 
 anovas = anovas %>% 
+  select(-transcript.1) %>% 
   group_by(transcript) %>% 
   mutate_each(funs(signif(., digits = 3)))
 
@@ -159,7 +160,7 @@ df$tissue = factor(df$tissue,
 
 # save files --------------------------------------------------------------
 
-saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2017-02-19.rds')
+saveRDS(df, '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2017-04-02.rds')
 
 
 # Copy to sqlite db -------------------------------------------------------
