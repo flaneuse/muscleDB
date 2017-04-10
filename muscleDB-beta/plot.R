@@ -4,7 +4,9 @@ theme_xOnly<- function(textSize) {
         axis.ticks = element_blank(),
         axis.text = element_text(size = textSize, color = grey60K, family = 'Segoe UI Light'),
         axis.text.y = element_text(vjust = 0.1),
-        axis.title = element_blank(), 
+        axis.title.x = element_text(size = 19, color = grey60K, 
+                                    family = 'Segoe UI Light'), 
+        axis.title.y = element_blank(), 
         legend.position="none",
         panel.border = element_rect(colour = grey90K, size = 0.25, fill = NA),
         panel.grid.major = element_line(color = grey60K, size = 0.2),
@@ -149,7 +151,7 @@ output$plot1 <- renderPlot({
                 colour = grey60K) +
       
 
-      
+      ylab('expression (FPKM)') + 
       facet_wrap(~transFacet) +
       theme_xOnly(textSize)
   }
