@@ -13,7 +13,7 @@ sidebar <- dashboardSidebar(
   #             choices = NULL,
   #             selected = "Myod1"),
   
-  textInput("geneInput", label = "search symbol (e.g. Myod1", value = "Myod1"),
+  textInput("geneInput", label = "search symbol (e.g. Myod1", value = initGene),
   
   # Search form for ontology
   # sidebarSearchForm(label = "search ontology (axon)", "GO", "searchButton"),
@@ -27,7 +27,7 @@ sidebar <- dashboardSidebar(
   # -- Muscle filtering --
   checkboxGroupInput("muscles","muscle type", inline = FALSE,
                      choices = tissueList,
-                     selected = selTissues),
+                     selected = allTissues),
   
   # Conditional for advanced filtering options.
   checkboxInput("adv", "advanced filtering", value = FALSE),

@@ -21,10 +21,15 @@ library(RColorBrewer)
 
 # Import in the Muscle Transcriptome database -----------------------------
 
+# Set the initial view to be the Myod1 gene, to save on processing time.
+initGene = 'Myod1'
+
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
 data = readRDS('data/expr_2017-04-02.rds')
+
+initData = data %>% filter(shortName %like% initGene)
 
 GOs = readRDS("data/allOntologyTerms.rds")
 

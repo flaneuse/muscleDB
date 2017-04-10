@@ -14,6 +14,13 @@ filterData <- reactive({
   # geneInput = paste0(input$geneInput, '%') # For SQL-based filtering
   geneInput = paste0('^', input$geneInput)
   
+  # check if the data is the initial view, or all the data.
+  if (input$geneInput == initGene) {
+    data2filter = initData
+  } else {
+    data2filter = data
+  }
+  
   if(is.null(input$GO)){
     ont = ""
   } else {
@@ -60,30 +67,30 @@ filterData <- reactive({
   # To switch this to an OR relationship, combine the geneInput and ont with an '|'.
   
   # Check if q-value filtering is turned on
-  if(input$adv == FALSE & qCol %in% colnames(data)) {
-    filtered = data %>% 
+  if(input$adv == FALSE & qCol %in% colnames(data2filter)) {
+    filtered = data2filter %>% 
       select_("-dplyr::contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),
              GO %like% ont)
     
   }  else if (input$adv == FALSE) {
-    filtered = data %>% 
+    filtered = data2filter %>% 
       select_("-dplyr::contains('_q')") %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont) %>%     # gene ontology
       mutate(q = NA)
-  } else if(qCol %in% colnames(data)){
+  } else if(qCol %in% colnames(data2filter)){
     # Check if the q values exist in the db.
-    filtered = data %>% 
+    filtered = data2filter %>% 
       select_("-dplyr::contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
              GO %like% ont,               # gene ontology
              q < input$qVal)
   } else {
-    filtered = data %>% 
+    filtered = data2filter %>% 
       select(-dplyr::contains('_q')) %>% 
       filter(tissue %in% selMuscles,   # muscles
              grepl(eval(geneInput), shortName, ignore.case = TRUE),  # gene symbol
