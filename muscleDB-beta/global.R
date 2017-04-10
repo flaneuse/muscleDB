@@ -8,9 +8,9 @@ library(ggvis)
 library(ggplot2)
 # library(rCharts)
 library(dtplyr)
-library(data.table)
+# library(data.table)
 library(llamar)
-library(plotly)
+# library(plotly)
 library(RColorBrewer)
 
 
