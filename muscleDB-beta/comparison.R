@@ -1,3 +1,46 @@
+
+# themes ------------------------------------------------------------------
+
+theme_XGrid = function (font_normal = "Lato", font_semi = "Lato", font_light = "Lato Light", 
+          legend.position = "none", legend.direction = "horizontal", 
+          panel_spacing = 3, font_axis_label = 12, font_axis_title = font_axis_label * 
+            1.15, font_facet = font_axis_label * 1.15, font_legend_title = font_axis_label, 
+          font_legend_label = font_axis_label * 0.8, font_subtitle = font_axis_label * 
+            1.2, font_title = font_axis_label * 1.3, grey_background = FALSE, 
+          background_colour = grey10K, projector = FALSE) 
+{
+
+  background_colour = ifelse(grey_background == TRUE, background_colour, 
+                             NA)
+  if (grey_background == TRUE) {
+    plot_margin = margin(t = 5, r = 15, b = 5, l = 5, unit = "pt")
+  }
+  else {
+    plot_margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
+  }
+  theme(title = element_text(size = font_title, colour = "#414042", 
+                             family = font_normal), plot.subtitle = element_text(size = font_subtitle, 
+                                                                                 colour = "#636466", family = font_semi), text = element_text(family = font_light, 
+                                                                                                                                                    colour = "#6d6e71", hjust = 0.5), axis.line = element_blank(), 
+        axis.ticks.x = element_blank(), axis.line.y = element_blank(), 
+        axis.ticks.y = element_blank(), axis.text.x = element_text(size = font_axis_label, 
+                                                                   colour = "#6d6e71", family = font_light), axis.title.x = element_text(size = font_axis_title, 
+                                                                                                                                           colour = "#6d6e71", family = font_semi), axis.text.y = element_text(size = font_axis_label, 
+                                                                                                                                                                                                                 colour = "#6d6e71", family = font_light), axis.title.y = element_blank(), 
+        legend.position = legend.position, legend.title = element_text(size = font_legend_title, 
+                                                                       colour = "#6d6e71", family = font_semi), legend.text = element_text(size = font_legend_label, 
+                                                                                                                                             colour = "#6d6e71", family = font_semi), legend.direction = legend.direction, 
+        panel.background = element_rect(fill = "white", colour = NA, 
+                                        size = NA), plot.background = element_rect(fill = background_colour, 
+                                                                                   colour = NA, size = NA, linetype = 1), panel.spacing = unit(panel_spacing, 
+                                                                                                                                               "lines"), panel.grid.minor.x = element_blank(), panel.grid.major.x = element_line(size = 0.1, 
+                                                                                                                                                                                                                                 colour = "#6d6e71"), panel.grid.minor.y = element_blank(), 
+        panel.grid.major.y = element_blank(), panel.border = element_blank(), 
+        plot.margin = plot_margin, 
+        strip.text = element_text(size = font_facet, colour = "#636466", hjust = 0.025), strip.background = element_blank())
+}
+
+
 # Gene selection box --------------------------------------------------
 output$g1 = renderUI({
   
@@ -112,14 +155,14 @@ output$compPlot = renderPlot({
            aes(x = logFC, xend = 0, y = tissue, yend = tissue,
                fill = logFC)) +
       geom_segment(colour = grey40K, size = 0.25) +
-      geom_vline(xintercept = 0, colour = grey90K, size = 0.25) +
-      geom_point(size = 4, colour = grey70K,
+      geom_vline(xintercept = 0, colour = "#414042", size = 0.25) +
+      geom_point(size = 4, colour = "#6d6e71",
                  shape = 21) +
       scale_fill_gradientn(colours = brewer.pal(10, 'RdYlBu'),
                            limits = c(-yMax, yMax)) +
-      theme_xgrid() +
-      theme(rect = element_rect(colour = grey90K, size = 0.25, fill = NA),
-            panel.border = element_rect(colour = grey90K, size = 0.25, fill = NA)) +
+      theme_XGrid() +
+      theme(rect = element_rect(colour = "#414042", size = 0.25, fill = NA),
+            panel.border = element_rect(colour = "#414042", size = 0.25, fill = NA)) +
       facet_wrap(~fullName) +
       xlab('log(fold change)')
   } else {
