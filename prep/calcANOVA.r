@@ -28,6 +28,9 @@
 # geneExpr = as.matrix(read.csv("allData-sol6BAD.csv", row.names=1))
 
 calcANOVA <- function (muscles, geneExpr, numRep){
+  
+  # Threshold to assume that there's no variation within the tissues, so don't calculate the ANOVA.
+  sd_thresh = 1e-6
 
 # ___________________________________________________________________________________
 # Intialize 2 column data frame to hold the data in each loop.
@@ -72,9 +75,20 @@ for (j in 1:length(muscles)){
 # Calculate the ANOVA for each transcript (i.e. each row)
 for(i in 1:nrow(geneExpr)){
   d[,2] <- geneExpr[i, colMuscles]
+  
+  # Calculate linear model between the observations
   d_obj <- lm(val~cat, data=d)
-  d_anova <- anova(d_obj)
-  anova_data[i,1] <- d_anova[1,5]
+  
+  if(sd(d_obj$residuals) > sd_thresh){
+    d_anova <- anova(d_obj)
+    
+    anova_data[i,1] <- d_anova[1,5]
+    
+  } else {
+    anova_data[i,1] <- NA
+  }
+  
+  
   
   # Display every 10,000 transcripts how many calcs have been done.
   if (! i%%10000) {
