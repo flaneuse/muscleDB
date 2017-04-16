@@ -6,6 +6,7 @@
 * updated gene ontology classifications
 * updated master list of gene ontology terms for selectize
 * revised incorrect standard error calculations for QUAD, GAS, TA
+* fixed filtering to show q-values for new tissues (needed to map tissue names to their codes in `filterExpr.R`)
 
 ### files updated
 1. expr_2017-04-16.rds
