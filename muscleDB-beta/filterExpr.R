@@ -46,6 +46,7 @@ filterData <- reactive({
                                            'eye', 'EDL', 'FDB',
                                            'thoracic aorta', 'abdominal aorta',
                                            'tongue', 'masseter',
+                                           'gastrocnemius', 'quadriceps', 'tibialis anterior',
                                            'plantaris'),
                                   to = c('ATR', 'LV',
                                          'AOR', 'RV',
@@ -53,8 +54,9 @@ filterData <- reactive({
                                          'EYE', 'EDL', 'FDB',
                                          'TA', 'AA', 
                                          'TON', 'MAS',
+                                         'GAS', 'QUAD', 'TAN',
                                          'PLA'),
-                                  warn_missing = FALSE)
+                                  warn_missing = TRUE)
   
   
   qCol = paste0(paste0(sort(muscleSymbols), collapse = '.'), '_q')
@@ -68,6 +70,7 @@ filterData <- reactive({
   
   # Check if q-value filtering is turned on
   if(input$adv == FALSE & qCol %in% colnames(data2filter)) {
+    
     filtered = data2filter %>% 
       select_("-dplyr::contains('_q')", q = qCol) %>% 
       filter(tissue %in% selMuscles,   # muscles
@@ -75,6 +78,7 @@ filterData <- reactive({
              GO %like% ont)
     
   }  else if (input$adv == FALSE) {
+    
     filtered = data2filter %>% 
       select_("-dplyr::contains('_q')") %>% 
       filter(tissue %in% selMuscles,   # muscles
@@ -191,7 +195,6 @@ filterData <- reactive({
       
     }
   }
-  
   
   return(filtered)
 })
