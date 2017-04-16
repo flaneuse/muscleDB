@@ -3,6 +3,7 @@
 ## 16 April 2017
 * updated ANOVAs with log2-transformed expression values
 * updated gene ontology classifications
+* updated master list of gene ontology terms for selectize
 * revised incorrect standard error calculations for QUAD, GAS, TA
 
 ## 4 April 2017
