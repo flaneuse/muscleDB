@@ -29,6 +29,8 @@ All files are within the ['prep' directory](https://github.com/flaneuse/muscleDB
 1. update the call to data (`data = readRDS('data/expr_2017-02-19.rds')`)
 * update `tissueList`, `allTissues`, `selTissues`
 * run app to double check everything works.
+## within `filterExpr.R`:
+1.   update muscleSymbols = plyr::mapvalues(selMuscles, ...)
 
 # Upload to server and restart Shiny server.
 1. Copy the new .rds data file into the data directory
