@@ -27,7 +27,7 @@ initGene = 'Myod1'
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
-data = readRDS('data/expr_2017-04-02.rds')
+data = readRDS('data/expr_2017-04-16.rds')
 
 initData = data %>% filter(shortName %like% initGene)
 
@@ -74,3 +74,11 @@ selTissues = c(
                'plantaris')
 
 # shortNameList = unique(data$shortName)
+
+
+# greys -------------------------------------------------------------------
+grey10K = "#E6E7E8"
+grey40K = "#a7a9ac"
+grey50K = "#939598"
+grey60K = "#808285"
+grey90K = "#414042"
