@@ -12,7 +12,8 @@
 1. expr_2017-04-16.rds
 2. allOntologyTerms.rds
 3. global.R (to reference new files)
-4. calculation / prep files in /prep folder
+4. filterExpr.R (to add in Q's for new tissues)
+5. calculation / prep files in /prep folder
 
 ## 4 April 2017
 *bug fixes*
