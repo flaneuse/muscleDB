@@ -4,8 +4,11 @@
 *performance upgrades*
 * reduce number of sign. figures on q-values
 * integrate data.table filtering from dplyr
+
 *functionality*
 * add in filtering by transcript + gene name
+* check that png download is available everywhere.
+
 *bugs*
 * fix GO break at terms
 
