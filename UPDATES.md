@@ -2,7 +2,7 @@
 
 ## 23 April 2017 (to do)
 *performance upgrades*
-* reduce number of sign. figures on q-values
+* reduce number of sign. figures on q-values to 2.
 * integrate data.table filtering from dplyr
 
 *functionality*
