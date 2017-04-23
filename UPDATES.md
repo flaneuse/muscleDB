@@ -1,5 +1,11 @@
 # Tracking major changes to MuscleDB
 
+## 23 April 2017 (to do)
+*performance upgrades*
+* reduce number of sign. figures on q-values
+* integrate data.table filtering from dplyr
+* add in filtering by transcript + gene name
+
 ## 16 April 2017
 *New ANOVAs calculated, ontology + SE updated*
 * updated ANOVAs with log2-transformed expression values
