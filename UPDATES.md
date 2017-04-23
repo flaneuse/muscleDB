@@ -4,7 +4,10 @@
 *performance upgrades*
 * reduce number of sign. figures on q-values
 * integrate data.table filtering from dplyr
+*functionality*
 * add in filtering by transcript + gene name
+*bugs*
+* fix GO break at terms
 
 ## 16 April 2017
 *New ANOVAs calculated, ontology + SE updated*
