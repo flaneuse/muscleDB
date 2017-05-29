@@ -1,0 +1,11 @@
+name: mtapp-niams-demo
+title: MTapp-NIAMS-demo
+account: muscle-transcriptome-atlas
+server: shinyapps.io
+appId: 31631
+bundleId: 844633
+url: https://muscle-transcriptome-atlas.shinyapps.io/MTapp-NIAMS-demo/
+when: 1496072632.14516
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/allOntologyTerms.rds|data/allOntologyTerms2014.rds|data/expr_2016-10-08.rds|data/expr_2017-02-19.rds|data/expr_2017-04-02.rds|data/expr_2017-04-16.rds
