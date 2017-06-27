@@ -60,6 +60,7 @@ df = data %>%
   filter(gene %like% 'Hox')
 
 
+
 # calculate dendrogram ----------------------------------------------------
 
 # cluster the wide form of the data (just numbers) to get the transcript clusters
@@ -163,6 +164,15 @@ print(dendro_x, vp = viewport(width = 0.725, height = 0.2, x = 0.44, y = 0.875))
 print(dendro_y, vp = viewport(width = 0.45, height = 0.655, x = 0.9,  y = 0.495))
 print(heatmap, vp = viewport(0.8, 0.8, x = 0.4, y = 0.4))
 
+heatmap +
+   geom_segment(aes(x = x, y = y/5 + 45, xend = xend, yend = yend/5 + 45, fill=1),
+                                 size = 0.25,
+                  fill = 'red', color = 'red',
+                  data = segment(dendro_data((dendro_tissues)))) +
+  geom_segment(aes(x = y, y = x, xend = yend, yend = xend, fill=1),
+               size = 0.25,
+               fill = 'red', color = 'red',
+               data = segment(rev(dendro_data((dendro_genes)))))
 
 # interactive version -----------------------------------------------------
 dfwide = tidyr::spread(df %>% select(transcript, shortName, tissue, expr), tissue, expr)
