@@ -4,6 +4,9 @@
 # Laura Hughes, laura.d.hughes@gmail.com
 
 
+# csv file name CHANGE ME!-----------------------------------------------------------
+# File that's read in on line 75.  Note that Excel files can be read in with slight modifications
+csv_file = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatmap_demo.csv'
 
 
 # import libraries --------------------------------------------------------
@@ -69,7 +72,7 @@ dendroReduction = 5
 #  gene | muscle tissue | expression 
 
 # Note 2: only columns should be gene, transcript, shortName, and expression
-dfwide = read.csv('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatmap_demo.csv')
+dfwide = read.csv(csv_file)
 
 # It's easiest to plot the base heatmap if the  data are  in the long form
 # So to transpose...
