@@ -37,6 +37,7 @@ library(viridis)
 library(dplyr)
 library(tidyr)
 
+
 # heatmap choices ---------------------------------------------------------
 
 # colorPalette is a series of colors to be used in the color ramp
@@ -47,10 +48,19 @@ nodataColor = viridis::magma(1)
 # font color for all text (in hexadecimal)
 fontColor = '#777777'
 
-# export options
+# export options (size and name for saved files)
 width = 7
 height = 7.5
 filename = 'heatmap'
+
+
+# scaling values to scrunch the dendrograms
+# gap between dendrogram and heatmap plot.  0.5 = overlapping with the end of the plot
+gapDendro = 0.75
+
+# scaling factor to limit the size of the dendrogram in the plot
+dendroReduction = 5
+
 
 # import data -------------------------------------------------------------
 # Note: data should be in a "wide" format, e.g. each row should contain:
@@ -67,8 +77,12 @@ dfwide = read.csv('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatm
 df = dfwide %>% 
   # transpose
   gather(tissue, expr, -gene, -transcript, -shortName) %>% 
-  # create a fusion name for plotting
+  # create a fusion name for plotting, e.g. Hoxa7 (uc009byk)
   mutate(gene_trans = ifelse(is.na(gene), transcript, paste0(gene, ' (', transcript, ')')))
+
+# pull out how many tissues/transcripts dealing with
+numTranscripts = length(unique(df$transcript))
+numTissues = length(unique(df$tissue))
 
 
 # dfwide is used to cluster the genes.  To do so, the data frame should only contain numbers, 
@@ -91,7 +105,6 @@ gene_order = left_join(gene_order, df %>% select(transcript, shortName, gene_tra
   arrange(gene_order)
 
 # cluster the transpose of the data to get the tissue clusters
-# column mean used to normalize before clustering
 dendro_tissues = hclust(dist(t(dfwide)))
 
 # figure out how the tissues should be ordered from left to right
@@ -150,18 +163,7 @@ heatmap = ggplot(df) +
 
 
 
-
-
 # add in dendrograms ------------------------------------------------------
-numTranscripts = length(unique(df$transcript))
-numTissues = length(unique(df$tissue))
-
-# gap between dendrogram and heatmap plot.  0.5 = overlapping with the end of the plot
-gapDendro = 0.75
-
-# scaling factor to limit the size of the dendrogram in the plot
-dendroReduction = 5
-
 heatmap +
   # tissue dendrogram
    geom_segment(aes(x = x, y = y/dendroReduction + numTranscripts + gapDendro, xend = xend, 
