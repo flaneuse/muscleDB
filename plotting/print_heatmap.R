@@ -7,6 +7,19 @@
 
 
 # import libraries --------------------------------------------------------
+# Check if packages are installed
+pkgs = c('ggplot2', 'd3heatmap', 'ggdendro', 'viridis', 'dplyr', 'tidyr')
+alreadyInstalled = installed.packages()[, "Package"]
+
+toInstall = pkgs[!pkgs %in% alreadyInstalled]
+
+# Install anything that isn't already installed.
+if (length(toInstall > 0)) {
+  print(paste0("Installing these packages: ", paste0(toInstall, collapse = ", ")))
+  
+  install.packages(toInstall)
+}
+
 
 # main library for plotting
 library(ggplot2)
@@ -19,91 +32,92 @@ library(ggdendro)
 
 # color libraries
 library(viridis)
-library(RColorBrewer)
-
-# library to have custom fonts from the system installed 
-library (extrafont)
-extrafont::font_import()
 
 # library for basic data manipulation
 library(dplyr)
 library(tidyr)
-library(data.table)
 
 # heatmap choices ---------------------------------------------------------
 
-# Whether the heatmap tiles should be square (TRUE) or rectangular (FALSE)
-squareTiles = TRUE
-
 # colorPalette is a series of colors to be used in the color ramp
 colorPalette = viridis::magma(11)
+# If there are any NAs (e.g. from log-transform), what color should be plotted?
 nodataColor = viridis::magma(1)
 
-# font color for everything (in hexadecimal)
+# font color for all text (in hexadecimal)
 fontColor = '#777777'
 
-# threshold for whether to label unusually high values
-exprLabelThresh = 25
-
+# export options
+width = 7
+height = 7.5
+filename = 'heatmap'
 
 # import data -------------------------------------------------------------
-# Note: data should be in a "long" format, e.g. each row should contain:
-#  gene | muscle tissue | expression 
-# NOT
+# Note: data should be in a "wide" format, e.g. each row should contain:
 # gene | atria expression | left ventricle expression | ...
+# NOT
+#  gene | muscle tissue | expression 
+
+# Note 2: only columns should be gene, transcript, shortName, and expression
+dfwide = read.csv('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatmap_demo.csv')
+
+# It's easiest to plot the base heatmap if the  data are  in the long form
+# So to transpose...
+# it'll take every column that's NOT gene, transcript, or id and put the column name into 'tissue' and the value into 'expr'
+df = dfwide %>% 
+  # transpose
+  gather(tissue, expr, -gene, -transcript, -shortName) %>% 
+  # create a fusion name for plotting
+  mutate(gene_trans = ifelse(is.na(gene), transcript, paste0(gene, ' (', transcript, ')')))
 
 
-data = readRDS('data/expr_2017-04-23.rds')
-
-# filter out just the data for 'Hox' genes
-df = data %>% 
-  filter(gene %like% 'Hox')
-
-
+# dfwide is used to cluster the genes.  To do so, the data frame should only contain numbers, 
+# with the rows labeled by a unique variable (transcript, in this case)
+row.names(dfwide) = dfwide$transcript
+dfwide = dfwide  %>% select(-gene, -transcript, -shortName)
 
 # calculate dendrogram ----------------------------------------------------
 
 # cluster the wide form of the data (just numbers) to get the transcript clusters
-dendro_genes = hclust(dist(dfwide))
+# clustering based on a row mean of everything.
+dendro_genes = hclust(dist(rowMeans(dfwide)))
 
 # figure out how the tissues should be ordered from left to right
-gene_order = data.frame(transcript =  dendro_genes$labels[dendro_genes$order], gene_order = 1:max(dendro_genes$order))
+gene_order = data.frame(transcript =  dendro_genes$labels[dendro_genes$order], 
+                        gene_order = 1:max(dendro_genes$order))
 
-gene_order = left_join(gene_order, df %>% select(transcript, shortName) %>% distinct(), 
+gene_order = left_join(gene_order, df %>% select(transcript, shortName, gene_trans) %>% distinct(), 
                        by = 'transcript') %>% 
-  arrange(desc(gene_order))
+  arrange(gene_order)
 
 # cluster the transpose of the data to get the tissue clusters
+# column mean used to normalize before clustering
 dendro_tissues = hclust(dist(t(dfwide)))
 
 # figure out how the tissues should be ordered from left to right
 tissue_order = dendro_tissues$labels[dendro_tissues$order]
 
 # resort the transcripts and tissues, so they are in the order of the dendrogram
+# without this step, the heatmap will plot the tissues and genes in alpha order
 df$tissue = factor(df$tissue, levels = tissue_order)
 
 df$transcript = factor(df$transcript, levels = gene_order$transcript)
-df$shortName = factor(df$shortName, levels = unique(gene_order$shortName))
+df$gene_trans = factor(df$gene_trans, levels = unique(gene_order$gene_trans))
 
 # create heatmap ----------------------------------------------------------
 
 # x values are the tissue / muscle type
-# y values are the gene names (using the gene name if it exists, or otherwise the transcript id)
+# y values are the gene names (using the gene name + transcript if it exists, or otherwise the transcript id)
 # fill values (color) are the expression levels
-heatmap = ggplot(df, aes(x = tissue, y = shortName, fill = log10(expr))) +
+heatmap = ggplot(df) +
   
+  # create the filled color tiles
   # no border between tiles
-  geom_tile() +
+  geom_tile(aes(x = tissue, y = gene_trans, fill = expr)) +
   
-  # create the filled color tiles. color/size specify the color and width of the border outside each tile
-  # geom_tile(color = 'white', size = 0.05) +
-  
-  # label expression values
-  # geom_text(aes(label = round(expr, 0)),
-  #           data = df %>% filter(expr > exprLabelThresh), 
-  #           size = 2.5, # size is in mm, not points
-  #   color = '#222222'
-  # ) +
+  # create the filled color tiles. 
+  # Add a border where color/size specify the color and width of the border outside each tile
+  # geom_tile(aes(x = tissue, y = gene_trans, fill = expr), color = 'white', size = 0.05) +
   
   # change the color palette
   scale_fill_gradientn(colours = colorPalette,
@@ -134,50 +148,40 @@ heatmap = ggplot(df, aes(x = tissue, y = shortName, fill = log10(expr))) +
   )
 
 
-dendro_y = ggplot(segment(dendro_data(rev(dendro_genes)))) +
-  geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
-               size = 0.25,
-               color = fontColor
-               ) +
-  geom_text(aes(x = x, y = y, label = label), 
-            color = fontColor,
-            size = 2, 
-            hjust = 1,
-            data = dendro_data(rev(dendro_genes))$labels) +
-  scale_x_continuous(expand = c(0.1, 0.1)) +
-  coord_flip() +
-  theme_void()
-
-dendro_x = ggplot(segment(dendro_data((dendro_tissues)))) +
-  geom_segment(aes(x = x, y = y, xend = xend, yend = yend),
-               size = 0.25,
-               color = fontColor
-  ) +
-  theme_void()
 
 
-# save heatmap ------------------------------------------------------------
-library(grid)
-grid.newpage()
 
-print(dendro_x, vp = viewport(width = 0.725, height = 0.2, x = 0.44, y = 0.875))
-print(dendro_y, vp = viewport(width = 0.45, height = 0.655, x = 0.9,  y = 0.495))
-print(heatmap, vp = viewport(0.8, 0.8, x = 0.4, y = 0.4))
+
+# add in dendrograms ------------------------------------------------------
+numTranscripts = length(unique(df$transcript))
+numTissues = length(unique(df$tissue))
+
+# gap between dendrogram and heatmap plot.  0.5 = overlapping with the end of the plot
+gapDendro = 0.75
+
+# scaling factor to limit the size of the dendrogram in the plot
+dendroReduction = 5
 
 heatmap +
-   geom_segment(aes(x = x, y = y/5 + 45, xend = xend, yend = yend/5 + 45, fill=1),
+  # tissue dendrogram
+   geom_segment(aes(x = x, y = y/dendroReduction + numTranscripts + gapDendro, xend = xend, 
+                    yend = yend/dendroReduction + numTranscripts + gapDendro, fill=1),
                                  size = 0.25,
-                  fill = 'red', color = 'red',
-                  data = segment(dendro_data((dendro_tissues)))) +
-  geom_segment(aes(x = y, y = x, xend = yend, yend = xend, fill=1),
+                  color = fontColor,
+                  data = segment(dendro_data(dendro_tissues))) +
+  # transcript dendrogram
+  geom_segment(aes(x = y/dendroReduction + numTissues + gapDendro, y = x, 
+                   xend = yend/dendroReduction + numTissues + gapDendro, yend = xend, fill=1),
                size = 0.25,
-               fill = 'red', color = 'red',
-               data = segment(rev(dendro_data((dendro_genes)))))
+               color = fontColor,
+               data = segment(dendro_data(dendro_genes)))
+
+# save heatmap ------------------------------------------------------------
+# save as pdf
+ggsave(filename = paste0(filename, '.pdf'), width = width, height = height)
+
+# save as png
+ggsave(filename = paste0(filename, '.png'), width = width, height = height)
 
 # interactive version -----------------------------------------------------
-dfwide = tidyr::spread(df %>% select(transcript, shortName, tissue, expr), tissue, expr)
-row.names(dfwide) = dfwide$transcript
-
-dfwide = dfwide %>% select(-transcript, -shortName)
-
-d3heatmap::d3heatmap(dfwide %>% select(-transcript, -shortName), colors = colorPalette)
+d3heatmap::d3heatmap(dfwide, colors = colorPalette)
