@@ -97,7 +97,7 @@ dfwide = dfwide  %>% select(-gene, -transcript, -shortName)
 
 # cluster the wide form of the data (just numbers) to get the transcript clusters
 # clustering based on a row mean of everything.
-dendro_genes = hclust(dist(rowMeans(dfwide)))
+dendro_genes = hclust(dist((dfwide)))
 
 # figure out how the tissues should be ordered from left to right
 gene_order = data.frame(transcript =  dendro_genes$labels[dendro_genes$order], 
