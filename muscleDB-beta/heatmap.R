@@ -71,7 +71,7 @@ output$heatmap <- renderD3heatmap({
     d3heatmap(filteredData, scale = scaleHeat, 
               dendrogram = if(input$orderHeat){'both'} else{'none'}, 
               # Rowv = TRUE, Colv = TRUE, 
-              show_grid = TRUE, color="YlOrRd", labRow = t(heatNames),
+              show_grid = TRUE, color= viridis::magma(11), labRow = t(heatNames), 
               xaxis_height = 100, yaxis_width = 200
     )
   }
