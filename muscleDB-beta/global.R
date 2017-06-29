@@ -27,7 +27,7 @@ initGene = 'Myod1'
 # mt_source = src_sqlite('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_public_2015-11-08.sqlite3', create = FALSE)
 # data = tbl(mt_source, 'MT')
 
-data = readRDS('data/expr_2017-04-16.rds')
+data = readRDS('data/expr_2017-04-23.rds')
 
 initData = data %>% filter(shortName %like% initGene)
 
