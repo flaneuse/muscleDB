@@ -6,7 +6,53 @@ data = data %>% select(-transcript)
 
 dendro = hclust(dist(t(data)))
 
+dd = dendro_data(dendro)
+
+cardColor = '#ad494a'
+skelColor = '#5254a3'
+smoothColor = '#bd9e39'
+
+cols = data.frame(c('atria' = cardColor,
+         'left ventricle' = cardColor,
+         'right ventricle' = cardColor,
+         'total aorta' = smoothColor,
+         'thoracic aorta' = smoothColor,
+         'abdominal aorta' = smoothColor,
+         
+         'soleus' = skelColor,
+         'tibialis anterior' = skelColor,
+         'quadriceps'  = skelColor,
+         'gastrocnemius' = skelColor,
+         'diaphragm' = skelColor,
+         'eye' = skelColor,
+         'EDL' = skelColor,
+         'FDB'  = skelColor,
+         'masseter' = skelColor,
+         'tongue' = skelColor,
+         'plantaris' = skelColor))
+
+cols = cols %>% mutate(label = row.names(cols)) %>% rename(color = c.atria...cardColor...left.ventricle....cardColor...right.ventricle....cardColor..)
+
+lab = dd$labels
+lab = left_join(lab, cols)
+seg = dd$segments
+
+ggplot(seg) +
+  geom_segment(aes(x = x, xend = xend, y = y/5, yend = yend/5),
+               size = 0.25, colour = '#777777') +
+  geom_text(aes(x = x, y = y , label = label, colour = color),
+            family = 'Lato Light', 
+            nudge_y = -1000,
+            size = 3, data = lab) +
+  scale_color_identity() +
+  theme_void()
+
+# distance matrix ---------------------------------------------------------
+
+
 dist_matrix = dist(t(data))
+
+
 
 dist_matrix = as.matrix(dist_matrix)
 
