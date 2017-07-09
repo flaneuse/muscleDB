@@ -2,10 +2,9 @@ theme_xOnly<- function(textSize) {
   theme(title = element_text(size = 32, color = grey90K),
         axis.line = element_blank(),
         axis.ticks = element_blank(),
-        axis.text = element_text(size = textSize, color = grey60K, family = 'Segoe UI Light'),
+        axis.text = element_text(size = textSize, color = grey60K),
         axis.text.y = element_text(vjust = 0.1),
-        axis.title.x = element_text(size = 19, color = grey60K, 
-                                    family = 'Segoe UI Light'), 
+        axis.title.x = element_text(size = 19, color = grey60K), 
         axis.title.y = element_blank(), 
         legend.position="none",
         panel.border = element_rect(colour = grey90K, size = 0.25, fill = NA),
@@ -13,7 +12,7 @@ theme_xOnly<- function(textSize) {
         panel.grid.major.y = element_blank(),
         panel.spacing = unit(15, units = 'points'),
         panel.background = element_blank(), 
-        strip.text = element_text(size = 13, face = 'bold', color = grey60K, family = 'Segoe UI Semilight'),
+        strip.text = element_text(size = 13, face = 'bold', color = grey60K),
         strip.background = element_blank()
   )
 }
@@ -95,7 +94,6 @@ output$plot1 <- renderPlot({
     #                 colour = '#6d6e71') +
     #   geom_bar(stat = "identity", fill = 'dodgerblue', alpha = 0.7) +
     #   geom_text(aes(x = tissue, y = 0), hjust = 1.1,
-    #             family = 'Segoe UI Light', 
     #             colour = 'blue') +
     #   facet_wrap(~transFacet) +
     #   theme_xOnly(textSize)
@@ -147,7 +145,6 @@ output$plot1 <- renderPlot({
                  stroke = 0.2, shape = 21) + 
 
       geom_text(aes(x = tissue, y = 0), hjust = 1.1,
-                family = 'Segoe UI Light', 
                 colour = grey60K) +
       
 
