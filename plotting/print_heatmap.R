@@ -8,6 +8,8 @@
 # File that's read in on line 75.  Note that Excel files can be read in with slight modifications
 csv_file = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatmap_demo.csv'
 
+excel_file = '~/Downloads/Myh_Expression.xlsx'
+
 
 
 # Save heatmap function ---------------------------------------------------
@@ -18,7 +20,7 @@ csv_file = '~/Dropbox/Muscle Transcriptome Atlas/Website files/data/heatmap_demo
 # Row normalization kicks out any transcript with 0 deviation.
 # Clustering happens AFTER any normalization
 
-save_heatmap = function(csv_file, 
+save_heatmap = function(file_name, 
                         # plot the heatmap?
                         show_heatmap = TRUE,
                         
@@ -27,6 +29,13 @@ save_heatmap = function(csv_file,
                         
                         # cluster and plot the muscle tissues?
                         cluster_muscle = TRUE,
+                        
+                        # scaling factor to limit the size of the dendrogram in the plot
+                        # Higher numbers = more space taken up by the dendrograms
+                        # x = gene clustering (along x-axis)
+                        dendro_xScale = 5,
+                        # y = tissue clustering (along y-axis)
+                        dendro_yScale = 4,
                         
                         # log-normalize values
                         log_norm = TRUE,
@@ -48,7 +57,7 @@ save_heatmap = function(csv_file,
 ) {
   # import libraries --------------------------------------------------------
   # Check if packages are installed
-  pkgs = c('ggplot2', 'd3heatmap', 'ggdendro', 'viridis', 'dplyr', 'tidyr')
+  pkgs = c('ggplot2', 'd3heatmap', 'ggdendro', 'viridis', 'dplyr', 'tidyr', 'data.table', 'readxl')
   alreadyInstalled = installed.packages()[, "Package"]
   
   toInstall = pkgs[!pkgs %in% alreadyInstalled]
@@ -60,6 +69,8 @@ save_heatmap = function(csv_file,
     install.packages(toInstall)
   }
   
+  # library to import excel files
+  library(readxl)
   
   # main library for plotting
   library(ggplot2)
@@ -74,6 +85,7 @@ save_heatmap = function(csv_file,
   library(viridis)
   
   # library for basic data manipulation
+  library(data.table)
   library(dplyr)
   library(tidyr)
   
@@ -94,8 +106,7 @@ save_heatmap = function(csv_file,
   # gap between dendrogram and heatmap plot.  0.5 = overlapping with the end of the plot
   gapDendro = 0.75
   
-  # scaling factor to limit the size of the dendrogram in the plot
-  dendroReduction = 5
+  
   
   
   # import data -------------------------------------------------------------
@@ -105,8 +116,13 @@ save_heatmap = function(csv_file,
   #  gene | muscle tissue | expression 
   
   # Note 2: only columns should be gene, transcript, shortName, and expression
-  dfwide = read.csv(csv_file, stringsAsFactors = FALSE)
-  
+  if(file_name %like% '.csv'){
+    dfwide = read.csv(file_name, stringsAsFactors = FALSE)
+  } else if(file_name %like% '.xls') {
+    dfwide = read_excel(file_name)
+  } else {
+    stop('unrecognized file_name type. Input a .csv or .xls/.xslx file')
+  }
   
   # log-10 transform the numeric data
   # find which columns are numeric
@@ -126,8 +142,8 @@ save_heatmap = function(csv_file,
     dfwide =
       dfwide %>% 
       rowwise() %>% 
-      mutate_(.dots = setNames(paste0('sd(c(', paste(numeric_cols, collapse = ','), '))'), 'std')) %>%
-      mutate_(.dots = setNames(paste0('mean(c(', paste(numeric_cols, collapse = ','), '))'), 'avg'))
+      mutate_(.dots = setNames(paste0('sd(c(', paste0('`', paste(numeric_cols, collapse = '`,`'), '`'), '))'), 'std')) %>%
+      mutate_(.dots = setNames(paste0('mean(c(', paste0('`', paste(numeric_cols, collapse = '`,`'), '`'), '))'), 'avg'))
     
     if(any(dfwide$std == 0)) {
       transcript = dfwide[dfwide$std == 0, 'transcript']
@@ -196,6 +212,7 @@ save_heatmap = function(csv_file,
   df$transcript = factor(df$transcript, levels = gene_order$transcript)
   df$gene_trans = factor(df$gene_trans, levels = unique(gene_order$gene_trans))
   
+  
   # create heatmap ----------------------------------------------------------
   # base heatmap
   heatmap = ggplot(df) + # controls the aesthetics of the graph
@@ -250,24 +267,37 @@ save_heatmap = function(csv_file,
   
   
   # add in dendrograms ------------------------------------------------------
+  
   if(cluster_muscle == TRUE) {
+    
+    muscle_nodes = segment(dendro_data(dendro_tissues))
+    max_y = max(muscle_nodes$yend)
+    
+    dendro_yReduction = max_y/dendro_yScale
+    
     heatmap = heatmap +
       # tissue dendrogram
-      geom_segment(aes(x = x, y = y/dendroReduction + numTranscripts + gapDendro, xend = xend, 
-                       yend = yend/dendroReduction + numTranscripts + gapDendro, fill=1),
+      geom_segment(aes(x = x, y = y/dendro_yReduction + numTranscripts + gapDendro, xend = xend, 
+                       yend = yend/dendro_yReduction + numTranscripts + gapDendro, fill=1),
                    size = 0.25,
                    color = fontColor,
-                   data = segment(dendro_data(dendro_tissues)))
+                   data = muscle_nodes)
   }
   
   if(cluster_genes == TRUE) {
+    gene_nodes = segment(dendro_data(dendro_genes))
+    max_y = max(gene_nodes$yend)
+    
+    dendro_xReduction = max_y/dendro_xScale
+    
+    
     heatmap = heatmap +
       # transcript dendrogram
-      geom_segment(aes(x = y/dendroReduction + numTissues + gapDendro, y = x, 
-                       xend = yend/dendroReduction + numTissues + gapDendro, yend = xend, fill=1),
+      geom_segment(aes(x = y/dendro_xReduction + numTissues + gapDendro, y = x, 
+                       xend = yend/dendro_xReduction + numTissues + gapDendro, yend = xend, fill=1),
                    size = 0.25,
                    color = fontColor,
-                   data = segment(dendro_data(dendro_genes)))
+                   data = gene_nodes)
   }
   
   # save heatmap ------------------------------------------------------------
@@ -290,6 +320,8 @@ save_heatmap(csv_file, saved_filename = 'Hox_heatmap')
 save_heatmap(csv_file, border_color = NA)
 
 # turn off clustering
+save_heatmap(csv_file, cluster_genes = TRUE, cluster_muscle = FALSE)
+save_heatmap(csv_file, cluster_genes = FALSE, cluster_muscle = TRUE)
 save_heatmap(csv_file, cluster_genes = FALSE, cluster_muscle = FALSE)
 
 # turn off all normalization
@@ -301,7 +333,8 @@ save_heatmap(csv_file, log_norm = FALSE, saved_filename = 'Hox_heatmap_nolog')
 # turn off row normalization
 save_heatmap(csv_file, row_norm = FALSE, saved_filename = 'Hox_heatmap_norow')
 
-
+# Myh_expression
+save_heatmap(excel_file, saved_filename = 'Myh_heatmap', row_norm = FALSE, log_norm = FALSE)
 
 # interactive version -----------------------------------------------------
 # d3heatmap::d3heatmap(dfwide %>% select(-transcript, -gene, -shortName), colors = colorPalette)
