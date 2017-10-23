@@ -39,14 +39,8 @@ calcANOVA <- function (muscles, geneExpr, numRep){
   
 numTissues = length(muscles)
   
-d <- data.frame(cat = rep(letters[1:numTissues], each = numRep), val = rep(1,numRep*numTissues))
+d <- data.frame(cat = rep(letters[1:numTissues], each = numRep), val = rep(NA, numRep*numTissues))
 
-#!!!!! Temporary fix since SOL6 is bad.  DELETE DELETE DELETE when good data is obtained.
-# Deletes the last row of the empty placeholder matrix.
-# if (any(match(muscles, "SOL"), na.rm = TRUE)) {
-#   lastRow = nrow(d)
-#   d = d[-lastRow,]
-# }
 
 
 

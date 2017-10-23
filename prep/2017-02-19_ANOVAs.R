@@ -10,7 +10,7 @@
 
 
 # Import function to loop through the ANOVA calculations.
-setwd('~/GitHub/muscleDB/prep/')
+setwd('~/Documents/GitHub/muscleDB/prep/')
 source('ANOVAlookupTable.r')
 library(readxl) # reading in excel files.
 library(dplyr)

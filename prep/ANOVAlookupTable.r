@@ -44,7 +44,7 @@ ANOVAlookupTable <- function (geneExprData,
     muscleCounter = n:numMuscles
   }
   
-  ANOVAvals = matrix(data=NA,nrow = nrow(geneExpr), ncol= numCombs)
+  ANOVAvals = matrix(data=NA, nrow = nrow(geneExpr), ncol= numCombs)
   colnames(ANOVAvals) = rep(" ",numCombs)
   rownames(ANOVAvals) = rownames(geneExpr)
   counter = 1
