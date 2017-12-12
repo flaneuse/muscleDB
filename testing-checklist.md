@@ -19,6 +19,8 @@
     * summary table
     * download
     * hyperlinks work on tissues
+    * next page
+    * sort columns
 * volcano
     * switch reference tissue
     * hyperlinks work on tissues
@@ -36,6 +38,7 @@
     * png
     * pdf
     * click to zoom in
+    * click on table and point highlighted in graph
 * comparison
     * next page
     * png
