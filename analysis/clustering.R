@@ -1,3 +1,11 @@
+
+# Heatmaps and dendrograms for all tissues in MuscleDB --------------------
+# Clustering / dendrograms of tissues produced from all 65,029 transcripts
+# This clustering is then used to sort corresponding heatmap of differential expression and Euclidean distances.
+
+library(tidyverse)
+library(ggdendro)
+
 data = readRDS('~/Dropbox/Muscle Transcriptome Atlas/Website files/data/expr_2017-04-23.rds')
 
 data = data %>% select(transcript, tissue, expr) %>% spread(tissue, expr)
